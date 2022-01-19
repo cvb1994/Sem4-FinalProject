@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor

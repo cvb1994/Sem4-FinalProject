@@ -15,4 +15,6 @@ public interface ISongService {
 	public ResponseDto save(SongDto model);
 	public ResponseDto delete(int songId);
 	public void increase(int songId);
+	
+	public List<SongDto> getTopSongByGenre(String genreName);
 }

@@ -42,21 +42,12 @@ public class ArtistController {
 	
 	@PostMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<?> create(@ModelAttribute ArtistDto model) throws IOException{
-		if(model == null) return new ResponseEntity("Upload Failed", HttpStatus.BAD_REQUEST);
-		
-		String fileName = util.copyFile(model.getFile());
-		model.setAvatar(fileName);
-		
-		ArtistDto savedArtist = artistSer.save(model);
-		if(savedArtist == null) return ResponseEntity.ok("Create Failed");
-		return ResponseEntity.ok("Create Success");
+		return ResponseEntity.ok(artistSer.save(model));
 		
 	}
 	
 	@DeleteMapping(value = "/{artistId}")
 	public ResponseEntity<?> delete(@PathVariable int artistId){
-		boolean result = artistSer.delete(artistId);
-		if(result) return ResponseEntity.ok("Delete Success");
-		return ResponseEntity.ok("Delete Failed");
+		return ResponseEntity.ok(artistSer.delete(artistId));
 	}
 }

@@ -25,7 +25,7 @@ public class SongDto extends BaseDto{
 	
 	public List<Integer> artistIds;
 	public int albumId;
-	public int genreId;
+	public List<Integer> genreIds;
 	
 	public MultipartFile file;
 	public MultipartFile mp3;

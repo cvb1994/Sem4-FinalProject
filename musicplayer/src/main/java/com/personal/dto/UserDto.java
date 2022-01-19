@@ -3,6 +3,8 @@ package com.personal.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,4 +27,6 @@ public class UserDto extends BaseDto{
 	
 	public List<PlayListDto> playlists;
 	public List<PaymentDto> payments;
+	
+	public MultipartFile file; 
 }

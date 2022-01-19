@@ -1,5 +1,6 @@
 package com.personal.serviceImp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,14 +13,25 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.personal.common.FileTypeEnum;
+import com.personal.common.SystemParamEnum;
 import com.personal.dto.PageDto;
 import com.personal.dto.ResponseDto;
 import com.personal.dto.SongDto;
+import com.personal.entity.Album;
+import com.personal.entity.Artist;
+import com.personal.entity.Genre;
 import com.personal.entity.Song;
+import com.personal.entity.SystemParam;
 import com.personal.mapper.SongMapper;
+import com.personal.repository.AlbumRepository;
+import com.personal.repository.ArtistRepository;
+import com.personal.repository.GenreRepository;
 import com.personal.repository.ListenCountRepository;
 import com.personal.repository.SongRepository;
+import com.personal.repository.SystemParamRepository;
 import com.personal.service.ISongService;
+import com.personal.utils.CloudStorageUtils;
 import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
@@ -28,22 +40,26 @@ public class SongService implements ISongService{
 	@Autowired
 	private SongRepository songRepo;
 	@Autowired
+	private AlbumRepository	albumRepo;
+	@Autowired
+	private ArtistRepository artistRepo;
+	@Autowired
+	private GenreRepository genreRepo;
+	@Autowired
 	private SongMapper songMapper;
 	@Autowired
-	private ListenCountRepository listenCountRepo;
+	private SystemParamRepository systemRepo;
 	@Autowired
-	Utilities util;
+	private Utilities util;
 	@Autowired
 	private UploadToDrive uploadDrive;
-	
-	private String serviceUrl = "http://localhost:8081/upload/img/";
+	@Autowired
+	private CloudStorageUtils uploadCloudStorage;
 	
 	@Override
 	public List<SongDto> getAll() {
 		List<SongDto> list = songRepo.findAll().stream().map(songMapper::entityToDto).collect(Collectors.toList());
-		list.stream().forEach(s -> {
-			s.setImage(serviceUrl.concat(s.getImage()));
-		});
+		
 		return list;
 	}
 	
@@ -51,9 +67,7 @@ public class SongService implements ISongService{
 	public PageDto gets(SongDto criteria) {
 		Page<Song> page = songRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
-		list.stream().forEach(s -> {
-			s.setImage(serviceUrl.concat(s.getImage()));
-		});
+		
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
 		pageDto.setNumber(page.getNumber());
@@ -67,58 +81,113 @@ public class SongService implements ISongService{
 	@Override
 	public SongDto getById(int songId) {
 		SongDto song = songRepo.findById(songId).map(songMapper::entityToDto).orElse(null);
-		if(song != null) {
-			song.setImage(serviceUrl.concat(song.getImage()));
-		}
+		
 		return song;
 	}
 
 	@Override
 	public SongDto getByName(String name) {
 		SongDto song = songRepo.findByTitle(name).map(songMapper::entityToDto).orElse(null);
-		if(song != null) {
-			song.setImage(serviceUrl.concat(song.getImage()));
-		}
+		
 		return song;
 	}
 
 	@Override
 	public ResponseDto save(SongDto model) {
 		ResponseDto res = new ResponseDto();
-		
-		String fileType = util.getFileType(model.getFile());
-		if(fileType != null) {
-			String imageUrl = uploadDrive.uploadFile(model.getFile(), fileType);
-			if(imageUrl == null) {
-				res.setError("Lỗi trong quá trình upload file");
-				res.setIsSuccess(false);
-				return res;
-			}
-			model.setImage(imageUrl);
-		} else {
-			res.setError("File không hợp lệ");
+		Song song = Optional.ofNullable(model).map(songMapper::dtoToEntity).orElse(null);
+		if(song == null) {
+			res.setError("Dữ liệu không đúng");
 			res.setIsSuccess(false);
 			return res;
 		}
+		boolean isAlbumExist = false;
 		
-		fileType = util.getFileType(model.getMp3());
-		if(fileType != null) {
-			String audioUrl = uploadDrive.uploadFile(model.getMp3(), fileType);
+		if(model.getAlbumId() != 0) {
+			Optional<Album> optAlbum = albumRepo.findById(model.getAlbumId());
+			if(optAlbum.isPresent()) {
+				song.setAlbum(optAlbum.get());
+				song.setImage(optAlbum.get().getAvatar());
+				isAlbumExist = true;
+			}
+		} 
+		
+		List<Artist> listArtist = new ArrayList<>();
+		for(Integer i : model.getArtistIds()) {
+			Optional<Artist> artist = artistRepo.findById(i.intValue());
+			if(artist.isPresent()) listArtist.add(artist.get());
+		}
+		if(listArtist.size() == 0) {
+			res.setError("Không tìm thấy nghệ sĩ");
+			res.setIsSuccess(false);
+			return res;
+		} else {
+			song.setArtists(listArtist);
+		}
+		
+		List<Genre> listGenre = new ArrayList<>();
+		for(Integer i : model.getGenreIds()) {
+			Optional<Genre> genre = genreRepo.findById(i.intValue());
+			if(genre.isPresent()) listGenre.add(genre.get());
+		}
+		if(listGenre.size() == 0) {
+			res.setError("Không tìm thấy thể loại");
+			res.setIsSuccess(false);
+			return res;
+		} else {
+			song.setGenres(listGenre);
+		}
+		
+		if(model.getFile() == null && !isAlbumExist) {
+			Optional<SystemParam> optParam = systemRepo.findByParamName(SystemParamEnum.ALBUM_IMAGE_DEFAULT.name);
+			if(optParam.isPresent()) {
+				song.setImage(optParam.get().getParamValue());
+			} else {
+				res.setError("Không tìm thấy ảnh đại diện mặc định");
+				res.setIsSuccess(false);
+				return res;
+			}
+		} else if(!isAlbumExist){
+			String extension = util.getFileExtension(model.getFile());
+			if(extension != null) {
+				String name = util.nameIdentifier(model.getTitle(), extension);
+				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.SONG_IMAGE.name, name);
+				if(imageUrl == null) {
+					res.setError("Lỗi trong quá trình upload file");
+					res.setIsSuccess(false);
+					return res;
+				}
+				song.setImage(imageUrl);
+			} else {
+				res.setError("File không hợp lệ");
+				res.setIsSuccess(false);
+				return res;
+			}
+		}
+		
+		if(model.getMp3().isEmpty()) {
+			res.setError("File không tồn tại");
+			res.setIsSuccess(false);
+			return res;
+		}
+		String extension = util.getFileExtension(model.getMp3());
+		if(extension != null) {
+			String name = util.nameIdentifier(model.getTitle(), extension);
+			String audioUrl = uploadCloudStorage.uploadObject(model.getMp3(), name);
 			if(audioUrl == null) {
 				res.setError("Lỗi trong quá trình upload file");
 				res.setIsSuccess(false);
 				return res;
 			}
-			model.setMediaUrl(audioUrl);
+			song.setMediaUrl(audioUrl);
 		} else {
 			res.setError("File không hợp lệ");
 			res.setIsSuccess(false);
 			return res;
 		}
 		
-		Song song = Optional.ofNullable(model).map(songMapper::dtoToEntity).orElse(null);
-		if (song != null) {
-			songRepo.save(song);
+		Song savedSong = songRepo.save(song);
+		if(savedSong != null) {
 			res.setIsSuccess(true);
 			return res;
 		}
@@ -165,5 +234,14 @@ public class SongService implements ISongService{
 //				listenCountRepo.save(lc);
 //			}
 //		}
+	}
+	
+	@Override
+	public List<SongDto> getTopSongByGenre(String genreName){
+//		Optional<Genre> optGenre = genreRepo.findByNameIgnoreCase(genreName);
+//		if(optGenre.isPresent()) {
+//			return songRepo.findTop10ByGenreOrderByListenCountReset(optGenre.get()).stream().map(songMapper::entityToDto).collect(Collectors.toList());
+//		}
+		return null;
 	}
 }

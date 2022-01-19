@@ -1,11 +1,11 @@
 package com.personal.common;
 
 public enum FolderTypeEnum {
-	GENRE_FOLDER("genreUpload"),
-	ARTIST_FOLDER("artistUpload"),
-	ALBUM_FOLDER("albumUpload"),
-	SONG_FOLDER("songFolder"),
-	USER_FOLDER("userUpload"),
+	GENRE_IMAGE_FOLDER("genreUpload"),
+	ARTIST_IMAGE_FOLDER("artistUpload"),
+	ALBUM_IMAGE_FOLDER("albumUpload"),
+	SONG_IMAGE_FOLDER("songFolder"),
+	USER_IMAGE_FOLDER("userUpload"),
 	AUDIO_FOLDER("music-upload")
 	;
 	

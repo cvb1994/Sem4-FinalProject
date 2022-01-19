@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class AdminDto extends BaseDto{
-	public int id;
-	public String username;
-	public String password;
+public class SystemParamDto extends BaseDto{
+	private int id;
+	private String paramName;
+	private String paramValue;
 }

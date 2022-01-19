@@ -54,11 +54,11 @@ public class CloudStorageUtils {
 		return bucket;
 	}
 	
-	public String uploadObject(MultipartFile fileUpload) {
+	public String uploadObject(MultipartFile fileUpload, String fileName) {
 		Storage storage = StorageOptions.getDefaultInstance().getService();
 		Bucket bucket = findBucket(FolderTypeEnum.AUDIO_FOLDER.name);
 		
-	    BlobId blobId = BlobId.of(bucket.getName(), fileUpload.getOriginalFilename());
+	    BlobId blobId = BlobId.of(bucket.getName(), fileName);
 	    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 	    String url = null;
 	    try {

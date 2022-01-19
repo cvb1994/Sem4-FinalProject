@@ -33,10 +33,16 @@ public class UploadToDrive {
             FileList result = driveManager.getService().files().list().setQ("mimeType = 'application/vnd.google-apps.folder'")
                     .setSpaces("drive").setFields("nextPageToken, files(id, name)").setPageToken(pageToken).execute();
             String targetFolder = null;
-            if(fileType.equals(FileTypeEnum.AUDIO.name)) {
-            	targetFolder = FolderTypeEnum.AUDIO_FOLDER.name;
-            } else {
-//            	targetFolder = FolderTypeEnum.IMAGE_FOLDER.name;
+            if(fileType.equals(FileTypeEnum.GENRE_IMAGE.name)) {
+            	targetFolder = FolderTypeEnum.GENRE_IMAGE_FOLDER.name;
+            } else if(fileType.equals(FileTypeEnum.ARTIST_IMAGE.name)){
+            	targetFolder = FolderTypeEnum.ARTIST_IMAGE_FOLDER.name;
+            } else if(fileType.equals(FileTypeEnum.ALBUM_IMAGE.name)){
+            	targetFolder = FolderTypeEnum.ALBUM_IMAGE_FOLDER.name;
+            } else if(fileType.equals(FileTypeEnum.SONG_IMAGE.name)){
+            	targetFolder = FolderTypeEnum.SONG_IMAGE_FOLDER.name;
+            } else if(fileType.equals(FileTypeEnum.USER_IMAGE.name)){
+            	targetFolder = FolderTypeEnum.USER_IMAGE_FOLDER.name;
             }
 
             for (File file : result.getFiles()) {
@@ -56,11 +62,19 @@ public class UploadToDrive {
             return folderId;
 
         File fileMetadata = new File();
-        if(fileType.equals(FileTypeEnum.AUDIO.name)) {
-        	fileMetadata.setName(FolderTypeEnum.AUDIO_FOLDER.name);
-        } else {
-//        	fileMetadata.setName(FolderTypeEnum.IMAGE_FOLDER.name);
+        
+        if(fileType.equals(FileTypeEnum.GENRE_IMAGE.name)) {
+        	fileMetadata.setName(FolderTypeEnum.GENRE_IMAGE_FOLDER.name);
+        } else if(fileType.equals(FileTypeEnum.ARTIST_IMAGE.name)){
+        	fileMetadata.setName(FolderTypeEnum.ARTIST_IMAGE_FOLDER.name);
+        } else if(fileType.equals(FileTypeEnum.ALBUM_IMAGE.name)){
+        	fileMetadata.setName(FolderTypeEnum.ALBUM_IMAGE_FOLDER.name);
+        } else if(fileType.equals(FileTypeEnum.SONG_IMAGE.name)){
+        	fileMetadata.setName(FolderTypeEnum.SONG_IMAGE_FOLDER.name);
+        } else if(fileType.equals(FileTypeEnum.USER_IMAGE.name)){
+        	fileMetadata.setName(FolderTypeEnum.USER_IMAGE_FOLDER.name);
         }
+
         fileMetadata.setMimeType("application/vnd.google-apps.folder");
 
         File file = driveManager.getService().files().create(fileMetadata).setFields("id").execute();
@@ -68,13 +82,13 @@ public class UploadToDrive {
         return folderId;
     }
 
-    public String uploadFile(MultipartFile fileUpload, String fileType){
+    public String uploadImageFile(MultipartFile fileUpload, String fileType, String fileName){
         try {
         	String folderId = getFolder(fileType);
             if (fileUpload != null) {
                 File file = new File();
                 file.setParents(Collections.singletonList(folderId));
-                file.setName(fileUpload.getOriginalFilename());
+                file.setName(fileName);
                 File uploadFile = driveManager.getService().files()
                         .create(file,
                                 new InputStreamContent(fileUpload.getContentType(),
@@ -90,10 +104,14 @@ public class UploadToDrive {
         return null;
     }
     
-    
     //Cấp quyền truy cập cho tk khác 
     public void grantPermission() throws GeneralSecurityException, IOException {
-    	String fileId = "1hm1WZghhYiyJ60wXl8j8IAlHDHR99H4j";
+    	String genreFolderId = "1caoxL3s_6YzuQD4drj-SPxiTN3ZBnmlJ";
+    	String artistFolderId = "1onQIU34Gi1Guq0pn3yMDAqiO77t5oBV-";
+    	String albumFolderId = "1_DJzxp-RGRBqvdXdL6gfvoQ-5MwbWW5r";
+    	String songFolderId = "1TcHCabvT6X2qttbqs-ddN4PvHfzzsCW7";
+    	
+    	String fileId = "1Z24WnT1aCNDEki89cKTdqw-kepmHt7gD";
     	JsonBatchCallback<Permission> callback = new JsonBatchCallback<Permission>() {
     		  @Override
     		  public void onFailure(GoogleJsonError e,
@@ -114,8 +132,8 @@ public class UploadToDrive {
     	Permission userPermission = new Permission()
     			.setType("user")
     		    .setRole("writer")
-    		    .setEmailAddress("service.email.test123@gmail.com");
-    	driveManager.getService().permissions().create(fileId, userPermission)
+    		    .setEmailAddress("aptech.sem4.group2@gmail.com");
+    	driveManager.getService().permissions().create(genreFolderId, userPermission)
         .setFields("id")
         .queue(batch, callback);
     	batch.execute();

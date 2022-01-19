@@ -43,20 +43,11 @@ public class AlbumController {
 	
 	@PostMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<?> create(@ModelAttribute AlbumDto model) throws IOException{
-		if(model == null) return new ResponseEntity("Upload Failed", HttpStatus.BAD_REQUEST);
-		
-		String fileName = util.copyFile(model.getFile());
-		model.setAvatar(fileName);
-		
-		AlbumDto savedAlbum = albumSer.save(model);
-		if(savedAlbum == null) return ResponseEntity.ok("Create Failed");
-		return ResponseEntity.ok("Create Success");
+		return ResponseEntity.ok(albumSer.save(model));
 	}
 	
 	@DeleteMapping(value = "/{albumId}")
 	public ResponseEntity<?> delete(@PathVariable int albumId){
-		boolean result = albumSer.delete(albumId);
-		if(result) return ResponseEntity.ok("Delete Success");
-		return ResponseEntity.ok("Delete Failed");
+		return ResponseEntity.ok(albumSer.delete(albumId));
 	}
 }
