@@ -1,13 +1,13 @@
 package com.personal.utils;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.api.gax.paging.Page;
@@ -15,7 +15,6 @@ import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
-import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
@@ -55,6 +54,18 @@ public class CloudStorageUtils {
 	}
 	
 	public String uploadObject(MultipartFile fileUpload, String fileName) {
+//		Resource sourceFile = new ClassPathResource("finalproject-338303-035a753549c0.json");
+//		Credentials credentials = null;
+//		try {
+//			InputStream inputStream = sourceFile.getInputStream();
+//			credentials = GoogleCredentials.fromStream(inputStream);
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		
+//		Storage storage = StorageOptions.newBuilder().setCredentials(credentials)
+//				  .setProjectId("finalproject-338303").build().getService();
 		Storage storage = StorageOptions.getDefaultInstance().getService();
 		Bucket bucket = findBucket(FolderTypeEnum.AUDIO_FOLDER.name);
 		

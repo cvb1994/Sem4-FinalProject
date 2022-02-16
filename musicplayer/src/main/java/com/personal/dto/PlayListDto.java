@@ -14,4 +14,7 @@ public class PlayListDto extends BaseDto{
 	public String name;
 	public UserDto user;
 	public List<SongDto> songs;
+	
+	public int userId;
+	public List<Integer> listSongIds;
 }

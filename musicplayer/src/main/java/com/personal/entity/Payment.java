@@ -21,8 +21,11 @@ public class Payment extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@Column(name = "transaction_code", nullable = false)
-	private String transactionCode;
+	@Column(name = "transaction_code", nullable = true)
+	private String transactionCode;							//ma giao dich tai he thong thanh toan
+	
+	@Column(name = "txnRef_code", nullable = false)
+	private String txnCode;									//ma giao dich tai merchant
 	
 	@Column(name = "price", nullable = false)
 	private int price;

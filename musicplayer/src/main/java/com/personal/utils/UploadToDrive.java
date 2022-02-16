@@ -99,6 +99,7 @@ public class UploadToDrive {
                 return fileUploadUrl;
             }
         } catch (Exception e) {
+        	System.out.println(e);
             System.out.println("error");
         }
         return null;
@@ -133,7 +134,7 @@ public class UploadToDrive {
     			.setType("user")
     		    .setRole("writer")
     		    .setEmailAddress("aptech.sem4.group2@gmail.com");
-    	driveManager.getService().permissions().create(genreFolderId, userPermission)
+    	driveManager.getService().permissions().create(songFolderId, userPermission)
         .setFields("id")
         .queue(batch, callback);
     	batch.execute();

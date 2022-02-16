@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.personal.dto.UserDto;
+import com.personal.event.CustomSpringEventPublisher;
 import com.personal.serviceImp.UserService;
 
 @RestController
@@ -20,9 +21,12 @@ import com.personal.serviceImp.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	CustomSpringEventPublisher eventPublisher;
 	
 	@PostMapping()
 	public ResponseEntity<?> createUser(@ModelAttribute UserDto model){
+		eventPublisher.publishCustomEvent("Hello Bach");
 		return ResponseEntity.ok(userService.save(model));
 	}
 	

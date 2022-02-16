@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.personal.dto.AdminDto;
@@ -24,6 +25,8 @@ public class AdminService implements IAdminService{
 	private AdminRepository adminRepo;
 	@Autowired
 	private AdminMapper adminMapper;
+	@Autowired
+	PasswordEncoder passEncoder;
 
 	@Override
 	public List<AdminDto> getAll() {
@@ -73,6 +76,8 @@ public class AdminService implements IAdminService{
 			res.setIsSuccess(false);
 			return res;
 		}
+		
+		admin.setPassword(passEncoder.encode(admin.getPassword()));
 		
 		Admin savedAdmin = adminRepo.save(admin);
 		if(savedAdmin != null) {

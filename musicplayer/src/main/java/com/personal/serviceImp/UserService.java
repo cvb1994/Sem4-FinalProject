@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.personal.common.FileTypeEnum;
@@ -36,6 +37,9 @@ public class UserService implements IUserService{
 	private UserMapper userMapper;
 	@Autowired
 	private Utilities util;
+	@Autowired
+	PasswordEncoder passEncoder;
+	
 
 	@Override
 	public List<UserDto> getAll() {
@@ -71,13 +75,20 @@ public class UserService implements IUserService{
 	public ResponseDto save(UserDto model) {
 		ResponseDto res = new ResponseDto();
 		
-		if(model.getId() != 0) {
-			Optional<User> optUser = userRepo.findById(model.getId());
-			if(optUser.isPresent()) {
-				res.setError("Username đã tồn tại");
-				res.setIsSuccess(false);
-				return res;
-			}
+//		if(model.getId() != 0) {
+//			Optional<User> optUser = userRepo.findById(model.getId());
+//			if(optUser.isPresent()) {
+//				res.setError("Username đã tồn tại");
+//				res.setIsSuccess(false);
+//				return res;
+//			}
+//		}
+		
+		Optional<User> optUser = userRepo.findByUsername(model.getUsername());
+		if(optUser.isPresent()) {
+			res.setError("Username đã tồn tại");
+			res.setIsSuccess(false);
+			return res;
 		}
 		
 		User user = Optional.ofNullable(model).map(userMapper::dtoToEntity).orElse(null);
@@ -113,10 +124,12 @@ public class UserService implements IUserService{
 				return res;
 			}
 		}
+		user.setPassword(passEncoder.encode(user.getPassword()));
 		
 		User savedUser = userRepo.save(user);
 		if(savedUser != null) {
 			res.setIsSuccess(true);
+			
 			return res;
 		}
 		

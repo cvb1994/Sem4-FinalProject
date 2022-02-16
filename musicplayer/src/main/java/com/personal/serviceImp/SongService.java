@@ -218,22 +218,13 @@ public class SongService implements ISongService{
 	@Override
 	@Transactional
 	public void increase(int songId) {
-//		Optional<Song> optSong = songRepo.findById(songId);
-//		if(optSong.isPresent()) {
-//			LocalDate currentDate = LocalDate.now();
-//			Optional<ListenCount> optlc = listenCountRepo.findBySongAndDate(optSong.get(), currentDate);
-//			if(optlc.isPresent()) {
-//				ListenCount lc = optlc.get();
-//				lc.setCount(lc.getCount()+1);
-//				listenCountRepo.save(lc);
-//			} else {
-//				ListenCount lc = new ListenCount();
-//				lc.setCount(1);
-//				lc.setDate(currentDate);
-//				lc.setSong(optSong.get());
-//				listenCountRepo.save(lc);
-//			}
-//		}
+		Optional<Song> optSong = songRepo.findById(songId);
+		if(optSong.isPresent()) {
+			Song song = optSong.get();
+			song.setListenCount(song.getListenCount() + 1);
+			song.setListenCountReset(song.getListenCountReset() + 1);
+			songRepo.save(song);
+		}
 	}
 	
 	@Override

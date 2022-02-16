@@ -1,15 +1,16 @@
 package com.personal.serviceImp;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -31,10 +32,12 @@ public class DriveManager {
     }
 
     public GoogleCredential googleCredential(final NetHttpTransport HTTP_TRANSPORT) throws GeneralSecurityException, IOException {
-//        Resource resource= resourceLoader.getResource("classpath:triple-kingdom-315609-6ed9d96224bd.p12");
-//        File file = resource.getFile();
-        File file = ResourceUtils.getFile("classpath:finalproject-338303-de5bf8c32f7a.p12");
-
+    	
+//        File file = ResourceUtils.getFile("classpath:finalproject-338303-2b7d9cd9ecb7.p12");
+    	Resource sourceFile = new ClassPathResource("finalproject-338303-d157f051ba61.p12");
+    	InputStream inputStream = sourceFile.getInputStream();
+    	
+    	
         Collection<String> elenco = new ArrayList<String>();
         elenco.add("https://www.googleapis.com/auth/drive");
         HttpTransport httpTransport = new NetHttpTransport();
@@ -42,9 +45,10 @@ public class DriveManager {
         return new GoogleCredential.Builder()
                 .setTransport(httpTransport)
                 .setJsonFactory(jsonFactory)
-                .setServiceAccountId("drive-service@finalproject-338303.iam.gserviceaccount.com")
+                .setServiceAccountId("875656899490-compute@developer.gserviceaccount.com")
                 .setServiceAccountScopes(elenco)
-                .setServiceAccountPrivateKeyFromP12File(file)
+                .setServiceAccountPrivateKeyFromP12File(inputStream)
                 .build();
     }
+	
 }

@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,16 +22,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.personal.dto.SongDto;
 import com.personal.serviceImp.SongService;
-import com.personal.utils.UploadToDrive;
 
 @RestController
 @RequestMapping(value = "/api/Song")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class SongController {
 	@Autowired
 	SongService songSer;
-	@Autowired
-	private UploadToDrive uploadDrive;
 	
 	private final String AUDIO_PATH = "E:\\Code\\Spring\\Personal Project\\musicplayer\\src\\main\\resources\\static\\upload\\mp3\\";
 	public static final int BYTE_RANGE = 128;
@@ -63,8 +58,6 @@ public class SongController {
 	
 	@PostMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<?> create(@ModelAttribute SongDto model) throws IOException{
-		if(model == null) return new ResponseEntity("Upload Failed", HttpStatus.BAD_REQUEST);
-		
 		return ResponseEntity.ok(songSer.save(model));
 	}
 	

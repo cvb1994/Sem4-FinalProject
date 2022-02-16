@@ -15,6 +15,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	int id;
 	String username;
 	String password;

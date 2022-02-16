@@ -2,6 +2,7 @@ package com.personal.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,10 +30,10 @@ public class PlayList extends BaseEntity{
 	private String name;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id", nullable = true)
 	private User user;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "playlist_song",
 		joinColumns = @JoinColumn(name="playlist_id", referencedColumnName = "id"),
 		inverseJoinColumns = @JoinColumn(name="song_id", referencedColumnName = "id"))
