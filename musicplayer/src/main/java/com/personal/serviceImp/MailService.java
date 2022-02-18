@@ -35,7 +35,7 @@ public class MailService implements IMailService {
     ThymeleafService thymeleafService;
 
 	@Override
-	public void sendRegisterConfirmEmail(String link, String receiver) {
+	public void sendWelcomeMail(String userName, String receiver) {
 		System.out.println("da vao day 2");
 		Properties props = new Properties();
         props.put("mail.smtp.host", host);
@@ -55,13 +55,45 @@ public class MailService implements IMailService {
             message.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(receiver)});
 
             message.setFrom(new InternetAddress(email));
-            message.setSubject("Spring-email-with-thymeleaf subject");
-            message.setContent(thymeleafService.getConfirmRegisterContent(link), CONTENT_TYPE_TEXT_HTML);
+            message.setSubject("Welcome To Your Music World");
+            message.setContent(thymeleafService.getWelcomeMail(userName), CONTENT_TYPE_TEXT_HTML);
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
 
 	}
+
+	@Override
+	public void sendResetMail(String link, String receiver) {
+		System.out.println("da vao day 2");
+		Properties props = new Properties();
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.port", port);
+
+        Session session = Session.getInstance(props,
+                new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(email, password);
+                    }
+                });
+        Message message = new MimeMessage(session);
+        
+        try {
+            message.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(receiver)});
+
+            message.setFrom(new InternetAddress(email));
+            message.setSubject("Reset Your Password");
+            message.setContent(thymeleafService.getResetEmail(link), CONTENT_TYPE_TEXT_HTML);
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+		
+	}
+
 
 }

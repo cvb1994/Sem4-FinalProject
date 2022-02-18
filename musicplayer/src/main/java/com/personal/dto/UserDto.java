@@ -1,6 +1,7 @@
 package com.personal.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -13,20 +14,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class UserDto extends BaseDto{
-	public int id;
-	public String username;
-	public String password;
-	public String email;
-	public String phone;
-	public LocalDate birthday;
-	public String firstName;
-	public String lastName;
-	public String gender;
-	public String avatar;
-	public LocalDate expireDate;
+	private int id;
+	private String username;
+	private String password;
+	private String email;
+	private String phone;
+	private LocalDate birthday;
+	private String firstName;
+	private String lastName;
+	private String gender;
+	private String avatar;
+	private LocalDate expireDate;
 	
-	public List<PlayListDto> playlists;
-	public List<PaymentDto> payments;
+//	private String userToken;
+//	private LocalDateTime tokenExpire;
 	
-	public MultipartFile file; 
+	private List<PlayListDto> playlists;
+	private List<PaymentDto> payments;
+	
+	private MultipartFile file; 
 }

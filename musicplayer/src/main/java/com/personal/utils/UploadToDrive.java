@@ -111,6 +111,7 @@ public class UploadToDrive {
     	String artistFolderId = "1onQIU34Gi1Guq0pn3yMDAqiO77t5oBV-";
     	String albumFolderId = "1_DJzxp-RGRBqvdXdL6gfvoQ-5MwbWW5r";
     	String songFolderId = "1TcHCabvT6X2qttbqs-ddN4PvHfzzsCW7";
+    	String userFolderId = "13WMkcgxXAvJFv0N6hOj2IymLJSaOS4bh";
     	
     	String fileId = "1Z24WnT1aCNDEki89cKTdqw-kepmHt7gD";
     	JsonBatchCallback<Permission> callback = new JsonBatchCallback<Permission>() {
@@ -134,7 +135,7 @@ public class UploadToDrive {
     			.setType("user")
     		    .setRole("writer")
     		    .setEmailAddress("aptech.sem4.group2@gmail.com");
-    	driveManager.getService().permissions().create(songFolderId, userPermission)
+    	driveManager.getService().permissions().create(userFolderId, userPermission)
         .setFields("id")
         .queue(batch, callback);
     	batch.execute();

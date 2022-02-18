@@ -5,13 +5,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomSpringEventPublisher {
+public class SendMailPublisher {
 	@Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void publishCustomEvent(final String message) {
+    public void sendMail(final String message, final String receiver, final String type) {
         System.out.println("Publishing custom event. ");
-        CustomSpringEvent customSpringEvent = new CustomSpringEvent(this, message);
-        applicationEventPublisher.publishEvent(customSpringEvent);
+        SendMailRegisterEvent mailConfirmRegister = new SendMailRegisterEvent(this, message, receiver, type);
+        applicationEventPublisher.publishEvent(mailConfirmRegister);
     }
 }

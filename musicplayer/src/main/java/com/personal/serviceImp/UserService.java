@@ -1,9 +1,12 @@
 package com.personal.serviceImp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,13 +14,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.personal.common.EmailTypeEnum;
 import com.personal.common.FileTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.PageDto;
+import com.personal.dto.ResetPasswordDto;
 import com.personal.dto.ResponseDto;
 import com.personal.dto.UserDto;
 import com.personal.entity.SystemParam;
 import com.personal.entity.User;
+import com.personal.event.SendMailPublisher;
 import com.personal.mapper.UserMapper;
 import com.personal.repository.SystemParamRepository;
 import com.personal.repository.UserRepository;
@@ -39,6 +45,8 @@ public class UserService implements IUserService{
 	private Utilities util;
 	@Autowired
 	PasswordEncoder passEncoder;
+	@Autowired
+	SendMailPublisher eventPublisher;
 	
 
 	@Override
@@ -75,14 +83,21 @@ public class UserService implements IUserService{
 	public ResponseDto save(UserDto model) {
 		ResponseDto res = new ResponseDto();
 		
-//		if(model.getId() != 0) {
-//			Optional<User> optUser = userRepo.findById(model.getId());
-//			if(optUser.isPresent()) {
-//				res.setError("Username đã tồn tại");
-//				res.setIsSuccess(false);
-//				return res;
-//			}
-//		}
+		if(model.getId() != 0) {
+			Optional<User> optUser = userRepo.findByUsernameAndIdNot(model.getUsername(), model.getId());
+			if(optUser.isPresent()) {
+				res.setError("Username đã tồn tại");
+				res.setIsSuccess(false);
+				return res;
+			}
+		}
+		
+		List<User> listCheckUser = userRepo.findByEmailOrPhone(model.getEmail(), model.getPhone());
+		if(listCheckUser.size() > 0) {
+			res.setError("Email hoặc số điện thoại đã có");
+			res.setIsSuccess(false);
+			return res;
+		}
 		
 		Optional<User> optUser = userRepo.findByUsername(model.getUsername());
 		if(optUser.isPresent()) {
@@ -129,7 +144,7 @@ public class UserService implements IUserService{
 		User savedUser = userRepo.save(user);
 		if(savedUser != null) {
 			res.setIsSuccess(true);
-			
+			eventPublisher.sendMail(savedUser.getFirstName(), savedUser.getEmail(), EmailTypeEnum.WELCOME.name);
 			return res;
 		}
 		
@@ -152,6 +167,66 @@ public class UserService implements IUserService{
 		}
 		res.setError("Không thể tìm thấy user");
 		res.setIsSuccess(false);
+		return res;
+	}
+
+	@Override
+	public ResponseDto getLinkResetPassword(String email) {
+		String baseUrl = "abc";
+		ResponseDto res = new ResponseDto();
+		Optional<User> optUser = userRepo.findByEmail(email);
+		if(optUser.isEmpty()) {
+			res.setIsSuccess(false);
+			res.setError("Email không tồn tại");
+			return res;
+		}
+		
+		User user = optUser.get();
+		String token = RandomStringUtils.randomAlphabetic(15);
+		LocalDateTime currentTime = LocalDateTime.now();
+		LocalDateTime expireTime = currentTime.plusDays(1);
+		user.setUserToken(token);
+		user.setTokenExpire(expireTime);
+		userRepo.save(user);
+		
+		Base64 base64 = new Base64();
+		String usernameEncode = new String(base64.encode(user.getUsername().getBytes()));
+		String linkReset = baseUrl + "?user="+usernameEncode+"&token="+token;
+		
+		eventPublisher.sendMail(linkReset, user.getEmail(), EmailTypeEnum.RESET.name);
+		res.setIsSuccess(true);
+		return res;
+	}
+
+	@Override
+	public ResponseDto resetPassword(ResetPasswordDto model) {
+		ResponseDto res = new ResponseDto();
+		String userEncode = model.getUser();
+		Base64 base64 = new Base64();
+		String userDecode = new String(base64.decode(userEncode.getBytes()));
+		
+		Optional<User> optUser = userRepo.findByUsername(userDecode);
+		if(optUser.isEmpty()) {
+			res.setIsSuccess(false);
+			res.setError("User không tồn tại");
+			return res;
+		}
+		User user = optUser.get();
+		if(!user.getUserToken().equals(model.getToken())) {
+			res.setIsSuccess(false);
+			res.setError("Token không hợp lệ");
+			return res;
+		}
+		LocalDateTime current = LocalDateTime.now();
+		if(current.isAfter(user.getTokenExpire())) {
+			res.setIsSuccess(false);
+			res.setError("Token hết hạn");
+			return res;
+		}
+		
+		user.setPassword(passEncoder.encode(model.getNewPass()));
+		userRepo.save(user);
+		res.setIsSuccess(true);
 		return res;
 	}
 

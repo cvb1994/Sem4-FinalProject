@@ -2,6 +2,8 @@ package com.personal.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,10 +12,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.personal.dto.ResetPasswordDto;
 import com.personal.dto.UserDto;
-import com.personal.event.CustomSpringEventPublisher;
 import com.personal.serviceImp.UserService;
 
 @RestController
@@ -21,12 +25,10 @@ import com.personal.serviceImp.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService;
-	@Autowired
-	CustomSpringEventPublisher eventPublisher;
+	
 	
 	@PostMapping()
 	public ResponseEntity<?> createUser(@ModelAttribute UserDto model){
-		eventPublisher.publishCustomEvent("Hello Bach");
 		return ResponseEntity.ok(userService.save(model));
 	}
 	
@@ -45,5 +47,15 @@ public class UserController {
 	@DeleteMapping(value = "/{userId}")
 	public ResponseEntity<?> deleteGenre(@PathVariable int userId){
 		return ResponseEntity.ok(userService.delete(userId));
+	}
+	
+	@GetMapping(value = "/password/resetlink")
+	public ResponseEntity<?> linkResetPassword(@RequestParam("email") String email, HttpServletRequest request){
+		return ResponseEntity.ok(userService.getLinkResetPassword(email));
+	}
+	
+	@PostMapping(value = "/password/reset")
+	public ResponseEntity<?> resetPassword(@ModelAttribute ResetPasswordDto model){
+		return ResponseEntity.ok(userService.resetPassword(model));
 	}
 }

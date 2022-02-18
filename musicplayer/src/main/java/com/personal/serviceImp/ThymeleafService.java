@@ -17,7 +17,8 @@ public class ThymeleafService {
     private static final String MAIL_TEMPLATE_SUFFIX = ".html";
     private static final String UTF_8 = "UTF-8";
 
-    private static final String REGISTER_CONFIRM = "registerConfirm";
+    private static final String WELCOME_MAIL = "welcome-mail";
+    private static final String RESET_PASS = "reset-pass";
 
     private static TemplateEngine templateEngine;
 
@@ -48,12 +49,20 @@ public class ThymeleafService {
         return templateResolver;
     }
 
-    public String getConfirmRegisterContent(String link) {
+    public String getWelcomeMail(String userName) {
         final Context context = new Context();
 
-//        context.setVariable("linkconfirm", link);
+        context.setVariable("userName", userName);
 
-        return templateEngine.process(REGISTER_CONFIRM, context);
+        return templateEngine.process(WELCOME_MAIL, context);
+    }
+    
+    public String getResetEmail(String link) {
+    	final Context context = new Context();
+
+        context.setVariable("linkReset", link);
+
+        return templateEngine.process(RESET_PASS, context);
     }
     
 }

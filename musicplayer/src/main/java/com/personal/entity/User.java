@@ -1,6 +1,7 @@
 package com.personal.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -53,6 +54,12 @@ public class User extends BaseEntity {
 	
 	@Column(name = "expire_date", nullable = true)
 	private LocalDate expireDate;
+	
+	@Column(name = "user_token", nullable = true)
+	private String userToken;
+	
+	@Column(name = "token_expire", nullable = true)
+	private LocalDateTime tokenExpire;
 	
 	@OneToMany(mappedBy = "user")
 	private List<PlayList> playlists;

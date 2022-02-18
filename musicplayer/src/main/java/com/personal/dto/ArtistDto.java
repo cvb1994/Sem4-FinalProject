@@ -5,6 +5,11 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModelProperty.AccessMode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,7 +25,9 @@ public class ArtistDto extends BaseDto{
 	public LocalDate birthday;
 	public String description;
 	public String nationality;
+	
 	public List<SongDto> listSong;
 	public List<AlbumDto> listAlbum;
+	
 	public MultipartFile file;
 }
