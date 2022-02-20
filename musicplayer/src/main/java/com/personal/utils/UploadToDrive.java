@@ -107,7 +107,8 @@ public class UploadToDrive {
     
     //Cấp quyền truy cập cho tk khác 
     public void grantPermission() throws GeneralSecurityException, IOException {
-    	String genreFolderId = "1caoxL3s_6YzuQD4drj-SPxiTN3ZBnmlJ";
+    	
+    	String genreFolderId = "1ZgMYh3fPWLGK6fi7UhhgRHy0c5y5XDQc";
     	String artistFolderId = "1onQIU34Gi1Guq0pn3yMDAqiO77t5oBV-";
     	String albumFolderId = "1_DJzxp-RGRBqvdXdL6gfvoQ-5MwbWW5r";
     	String songFolderId = "1TcHCabvT6X2qttbqs-ddN4PvHfzzsCW7";
@@ -135,7 +136,7 @@ public class UploadToDrive {
     			.setType("user")
     		    .setRole("writer")
     		    .setEmailAddress("aptech.sem4.group2@gmail.com");
-    	driveManager.getService().permissions().create(userFolderId, userPermission)
+    	driveManager.getService().permissions().create(genreFolderId, userPermission)
         .setFields("id")
         .queue(batch, callback);
     	batch.execute();
