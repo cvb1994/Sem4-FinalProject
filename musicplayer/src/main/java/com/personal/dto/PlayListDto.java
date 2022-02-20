@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class PlayListDto extends BaseDto{
 	public int id;
-	public String name;
+	public String name;						//required
 	public UserDto user;
 	public List<SongDto> songs;
 	
-	public int userId;
-	public List<Integer> listSongIds;
+	public int userId;						//required
+	public List<Integer> listSongIds;		//required
 }

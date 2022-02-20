@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class UserDto extends BaseDto{
 	private int id;
-	private String username;
-	private String password;
-	private String email;
-	private String phone;
+	private String username;					//required
+	private String password;					//required
+	private String email;						//required
+	private String phone;						//required
 	private LocalDate birthday;
 	private String firstName;
 	private String lastName;
@@ -32,5 +32,5 @@ public class UserDto extends BaseDto{
 	private List<PlayListDto> playlists;
 	private List<PaymentDto> payments;
 	
-	private MultipartFile file; 
+	private MultipartFile file; 				//required
 }

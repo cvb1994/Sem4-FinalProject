@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class AdminDto extends BaseDto{
 	public int id;
-	public String username;
-	public String password;
+	public String username;		//required
+	public String password;		//required
 }

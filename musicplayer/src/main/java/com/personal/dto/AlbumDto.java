@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class AlbumDto extends BaseDto{
 	public int id;
-	public String name;
+	public String name;						//required
 	public String avatar;
 	public String totalTime;
 	public LocalDate releaseDate;
@@ -22,9 +22,9 @@ public class AlbumDto extends BaseDto{
 	public ArtistDto artist;
 	public List<SongDto> songs;
 	
-	public int artistId;
+	public int artistId;					//required
 	
-	public MultipartFile file;
+	public MultipartFile file;				//required
 	
 	
 }
