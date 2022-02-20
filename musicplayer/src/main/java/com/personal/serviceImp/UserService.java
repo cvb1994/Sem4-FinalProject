@@ -175,7 +175,7 @@ public class UserService implements IUserService{
 		String baseUrl = "abc";
 		ResponseDto res = new ResponseDto();
 		Optional<User> optUser = userRepo.findByEmail(email);
-		if(optUser.isEmpty()) {
+		if(!optUser.isPresent()) {
 			res.setIsSuccess(false);
 			res.setError("Email không tồn tại");
 			return res;
@@ -206,7 +206,7 @@ public class UserService implements IUserService{
 		String userDecode = new String(base64.decode(userEncode.getBytes()));
 		
 		Optional<User> optUser = userRepo.findByUsername(userDecode);
-		if(optUser.isEmpty()) {
+		if(!optUser.isPresent()) {
 			res.setIsSuccess(false);
 			res.setError("User không tồn tại");
 			return res;

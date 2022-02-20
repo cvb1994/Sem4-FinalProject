@@ -24,7 +24,7 @@ import com.personal.dto.SongDto;
 import com.personal.serviceImp.SongService;
 
 @RestController
-@RequestMapping(value = "/api/Song")
+@RequestMapping(value = "/api/song")
 public class SongController {
 	@Autowired
 	SongService songSer;

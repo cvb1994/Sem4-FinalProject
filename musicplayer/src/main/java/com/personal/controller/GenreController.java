@@ -17,7 +17,7 @@ import com.personal.serviceImp.GenreService;
 import com.personal.utils.Utilities;
 
 @RestController
-@RequestMapping(value = "/api/Genre")
+@RequestMapping(value = "/api/genre")
 //@CrossOrigin(origins = "http://localhost:4200")
 public class GenreController {
 	@Autowired

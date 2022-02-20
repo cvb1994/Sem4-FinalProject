@@ -17,7 +17,7 @@ import com.personal.serviceImp.ArtistService;
 import com.personal.utils.Utilities;
 
 @RestController
-@RequestMapping(value = "/api/Artist")
+@RequestMapping(value = "/api/artist")
 public class ArtistController {
 	@Autowired
 	Utilities util;

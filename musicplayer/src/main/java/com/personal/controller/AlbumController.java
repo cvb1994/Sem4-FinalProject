@@ -18,7 +18,7 @@ import com.personal.serviceImp.AlbumService;
 import com.personal.utils.Utilities;
 
 @RestController
-@RequestMapping(value = "/api/Album")
+@RequestMapping(value = "/api/album")
 public class AlbumController {
 	@Autowired
 	Utilities util;
