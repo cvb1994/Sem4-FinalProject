@@ -52,9 +52,6 @@ public class User extends BaseEntity {
 	@Column(name = "avatar", nullable = false)
 	private String avatar;
 	
-	@Column(name = "expire_date", nullable = true)
-	private LocalDate expireDate;
-	
 	@Column(name = "user_token", nullable = true)
 	private String userToken;
 	

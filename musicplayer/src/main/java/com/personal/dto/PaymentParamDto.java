@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class PaymentParamDto extends BaseDto{
-	public int id;
-	public int price;
-	public int timeExpire;
-	public double discount;
+	private int id;
+	private int price;
+	private int timeExpire;
+	private double discount;
+	private String unit;
 }

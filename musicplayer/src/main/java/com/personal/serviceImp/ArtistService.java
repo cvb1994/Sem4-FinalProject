@@ -83,7 +83,7 @@ public class ArtistService implements IArtistService{
 			return res;
 		}
 		
-		if(model.getFile().isEmpty()) {
+		if(model.getFile() == null) {
 			Optional<SystemParam> optParam = systemRepo.findByParamName(SystemParamEnum.ARTIST_IMAGE_DEFAULT.name);
 			if(optParam.isPresent()) {
 				artist.setAvatar(optParam.get().getParamValue());

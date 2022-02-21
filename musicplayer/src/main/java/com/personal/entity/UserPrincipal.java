@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.personal.common.RoleEnum;
 import com.personal.common.UserTypeEnum;
 
 import lombok.AllArgsConstructor;
@@ -34,9 +35,9 @@ public class UserPrincipal implements UserDetails{
 		this.username = username;
 		this.password = password;
 		if(role.equals(UserTypeEnum.ADMIN.name)) {
-			this.authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"));
+			this.authorities = Collections.singleton(new SimpleGrantedAuthority(RoleEnum.ADMIN.name));
 		} else {
-			this.authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+			this.authorities = Collections.singleton(new SimpleGrantedAuthority(RoleEnum.USER.name));
 		}
 	}
 	

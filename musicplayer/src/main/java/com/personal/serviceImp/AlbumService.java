@@ -87,7 +87,7 @@ public class AlbumService implements IAlbumService {
 			return res;
 		}
 		
-		if(model.getFile().isEmpty()) {
+		if(model.getFile() == null) {
 			Optional<SystemParam> optParam = systemRepo.findByParamName(SystemParamEnum.ALBUM_IMAGE_DEFAULT.name);
 			if(optParam.isPresent()) {
 				album.setAvatar(optParam.get().getParamValue());

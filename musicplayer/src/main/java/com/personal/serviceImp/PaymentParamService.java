@@ -5,7 +5,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.personal.common.PaymentTimeUnit;
 import com.personal.dto.PaymentParamDto;
 import com.personal.dto.ResponseDto;
 import com.personal.entity.PaymentParam;
@@ -13,6 +15,7 @@ import com.personal.mapper.PaymentParamMapper;
 import com.personal.repository.PaymentParamRepository;
 import com.personal.service.IPaymentParam;
 
+@Service
 public class PaymentParamService implements IPaymentParam {
 	@Autowired
 	private PaymentParamRepository paymentParamRepo;
@@ -25,7 +28,7 @@ public class PaymentParamService implements IPaymentParam {
 	}
 
 	@Override
-	public PaymentParamDto findById(int id) {
+	public PaymentParamDto getById(int id) {
 		return paymentParamRepo.findById(id).map(paymentParamMapper::entityToDto).orElse(null);
 	}
 
@@ -36,6 +39,13 @@ public class PaymentParamService implements IPaymentParam {
 		PaymentParam param = Optional.ofNullable(model).map(paymentParamMapper::dtoToEntity).orElse(null);
 		if(param == null) {
 			res.setError("Dữ liệu không đúng");
+			res.setIsSuccess(false);
+			return res;
+		}
+		String unitCheck = param.getUnit();
+		if(!PaymentTimeUnit.DAY.name.equalsIgnoreCase(unitCheck) && !PaymentTimeUnit.MONTH.name.equalsIgnoreCase(unitCheck) &&
+				!PaymentTimeUnit.YEAR.name.equalsIgnoreCase(unitCheck)) {
+			res.setError("Đơn vị thời gian không đúng");
 			res.setIsSuccess(false);
 			return res;
 		}

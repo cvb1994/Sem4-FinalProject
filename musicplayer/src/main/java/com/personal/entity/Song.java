@@ -47,6 +47,9 @@ public class Song extends BaseEntity{
 	@Column(name = "listen_count_reset", nullable = true)
 	private int listenCountReset;
 	
+	@Column(name = "vip_only", nullable = false)
+	private Boolean vipOnly;
+	
 	@ManyToMany
 	@JoinTable(name = "song_artist",
 				joinColumns = @JoinColumn(name="song_id", referencedColumnName = "id"),

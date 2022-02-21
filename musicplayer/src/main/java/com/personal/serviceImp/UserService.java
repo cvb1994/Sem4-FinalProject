@@ -1,5 +1,6 @@
 package com.personal.serviceImp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +22,12 @@ import com.personal.dto.PageDto;
 import com.personal.dto.ResetPasswordDto;
 import com.personal.dto.ResponseDto;
 import com.personal.dto.UserDto;
+import com.personal.entity.Payment;
 import com.personal.entity.SystemParam;
 import com.personal.entity.User;
 import com.personal.event.SendMailPublisher;
 import com.personal.mapper.UserMapper;
+import com.personal.repository.PaymentRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.repository.UserRepository;
 import com.personal.service.IUserService;
@@ -37,6 +40,8 @@ public class UserService implements IUserService{
 	private UserRepository userRepo;
 	@Autowired
 	private SystemParamRepository systemRepo;
+	@Autowired
+	private PaymentRepository paymentRepo;
 	@Autowired
 	private UploadToDrive uploadDrive;
 	@Autowired
@@ -58,6 +63,18 @@ public class UserService implements IUserService{
 	public PageDto gets(UserDto criteria) {
 		Page<User> page = userRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<UserDto> list = page.getContent().stream().map(userMapper::entityToDto).collect(Collectors.toList());
+		LocalDate current = LocalDate.now();
+		list.stream().forEach(u -> {
+			Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(u.getId());
+			if(optPayment.isPresent()) {
+				if(current.isBefore(optPayment.get().getExpireDate())) {
+					u.setIsVip(true);
+				} else {
+					u.setIsVip(false);
+				}
+				u.setExpireDate(optPayment.get().getExpireDate());
+			}
+		});
 		
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
@@ -71,12 +88,38 @@ public class UserService implements IUserService{
 
 	@Override
 	public UserDto getById(int userId) {
-		return userRepo.findById(userId).map(userMapper::entityToDto).orElse(null);
+		UserDto userDto =  userRepo.findById(userId).map(userMapper::entityToDto).orElse(null);
+		if(userDto != null) {
+			Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(userDto.getId());
+			if(optPayment.isPresent()) {
+				LocalDate current = LocalDate.now();
+				if(current.isBefore(optPayment.get().getExpireDate())) {
+					userDto.setIsVip(true);
+				} else {
+					userDto.setIsVip(false);
+				}
+				userDto.setExpireDate(optPayment.get().getExpireDate());
+			}
+		}
+		return userDto;
 	}
 
 	@Override
 	public UserDto getByName(String name) {
-		return userRepo.findByUsername(name).map(userMapper::entityToDto).orElse(null);
+		UserDto userDto =  userRepo.findByUsername(name).map(userMapper::entityToDto).orElse(null);
+		if(userDto != null) {
+			Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(userDto.getId());
+			if(optPayment.isPresent()) {
+				LocalDate current = LocalDate.now();
+				if(current.isBefore(optPayment.get().getExpireDate())) {
+					userDto.setIsVip(true);
+				} else {
+					userDto.setIsVip(false);
+				}
+				userDto.setExpireDate(optPayment.get().getExpireDate());
+			}
+		}
+		return userDto;
 	}
 
 	@Override
@@ -113,7 +156,7 @@ public class UserService implements IUserService{
 			return res;
 		}
 		
-		if(model.getFile().isEmpty()) {
+		if(model.getFile() == null) {
 			Optional<SystemParam> optParam = systemRepo.findByParamName(SystemParamEnum.USER_IMAGE_DEFAULT.name);
 			if(optParam.isPresent()) {
 				user.setAvatar(optParam.get().getParamValue());

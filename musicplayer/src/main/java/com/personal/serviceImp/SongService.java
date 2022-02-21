@@ -1,6 +1,7 @@
 package com.personal.serviceImp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.personal.common.FileTypeEnum;
+import com.personal.common.RoleEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.PageDto;
 import com.personal.dto.ResponseDto;
@@ -21,15 +24,18 @@ import com.personal.dto.SongDto;
 import com.personal.entity.Album;
 import com.personal.entity.Artist;
 import com.personal.entity.Genre;
+import com.personal.entity.Payment;
 import com.personal.entity.Song;
 import com.personal.entity.SystemParam;
+import com.personal.entity.User;
 import com.personal.mapper.SongMapper;
 import com.personal.repository.AlbumRepository;
 import com.personal.repository.ArtistRepository;
 import com.personal.repository.GenreRepository;
-import com.personal.repository.ListenCountRepository;
+import com.personal.repository.PaymentRepository;
 import com.personal.repository.SongRepository;
 import com.personal.repository.SystemParamRepository;
+import com.personal.repository.UserRepository;
 import com.personal.service.ISongService;
 import com.personal.utils.CloudStorageUtils;
 import com.personal.utils.UploadToDrive;
@@ -46,6 +52,10 @@ public class SongService implements ISongService{
 	@Autowired
 	private GenreRepository genreRepo;
 	@Autowired
+	private UserRepository userRepo;
+	@Autowired
+	private PaymentRepository paymentRepo;
+	@Autowired
 	private SongMapper songMapper;
 	@Autowired
 	private SystemParamRepository systemRepo;
@@ -59,14 +69,31 @@ public class SongService implements ISongService{
 	@Override
 	public List<SongDto> getAll() {
 		List<SongDto> list = songRepo.findAll().stream().map(songMapper::entityToDto).collect(Collectors.toList());
-		
 		return list;
 	}
 	
 	@Override
-	public PageDto gets(SongDto criteria) {
+	public PageDto gets(SongDto criteria, Authentication auth) {
 		Page<Song> page = songRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+		
+		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+			User user = userRepo.findByUsername(auth.getName()).get();
+			Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(user.getId());
+			if(!optPayment.isPresent()) {
+				list.stream().forEach(s -> {
+					if(s.getVipOnly()) {
+						s.setMediaUrl(null);
+					}
+				});
+			}
+		} else if(auth == null) {
+			list.stream().forEach(s -> {
+				if(s.getVipOnly()) {
+					s.setMediaUrl(null);
+				}
+			});
+		}
 		
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
@@ -79,15 +106,23 @@ public class SongService implements ISongService{
 	}
 
 	@Override
-	public SongDto getById(int songId) {
+	public SongDto getById(int songId, Authentication auth) {
 		SongDto song = songRepo.findById(songId).map(songMapper::entityToDto).orElse(null);
-		
-		return song;
-	}
-
-	@Override
-	public SongDto getByName(String name) {
-		SongDto song = songRepo.findByTitle(name).map(songMapper::entityToDto).orElse(null);
+		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+			if(song.getVipOnly()) {
+				User user = userRepo.findByUsername(auth.getName()).get();
+				Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(user.getId());
+				if(!optPayment.isPresent()) {
+					song.setMediaUrl(null);
+					return song;
+				}
+			}
+		} else if(auth == null) {
+			if(song.getVipOnly()) {
+				song.setMediaUrl(null);
+				return song;
+			}
+		}
 		
 		return song;
 	}
@@ -165,7 +200,7 @@ public class SongService implements ISongService{
 			}
 		}
 		
-		if(model.getMp3().isEmpty()) {
+		if(model.getMp3() == null) {
 			res.setError("File không tồn tại");
 			res.setIsSuccess(false);
 			return res;
@@ -235,4 +270,5 @@ public class SongService implements ISongService{
 //		}
 		return null;
 	}
+
 }

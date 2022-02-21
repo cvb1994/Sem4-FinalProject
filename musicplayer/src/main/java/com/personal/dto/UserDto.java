@@ -25,6 +25,7 @@ public class UserDto extends BaseDto{
 	private String gender;
 	private String avatar;
 	private LocalDate expireDate;
+	private Boolean isVip;
 	
 //	private String userToken;
 //	private LocalDateTime tokenExpire;

@@ -1,5 +1,7 @@
 package com.personal.entity;
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,11 +35,17 @@ public class Payment extends BaseEntity {
 	@Column(name = "discount", nullable = true)
 	private double discount;
 	
+	@Column(name = "transaction_completed", nullable = false)
+	private Boolean transCompleted;
+	
 	@Column(name = "status_active", nullable = false)
 	private Boolean statusActive;
 	
 	@Column(name = "payment_method")
 	private String paymendMethod;
+	
+	@Column(name = "expire_date", nullable = false)
+	private LocalDate expireDate;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
