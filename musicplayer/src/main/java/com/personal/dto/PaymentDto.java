@@ -1,5 +1,7 @@
 package com.personal.dto;
 
+import java.time.LocalDate;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -8,15 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class PaymentDto extends BaseDto{
-	public int id;
-	public String transactionCode;
-	public String txnCode;
-	public int price;
-	public double discount;
-	public String paymentMethod;
-	public Boolean statusActive;
-	public UserDto user;
-	public int userId;
+	private int id;
+	private String transactionCode;
+	private String txnCode;
+	private int price;
+	private double discount;
+	private String paymentMethod;
+	private Boolean statusActive;
+	private UserDto user;
+	private LocalDate expireDate;
+	
+	private int userId;
+	private int paymentParamId;
 	
 	private String orderType;
 	private String orderInfo;

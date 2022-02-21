@@ -7,7 +7,7 @@ import com.personal.dto.ResponseDto;
 
 public interface IPaymentParam {
 	public List<PaymentParamDto> getAll();
-	public PaymentParamDto findById(int id);
+	public PaymentParamDto getById(int id);
 	public ResponseDto save(PaymentParamDto model);
 	public ResponseDto delete(int id);
 

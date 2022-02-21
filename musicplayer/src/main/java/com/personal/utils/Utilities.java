@@ -1,14 +1,15 @@
 package com.personal.utils;
 
 import java.text.Normalizer;
+import java.time.LocalDate;
 import java.util.Date;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.personal.common.FileExtensionEnum;
+import com.personal.common.PaymentTimeUnit;
 
 @Component
 public class Utilities {
@@ -54,5 +55,18 @@ public class Utilities {
 			return stringToNormalize(name).toLowerCase().replace(" ", "").concat("_image_cover").concat(getTimeMilisecond());
 		}
 		return null;
+	}
+	
+	public LocalDate getDateExpire(int time, String unit) {
+		LocalDate current = LocalDate.now();
+		LocalDate expire = null;
+		if(PaymentTimeUnit.DAY.name.equalsIgnoreCase(unit)) {
+			expire = current.plusDays(time);
+		} else if(PaymentTimeUnit.MONTH.name.equalsIgnoreCase(unit)) {
+			expire = current.plusMonths(time);
+		} else if(PaymentTimeUnit.YEAR.name.equalsIgnoreCase(unit)) {
+			expire = current.plusYears(time);
+		} 
+		return expire;
 	}
 }

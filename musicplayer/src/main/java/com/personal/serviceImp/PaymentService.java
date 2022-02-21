@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.personal.dto.PaymentDto;
 import com.personal.entity.Payment;
+import com.personal.entity.PaymentParam;
 import com.personal.entity.User;
+import com.personal.repository.PaymentParamRepository;
 import com.personal.repository.PaymentRepository;
 import com.personal.repository.UserRepository;
 import com.personal.service.IPaymentService;
+import com.personal.utils.Utilities;
 import com.personal.utils.VNPayUtils;
 
 @Service
@@ -35,7 +38,11 @@ public class PaymentService implements IPaymentService {
 	@Autowired
 	private PaymentRepository paymentRepo;
 	@Autowired
+	private PaymentParamRepository paymentParamRepo;
+	@Autowired
 	private UserRepository userRepo;
+	@Autowired
+	private Utilities utils;
 
 	@Override
 	public String sendQuery(PaymentDto model, HttpServletRequest req) throws UnsupportedEncodingException {
@@ -50,16 +57,20 @@ public class PaymentService implements IPaymentService {
         
         User user = userRepo.findById(model.getUserId()).get();
         
+        PaymentParam paymentParam = paymentParamRepo.findById(model.getPaymentParamId()).get();
+        
         Payment payment = new Payment();
-		payment.setDiscount(model.getDiscount());
+		payment.setDiscount(paymentParam.getDiscount());
+		payment.setPrice(paymentParam.getPrice());
+		payment.setExpireDate(utils.getDateExpire(paymentParam.getTimeExpire(), paymentParam.getUnit()));
 		payment.setPaymendMethod(model.getPaymentMethod());
 		payment.setTxnCode(vnp_TxnRef);
-		payment.setPrice(model.getPrice());
 		payment.setStatusActive(false);
+		payment.setTransCompleted(false);
 		payment.setUser(user);
 		paymentRepo.save(payment);
 
-        int amount = model.getPrice() * 100;
+        int amount = paymentParam.getPrice() * 100;
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
@@ -164,7 +175,9 @@ public class PaymentService implements IPaymentService {
 				Payment payment = optPayment.get();
 				payment.setTransactionCode(allParams.get("vnp_TransactionNo"));
 				payment.setStatusActive(true);
+				payment.setTransCompleted(true);
 				paymentRepo.save(payment);
+				
 				return "Thanh toán thành công";
 			}
 			

@@ -84,7 +84,7 @@ public class UploadToDrive {
 
     public String uploadImageFile(MultipartFile fileUpload, String fileType, String fileName){
         try {
-        	String folderId = getFolder(fileType);
+        	String folderId = getFolder(fileType);	
             if (fileUpload != null) {
                 File file = new File();
                 file.setParents(Collections.singletonList(folderId));
@@ -109,9 +109,9 @@ public class UploadToDrive {
     public void grantPermission() throws GeneralSecurityException, IOException {
     	
     	String genreFolderId = "1ZgMYh3fPWLGK6fi7UhhgRHy0c5y5XDQc";
-    	String artistFolderId = "1onQIU34Gi1Guq0pn3yMDAqiO77t5oBV-";
-    	String albumFolderId = "1_DJzxp-RGRBqvdXdL6gfvoQ-5MwbWW5r";
-    	String songFolderId = "1TcHCabvT6X2qttbqs-ddN4PvHfzzsCW7";
+    	String artistFolderId = "1iFw-VA85kwc2vwt9yu3HXdBLx2FR3s2g";
+    	String albumFolderId = "17u08jCnThsqo_5CFcMmayWsrPU0YKnOa";
+    	String songFolderId = "1KnrpVzFC6qyh89uDseRwoqA05wZclCXL";
     	String userFolderId = "13WMkcgxXAvJFv0N6hOj2IymLJSaOS4bh";
     	
     	String fileId = "1Z24WnT1aCNDEki89cKTdqw-kepmHt7gD";
@@ -136,7 +136,7 @@ public class UploadToDrive {
     			.setType("user")
     		    .setRole("writer")
     		    .setEmailAddress("aptech.sem4.group2@gmail.com");
-    	driveManager.getService().permissions().create(genreFolderId, userPermission)
+    	driveManager.getService().permissions().create(songFolderId, userPermission)
         .setFields("id")
         .queue(batch, callback);
     	batch.execute();

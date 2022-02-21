@@ -12,23 +12,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class SongDto extends BaseDto{
-	public int id;
-	public String title;					//required
-	public String image;
-	public String mediaUrl;
-	public String timePlay;
-	public String composer;
-	public int listenCount;
-	public List<ArtistDto> artists;
-	public AlbumDto album;
-	public List<GenreDto> genres;
+	private int id;
+	private String title;					//required
+	private String image;
+	private String mediaUrl;
+	private String timePlay;
+	private String composer;
+	private int listenCount;
+	private List<ArtistDto> artists;
+	private AlbumDto album;
+	private List<GenreDto> genres;
+	private Boolean vipOnly;
 	
-	public List<Integer> artistIds;			//required
-	public int albumId;						
-	public List<Integer> genreIds;			//required
+	private List<Integer> artistIds;			//required
+	private int albumId;						
+	private List<Integer> genreIds;			//required
 	
-	public MultipartFile file;				//required
-	public MultipartFile mp3;				//required
+	private MultipartFile file;				//required
+	private MultipartFile mp3;				//required
 	
 	
 }

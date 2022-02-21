@@ -92,7 +92,7 @@ public class GenreService implements IGenreService{
 			return res;
 		}
 		
-		if(model.getFile().isEmpty()) {
+		if(model.getFile() == null) {
 			Optional<SystemParam> optParam = systemRepo.findByParamName(SystemParamEnum.GENRE_IMAGE_DEFAULT.name);
 			if(optParam.isPresent()) {
 				genre.setAvatar(optParam.get().getParamValue());
