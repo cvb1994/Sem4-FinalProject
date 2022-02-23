@@ -38,14 +38,17 @@ public class GenreService implements IGenreService{
 	private UploadToDrive uploadDrive;
 
 	@Override
-	public List<GenreDto> getAll() {
+	public ResponseDto getAll() {
+		ResponseDto res = new ResponseDto();
 		List<GenreDto> list = genreRepo.findAll().stream().map(genreMapper::entityToDto).collect(Collectors.toList());
-		
-		return list;
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
 	}
 	
 	@Override
-	public PageDto gets(GenreDto criteria) {
+	public ResponseDto gets(GenreDto criteria) {
+		ResponseDto res = new ResponseDto();
 		Page<Genre> page = genreRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(),Sort.by("id").descending()));
 		List<GenreDto> list = page.getContent().stream().map(genreMapper::entityToDto).collect(Collectors.toList());
 		
@@ -56,39 +59,44 @@ public class GenreService implements IGenreService{
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
-		return pageDto;
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
 	}
 
 	@Override
-	public GenreDto getById(int genreId) {
+	public ResponseDto getById(int genreId) {
+		ResponseDto res = new ResponseDto();
 		GenreDto genre = genreRepo.findById(genreId).map(genreMapper::entityToDto).orElse(null);
-		
-		return genre;
+		res.setStatus(true);
+		res.setContent(genre);
+		return res;
 	}
 
 	@Override
-	public GenreDto getByName(String name) {
+	public ResponseDto getByName(String name) {
+		ResponseDto res = new ResponseDto();
 		GenreDto genre = genreRepo.findByName(name).map(genreMapper::entityToDto).orElse(null);
-		
-		return genre;
+		res.setStatus(true);
+		res.setContent(genre);
+		return res;
 	}
 
 	@Override
-	public ResponseDto save(GenreDto model) {
+	public ResponseDto create(GenreDto model) {
 		ResponseDto res = new ResponseDto();
 		
-		if(model.getId() == 0) {
-			Optional<Genre> checkGenre = genreRepo.findByNameIgnoreCase(model.getName());
-			if(checkGenre.isPresent()) {
-				res.setIsSuccess(false);
-				res.setError("Tên đã tồn tại");
-				return res;
-			}
+		Optional<Genre> checkGenre = genreRepo.findByNameIgnoreCase(model.getName());
+		if(checkGenre.isPresent()) {
+			res.setStatus(false);
+			res.setMessage("Tên đã tồn tại");
+			return res;
 		}
+		
 		Genre genre = Optional.ofNullable(model).map(genreMapper::dtoToEntity).orElse(null);
 		if(genre == null) {
-			res.setError("Dữ liệu không đúng");
-			res.setIsSuccess(false);
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
 			return res;
 		}
 		
@@ -97,8 +105,8 @@ public class GenreService implements IGenreService{
 			if(optParam.isPresent()) {
 				genre.setAvatar(optParam.get().getParamValue());
 			} else {
-				res.setError("Không tìm thấy ảnh đại diện mặc định");
-				res.setIsSuccess(false);
+				res.setMessage("Không tìm thấy ảnh đại diện mặc định");
+				res.setStatus(false);
 				return res;
 			}
 		} else {
@@ -107,14 +115,14 @@ public class GenreService implements IGenreService{
 				String name = util.nameIdentifier(model.getName(), extension);
 				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.GENRE_IMAGE.name, name);
 				if(imageUrl == null) {
-					res.setError("Lỗi trong quá trình upload file");
-					res.setIsSuccess(false);
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
 					return res;
 				}
 				genre.setAvatar(imageUrl);
 			} else {
-				res.setError("File không hợp lệ");
-				res.setIsSuccess(false);
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
 				return res;
 			}
 		}
@@ -122,12 +130,65 @@ public class GenreService implements IGenreService{
 		
 		Genre savedGenre = genreRepo.save(genre);
 		if(savedGenre != null) {
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Tạo mới thành công");
 			return res;
 		}
 		
-		res.setError("Không thể tạo thể loại mới");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tạo thể loại mới");
+		res.setStatus(false);
+		return res;
+	}
+	
+	@Override
+	public ResponseDto update(GenreDto model) {
+		ResponseDto res = new ResponseDto();
+		
+		Optional<Genre> checkGenre = genreRepo.findByNameIgnoreCaseAndIdNot(model.getName(), model.getId());
+		if(checkGenre.isPresent()) {
+			res.setStatus(false);
+			res.setMessage("Tên đã tồn tại");
+			return res;
+		}
+		
+		Genre genre = Optional.ofNullable(model).map(genreMapper::dtoToEntity).orElse(null);
+		if(genre == null) {
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
+			return res;
+		}
+		
+		if(model.getFile() == null) {
+			Optional<Genre> optGenre = genreRepo.findById(model.getId());
+			if(optGenre.isPresent()) genre.setAvatar(optGenre.get().getAvatar());
+		} else {
+			String extension = util.getFileExtension(model.getFile());
+			if(extension != null) {
+				String name = util.nameIdentifier(model.getName(), extension);
+				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.GENRE_IMAGE.name, name);
+				if(imageUrl == null) {
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
+					return res;
+				}
+				genre.setAvatar(imageUrl);
+			} else {
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
+				return res;
+			}
+		}
+		
+		
+		Genre savedGenre = genreRepo.save(genre);
+		if(savedGenre != null) {
+			res.setStatus(true);
+			res.setMessage("Cập nhật thành công");
+			return res;
+		}
+		
+		res.setMessage("Không thể cập nhật");
+		res.setStatus(false);
 		return res;
 	}
 
@@ -139,12 +200,13 @@ public class GenreService implements IGenreService{
 			Genre genre = optGenre.get();
 			genre.setDeleted(true);
 			genreRepo.save(genre);
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Xóa thành công");
 			return res;
 		}
 		
-		res.setError("Không tìm thấy thể loại");
-		res.setIsSuccess(false);
+		res.setMessage("Không tìm thấy thể loại");
+		res.setStatus(false);
 		return res;
 	}
 }

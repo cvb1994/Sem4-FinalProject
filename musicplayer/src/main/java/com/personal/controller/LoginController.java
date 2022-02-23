@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.personal.common.UserTypeEnum;
@@ -65,7 +64,7 @@ public class LoginController {
     @PostMapping("/logout")
 	public ResponseEntity<?> logout() {
     	ResponseDto res = new ResponseDto();
-    	res.setIsSuccess(true);
+    	res.setStatus(true);
 		return ResponseEntity.ok(res);
 	}
     

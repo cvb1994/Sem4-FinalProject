@@ -1,16 +1,14 @@
 package com.personal.service;
 
-import java.util.List;
-
 import com.personal.dto.AlbumDto;
-import com.personal.dto.PageDto;
 import com.personal.dto.ResponseDto;
 
 public interface IAlbumService {
-	public List<AlbumDto> getAll();
-	public PageDto gets(AlbumDto criteria);
-	public AlbumDto getById(int albumId);
-	public AlbumDto getByName(String name);
-	public ResponseDto save(AlbumDto model);
+	public ResponseDto getAll();
+	public ResponseDto gets(AlbumDto criteria);
+	public ResponseDto getById(int albumId);
+	public ResponseDto getByName(String name);
+	public ResponseDto create(AlbumDto model);
+	public ResponseDto update(AlbumDto model);
 	public ResponseDto delete(int albumId);
 }

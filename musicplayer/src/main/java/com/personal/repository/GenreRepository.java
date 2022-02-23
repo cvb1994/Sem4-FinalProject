@@ -19,6 +19,7 @@ public interface GenreRepository extends JpaRepository<Genre, Integer>, JpaSpeci
 	Optional<Genre> findByName(String name);
 	
 	Optional<Genre> findByNameIgnoreCase(String name);
+	Optional<Genre> findByNameIgnoreCaseAndIdNot(String name, int id);
 	
 //	List<Genre> findAllByGenreSong(Song song);
 	

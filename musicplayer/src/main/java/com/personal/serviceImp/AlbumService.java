@@ -42,14 +42,18 @@ public class AlbumService implements IAlbumService {
 	private UploadToDrive uploadDrive;
 
 	@Override
-	public List<AlbumDto> getAll() {
+	public ResponseDto getAll() {
+		ResponseDto res = new ResponseDto();
 		List<AlbumDto> list = albumRepo.findAll().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
-		
-		return list;
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
 	}
 
 	@Override
-	public PageDto gets(AlbumDto criteria) {
+	public ResponseDto gets(AlbumDto criteria) {
+		ResponseDto res = new ResponseDto();
+		
 		Page<Album> page = albumRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<AlbumDto> list = page.getContent().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 		
@@ -60,30 +64,38 @@ public class AlbumService implements IAlbumService {
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
-		return pageDto;
-	}
-
-	@Override
-	public AlbumDto getById(int albumId) {
-		AlbumDto album = albumRepo.findById(albumId).map(albumMapper::entityToDto).orElse(null);
 		
-		return album;
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
 	}
 
 	@Override
-	public AlbumDto getByName(String name) {
-		AlbumDto album = albumRepo.findByName(name).map(albumMapper::entityToDto).orElse(null);
-		
-		return album;
-	}
-
-	@Override
-	public ResponseDto save(AlbumDto model) {
+	public ResponseDto getById(int albumId) {
 		ResponseDto res = new ResponseDto();
+		AlbumDto album = albumRepo.findById(albumId).map(albumMapper::entityToDto).orElse(null);
+		res.setStatus(true);
+		res.setContent(album);
+		return res;
+	}
+
+	@Override
+	public ResponseDto getByName(String name) {
+		ResponseDto res = new ResponseDto();
+		AlbumDto album = albumRepo.findByName(name).map(albumMapper::entityToDto).orElse(null);
+		res.setStatus(true);
+		res.setContent(album);
+		return res;
+	}
+
+	@Override
+	public ResponseDto create(AlbumDto model) {
+		ResponseDto res = new ResponseDto();
+		
 		Album album = Optional.ofNullable(model).map(albumMapper::dtoToEntity).orElse(null);
 		if(album == null) {
-			res.setError("Dữ liệu không đúng");
-			res.setIsSuccess(false);
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
 			return res;
 		}
 		
@@ -92,8 +104,8 @@ public class AlbumService implements IAlbumService {
 			if(optParam.isPresent()) {
 				album.setAvatar(optParam.get().getParamValue());
 			} else {
-				res.setError("Không tìm thấy ảnh đại diện mặc định");
-				res.setIsSuccess(false);
+				res.setMessage("Không tìm thấy ảnh đại diện mặc định");
+				res.setStatus(false);
 				return res;
 			}
 		} else {
@@ -102,14 +114,14 @@ public class AlbumService implements IAlbumService {
 				String name = util.nameIdentifier(model.getName(), extension);
 				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ALBUM_IMAGE.name, name);
 				if(imageUrl == null) {
-					res.setError("Lỗi trong quá trình upload file");
-					res.setIsSuccess(false);
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
 					return res;
 				}
 				album.setAvatar(imageUrl);
 			} else {
-				res.setError("File không hợp lệ");
-				res.setIsSuccess(false);
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
 				return res;
 			}
 		}
@@ -119,12 +131,59 @@ public class AlbumService implements IAlbumService {
 		album.setArtist(artist.get());
 		Album savedAlbum = albumRepo.save(album);
 		if(savedAlbum != null) {
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Tạo mới thành công");
 			return res;
 		}
 		
-		res.setError("Không thể tạo mới album");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tạo mới album");
+		res.setStatus(false);
+		return res;
+	}
+	
+	@Override
+	public ResponseDto update(AlbumDto model) {
+		ResponseDto res = new ResponseDto();
+		
+		Album album = Optional.ofNullable(model).map(albumMapper::dtoToEntity).orElse(null);
+		if(album == null) {
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
+			return res;
+		}
+		
+		if(model.getFile() == null) {
+			album.setAvatar(albumRepo.findById(model.getId()).get().getAvatar());
+		} else {
+			String extension = util.getFileExtension(model.getFile());
+			if(extension != null) {
+				String name = util.nameIdentifier(model.getName(), extension);
+				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ALBUM_IMAGE.name, name);
+				if(imageUrl == null) {
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
+					return res;
+				}
+				album.setAvatar(imageUrl);
+			} else {
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
+				return res;
+			}
+		}
+		
+		Optional<Artist> artist = artistRepo.findById(model.getArtistId());
+		if(!artist.isPresent()) return null;
+		album.setArtist(artist.get());
+		Album savedAlbum = albumRepo.save(album);
+		if(savedAlbum != null) {
+			res.setStatus(true);
+			res.setMessage("Cập nhật thành công");
+			return res;
+		}
+		
+		res.setMessage("Không thể cập nhật album");
+		res.setStatus(false);
 		return res;
 	}
 
@@ -136,12 +195,13 @@ public class AlbumService implements IAlbumService {
 			Album album = optAlbum.get();
 			album.setDeleted(true);
 			albumRepo.save(album);
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Xóa album thành công");
 			return res;
 		}
 		
-		res.setError("Không thể tìm thấy album");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tìm thấy album");
+		res.setStatus(false);
 		return res;
 	}
 

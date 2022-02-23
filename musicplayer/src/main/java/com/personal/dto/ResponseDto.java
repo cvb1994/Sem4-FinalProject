@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ResponseDto {
-	private Boolean isSuccess;
-	private String error;
+	private Boolean status;
+	private String message;
+	private Object content;
 }

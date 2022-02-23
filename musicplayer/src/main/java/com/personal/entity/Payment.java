@@ -38,9 +38,6 @@ public class Payment extends BaseEntity {
 	@Column(name = "transaction_completed", nullable = false)
 	private Boolean transCompleted;
 	
-	@Column(name = "status_active", nullable = false)
-	private Boolean statusActive;
-	
 	@Column(name = "payment_method")
 	private String paymendMethod;
 	

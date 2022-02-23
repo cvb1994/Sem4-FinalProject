@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.personal.config.AppProperties;
 import com.personal.dto.PaymentDto;
 import com.personal.serviceImp.PaymentService;
 
@@ -22,6 +23,24 @@ import com.personal.serviceImp.PaymentService;
 public class PaymentController {
 	@Autowired
 	private PaymentService paymentService;
+	@Autowired
+	private AppProperties appPropertis;
+	
+	@GetMapping
+	public ResponseEntity<?> getAll(){
+		return ResponseEntity.ok(paymentService.getAll());
+	}
+	
+	@PostMapping(value = "/list")
+	public ResponseEntity<?> getpage(@ModelAttribute PaymentDto model){
+		if(model.getPage() == 0) {
+			model.setPage(appPropertis.getDefaultPage());
+		}
+		if(model.getSize() == 0) {
+			model.setSize(appPropertis.getDefaultPageSize());
+		}
+		return ResponseEntity.ok(paymentService.gets(model));
+	}
 	
 	@PostMapping()
 	public ResponseEntity<?> create(@ModelAttribute PaymentDto model, HttpServletRequest req) throws IOException{

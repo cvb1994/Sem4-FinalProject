@@ -36,7 +36,6 @@ public class MailService implements IMailService {
 
 	@Override
 	public void sendWelcomeMail(String userName, String receiver) {
-		System.out.println("da vao day 2");
 		Properties props = new Properties();
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.starttls.enable", "true");

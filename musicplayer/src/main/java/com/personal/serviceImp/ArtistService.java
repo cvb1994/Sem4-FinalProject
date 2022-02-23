@@ -38,14 +38,17 @@ public class ArtistService implements IArtistService{
 	private UploadToDrive uploadDrive;
 
 	@Override
-	public List<ArtistDto> getAll() {
+	public ResponseDto getAll() {
+		ResponseDto res = new ResponseDto();
 		List<ArtistDto> list =  artistRepo.findAll().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
-		
-		return list;
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
 	}
 
 	@Override
-	public PageDto gets(ArtistDto criteria) {
+	public ResponseDto gets(ArtistDto criteria) {
+		ResponseDto res = new ResponseDto();
 		Page<Artist> page = artistRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(),Sort.by("id").descending()));
 		List<ArtistDto> list = page.getContent().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
 		
@@ -56,30 +59,37 @@ public class ArtistService implements IArtistService{
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
-		return pageDto;
+		
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
 	}
 
 	@Override
-	public ArtistDto getById(int artistId) {
+	public ResponseDto getById(int artistId) {
+		ResponseDto res = new ResponseDto();
 		ArtistDto artist = artistRepo.findById(artistId).map(artistMapper::entityToDto).orElse(null);
-		
-		return artist;
+		res.setStatus(true);
+		res.setContent(artist);
+		return res;
 	}
 
 	@Override
-	public ArtistDto getByName(String name) {
+	public ResponseDto getByName(String name) {
+		ResponseDto res = new ResponseDto();
 		ArtistDto artist =  artistRepo.findByName(name).map(artistMapper::entityToDto).orElse(null);
-		
-		return artist;
+		res.setStatus(true);
+		res.setContent(artist);
+		return res;
 	}
 
 	@Override
-	public ResponseDto save(ArtistDto model) {
+	public ResponseDto create(ArtistDto model) {
 		ResponseDto res = new ResponseDto();
 		Artist artist = Optional.ofNullable(model).map(artistMapper::dtoToEntity).orElse(null);
 		if(artist == null) {
-			res.setError("Dữ liệu không đúng");
-			res.setIsSuccess(false);
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
 			return res;
 		}
 		
@@ -88,8 +98,8 @@ public class ArtistService implements IArtistService{
 			if(optParam.isPresent()) {
 				artist.setAvatar(optParam.get().getParamValue());
 			} else {
-				res.setError("Không tìm thấy ảnh đại diện mặc định");
-				res.setIsSuccess(false);
+				res.setMessage("Không tìm thấy ảnh đại diện mặc định");
+				res.setStatus(false);
 				return res;
 			}
 		} else {
@@ -98,26 +108,68 @@ public class ArtistService implements IArtistService{
 				String name = util.nameIdentifier(model.getName(), extension);
 				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ARTIST_IMAGE.name, name);
 				if(imageUrl == null) {
-					res.setError("Lỗi trong quá trình upload file");
-					res.setIsSuccess(false);
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
 					return res;
 				}
 				artist.setAvatar(imageUrl);
 			} else {
-				res.setError("File không hợp lệ");
-				res.setIsSuccess(false);
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
 				return res;
 			}
 		}
 		
 		Artist savedArtist =  artistRepo.save(artist);
 		if(savedArtist != null) {
-			res.setIsSuccess(true);
+			res.setStatus(true);
 			return res;
 		}
 		
-		res.setError("Không thể tạo nghệ sĩ mới");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tạo nghệ sĩ mới");
+		res.setStatus(false);
+		return res;
+	}
+	
+	@Override
+	public ResponseDto update(ArtistDto model) {
+		ResponseDto res = new ResponseDto();
+		Artist artist = Optional.ofNullable(model).map(artistMapper::dtoToEntity).orElse(null);
+		if(artist == null) {
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
+			return res;
+		}
+		
+		if(model.getFile() == null) {
+			artist.setAvatar(artistRepo.findById(model.getId()).get().getAvatar());
+		} else {
+			String extension = util.getFileExtension(model.getFile());
+			if(extension != null) {
+				String name = util.nameIdentifier(model.getName(), extension);
+				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ARTIST_IMAGE.name, name);
+				if(imageUrl == null) {
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
+					return res;
+				}
+				artist.setAvatar(imageUrl);
+			} else {
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
+				return res;
+			}
+		}
+		
+		Artist savedArtist =  artistRepo.save(artist);
+		if(savedArtist != null) {
+			res.setStatus(true);
+			res.setMessage("Cập nhật thành công");
+			return res;
+		}
+		
+		res.setMessage("Không thể cập nhật nghệ sĩ");
+		res.setStatus(false);
 		return res;
 	}
 
@@ -129,11 +181,12 @@ public class ArtistService implements IArtistService{
 			Artist artist = optArtist.get();
 			artist.setDeleted(true);
 			artistRepo.save(artist);
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Xóa thành công");
 			return res;
 		}
-		res.setError("Không thể tìm thấy nghệ sĩ");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tìm thấy nghệ sĩ");
+		res.setStatus(false);
 		return res;
 	}
 

@@ -16,9 +16,9 @@ public class PaymentDto extends BaseDto{
 	private int price;
 	private double discount;
 	private String paymentMethod;
-	private Boolean statusActive;
-	private UserDto user;
+	private Boolean transCompleted;
 	private LocalDate expireDate;
+	private UserDto user;
 	
 	private int userId;
 	private int paymentParamId;

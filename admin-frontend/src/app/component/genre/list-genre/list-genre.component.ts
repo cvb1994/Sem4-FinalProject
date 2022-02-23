@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ListGenreService } from 'src/app/service/genre/list-genre.service';
+import { GenreService } from 'src/app/service/genre.service';
 
 @Component({
   selector: 'app-list-genre',
@@ -10,11 +10,11 @@ export class ListGenreComponent implements OnInit {
   public listGenre : any;
 
   constructor(
-    private listGenreSer : ListGenreService
+    private genreSer : GenreService
   ) { }
 
   ngOnInit(): void {
-    this.listGenreSer.getAllGenre().subscribe((data) =>{
+    this.genreSer.getAllGenre().subscribe((data) =>{
       this.listGenre = data;
       console.log(this.listGenre);
     });

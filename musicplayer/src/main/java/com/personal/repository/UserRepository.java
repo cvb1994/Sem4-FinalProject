@@ -1,6 +1,5 @@
 package com.personal.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +14,5 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 	Optional<User> findByUsername(String name);
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUsernameAndIdNot(String name, int id);
-	List<User> findByEmailOrPhone(String email, String phone);
+	Optional<User> findByEmailAndIdNot(String email, int id);
 }

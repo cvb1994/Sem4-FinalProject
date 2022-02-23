@@ -1,14 +1,14 @@
 package com.personal.service;
 
-import java.util.List;
-
 import com.personal.dto.PaymentParamDto;
 import com.personal.dto.ResponseDto;
 
 public interface IPaymentParam {
-	public List<PaymentParamDto> getAll();
-	public PaymentParamDto getById(int id);
-	public ResponseDto save(PaymentParamDto model);
+	public ResponseDto getAll();
+	public ResponseDto gets(PaymentParamDto criteria);
+	public ResponseDto getById(int id);
+	public ResponseDto create(PaymentParamDto model);
+	public ResponseDto update(PaymentParamDto model);
 	public ResponseDto delete(int id);
 
 }

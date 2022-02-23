@@ -55,24 +55,25 @@ public class UserService implements IUserService{
 	
 
 	@Override
-	public List<UserDto> getAll() {
-		return userRepo.findAll().stream().map(userMapper::entityToDto).collect(Collectors.toList());
+	public ResponseDto getAll() {
+		ResponseDto res = new ResponseDto();
+		List<UserDto> list =  userRepo.findAll().stream().map(userMapper::entityToDto).collect(Collectors.toList());
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
 	}
 
 	@Override
-	public PageDto gets(UserDto criteria) {
+	public ResponseDto gets(UserDto criteria) {
+		ResponseDto res = new ResponseDto();
 		Page<User> page = userRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<UserDto> list = page.getContent().stream().map(userMapper::entityToDto).collect(Collectors.toList());
 		LocalDate current = LocalDate.now();
 		list.stream().forEach(u -> {
-			Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(u.getId());
-			if(optPayment.isPresent()) {
-				if(current.isBefore(optPayment.get().getExpireDate())) {
-					u.setIsVip(true);
-				} else {
-					u.setIsVip(false);
-				}
-				u.setExpireDate(optPayment.get().getExpireDate());
+			if(current.isBefore(u.getVipExpireDate())) {
+				u.setIsVip(true);
+			} else {
+				u.setIsVip(false);
 			}
 		});
 		
@@ -83,76 +84,68 @@ public class UserService implements IUserService{
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
-		return pageDto;
+		
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
 	}
 
 	@Override
-	public UserDto getById(int userId) {
+	public ResponseDto getById(int userId) {
+		ResponseDto res = new ResponseDto();
 		UserDto userDto =  userRepo.findById(userId).map(userMapper::entityToDto).orElse(null);
 		if(userDto != null) {
-			Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(userDto.getId());
-			if(optPayment.isPresent()) {
-				LocalDate current = LocalDate.now();
-				if(current.isBefore(optPayment.get().getExpireDate())) {
-					userDto.setIsVip(true);
-				} else {
-					userDto.setIsVip(false);
-				}
-				userDto.setExpireDate(optPayment.get().getExpireDate());
+			LocalDate current = LocalDate.now();
+			if(current.isBefore(userDto.getVipExpireDate())) {
+				userDto.setIsVip(true);
+			} else {
+				userDto.setIsVip(false);
 			}
 		}
-		return userDto;
+		res.setStatus(true);
+		res.setContent(userDto);
+		return res;
 	}
 
 	@Override
-	public UserDto getByName(String name) {
+	public ResponseDto getByName(String name) {
+		ResponseDto res = new ResponseDto();
 		UserDto userDto =  userRepo.findByUsername(name).map(userMapper::entityToDto).orElse(null);
 		if(userDto != null) {
-			Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(userDto.getId());
-			if(optPayment.isPresent()) {
-				LocalDate current = LocalDate.now();
-				if(current.isBefore(optPayment.get().getExpireDate())) {
-					userDto.setIsVip(true);
-				} else {
-					userDto.setIsVip(false);
-				}
-				userDto.setExpireDate(optPayment.get().getExpireDate());
+			LocalDate current = LocalDate.now();
+			if(current.isBefore(userDto.getVipExpireDate())) {
+				userDto.setIsVip(true);
+			} else {
+				userDto.setIsVip(false);
 			}
 		}
-		return userDto;
+		res.setStatus(true);
+		res.setContent(userDto);
+		return res;
 	}
 
 	@Override
-	public ResponseDto save(UserDto model) {
+	public ResponseDto create(UserDto model) {
 		ResponseDto res = new ResponseDto();
-		
-		if(model.getId() != 0) {
-			Optional<User> optUser = userRepo.findByUsernameAndIdNot(model.getUsername(), model.getId());
-			if(optUser.isPresent()) {
-				res.setError("Username đã tồn tại");
-				res.setIsSuccess(false);
-				return res;
-			}
-		}
-		
-		List<User> listCheckUser = userRepo.findByEmailOrPhone(model.getEmail(), model.getPhone());
-		if(listCheckUser.size() > 0) {
-			res.setError("Email hoặc số điện thoại đã có");
-			res.setIsSuccess(false);
-			return res;
-		}
 		
 		Optional<User> optUser = userRepo.findByUsername(model.getUsername());
 		if(optUser.isPresent()) {
-			res.setError("Username đã tồn tại");
-			res.setIsSuccess(false);
+			res.setMessage("Username đã tồn tại");
+			res.setStatus(false);
+			return res;
+		}
+		
+		Optional<User> listCheckUser = userRepo.findByEmail(model.getEmail());
+		if(listCheckUser.isPresent()) {
+			res.setMessage("Email đã đăng ký tài khoản");
+			res.setStatus(false);
 			return res;
 		}
 		
 		User user = Optional.ofNullable(model).map(userMapper::dtoToEntity).orElse(null);
 		if(user == null) {
-			res.setError("Dữ liệu không đúng");
-			res.setIsSuccess(false);
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
 			return res;
 		}
 		
@@ -161,8 +154,8 @@ public class UserService implements IUserService{
 			if(optParam.isPresent()) {
 				user.setAvatar(optParam.get().getParamValue());
 			} else {
-				res.setError("Không tìm thấy ảnh đại diện mặc định");
-				res.setIsSuccess(false);
+				res.setMessage("Không tìm thấy ảnh đại diện mặc định");
+				res.setStatus(false);
 				return res;
 			}
 		} else {
@@ -171,14 +164,14 @@ public class UserService implements IUserService{
 				String name = util.nameIdentifier(model.getUsername(), extension);
 				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.USER_IMAGE.name, name);
 				if(imageUrl == null) {
-					res.setError("Lỗi trong quá trình upload file");
-					res.setIsSuccess(false);
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
 					return res;
 				}
 				user.setAvatar(imageUrl);
 			} else {
-				res.setError("File không hợp lệ");
-				res.setIsSuccess(false);
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
 				return res;
 			}
 		}
@@ -186,13 +179,74 @@ public class UserService implements IUserService{
 		
 		User savedUser = userRepo.save(user);
 		if(savedUser != null) {
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Tạo tài khoản thành công");
 			eventPublisher.sendMail(savedUser.getFirstName(), savedUser.getEmail(), EmailTypeEnum.WELCOME.name);
 			return res;
 		}
 		
-		res.setError("Không thể tạo mới user");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tạo mới user");
+		res.setStatus(false);
+		return res;
+		
+	}
+	
+	@Override
+	public ResponseDto update(UserDto model) {
+		ResponseDto res = new ResponseDto();
+		
+		Optional<User> optUser = userRepo.findByUsernameAndIdNot(model.getUsername(), model.getId());
+		if(optUser.isPresent()) {
+			res.setMessage("Username đã tồn tại");
+			res.setStatus(false);
+			return res;
+		}
+		
+		Optional<User> listCheckUser = userRepo.findByEmailAndIdNot(model.getEmail(), model.getId());
+		if(listCheckUser.isPresent()) {
+			res.setMessage("Email đã đăng ký tài khoản");
+			res.setStatus(false);
+			return res;
+		}
+		
+		
+		User user = Optional.ofNullable(model).map(userMapper::dtoToEntity).orElse(null);
+		if(user == null) {
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
+			return res;
+		}
+		
+		if(model.getFile() == null) {
+			user.setAvatar(userRepo.findById(model.getId()).get().getAvatar());
+		} else {
+			String extension = util.getFileExtension(model.getFile());
+			if(extension != null) {
+				String name = util.nameIdentifier(model.getUsername(), extension);
+				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.USER_IMAGE.name, name);
+				if(imageUrl == null) {
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
+					return res;
+				}
+				user.setAvatar(imageUrl);
+			} else {
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
+				return res;
+			}
+		}
+		user.setPassword(passEncoder.encode(user.getPassword()));
+		
+		User savedUser = userRepo.save(user);
+		if(savedUser != null) {
+			res.setStatus(true);
+			res.setMessage("Cập nhật thành công tài khoản");
+			return res;
+		}
+		
+		res.setMessage("Không thể cập nhật tài khoản");
+		res.setStatus(false);
 		return res;
 		
 	}
@@ -205,11 +259,12 @@ public class UserService implements IUserService{
 			User user = optUser.get();
 			user.setDeleted(true);
 			userRepo.save(user);
-			res.setIsSuccess(true);
+			res.setMessage("Xóa thành công");
+			res.setStatus(true);
 			return res;
 		}
-		res.setError("Không thể tìm thấy user");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tìm thấy user");
+		res.setStatus(false);
 		return res;
 	}
 
@@ -219,8 +274,8 @@ public class UserService implements IUserService{
 		ResponseDto res = new ResponseDto();
 		Optional<User> optUser = userRepo.findByEmail(email);
 		if(!optUser.isPresent()) {
-			res.setIsSuccess(false);
-			res.setError("Email không tồn tại");
+			res.setStatus(false);
+			res.setMessage("Email không tồn tại");
 			return res;
 		}
 		
@@ -237,7 +292,8 @@ public class UserService implements IUserService{
 		String linkReset = baseUrl + "?user="+usernameEncode+"&token="+token;
 		
 		eventPublisher.sendMail(linkReset, user.getEmail(), EmailTypeEnum.RESET.name);
-		res.setIsSuccess(true);
+		res.setStatus(true);
+		res.setMessage("Email đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn");
 		return res;
 	}
 
@@ -250,26 +306,27 @@ public class UserService implements IUserService{
 		
 		Optional<User> optUser = userRepo.findByUsername(userDecode);
 		if(!optUser.isPresent()) {
-			res.setIsSuccess(false);
-			res.setError("User không tồn tại");
+			res.setStatus(false);
+			res.setMessage("User không tồn tại");
 			return res;
 		}
 		User user = optUser.get();
 		if(!user.getUserToken().equals(model.getToken())) {
-			res.setIsSuccess(false);
-			res.setError("Token không hợp lệ");
+			res.setStatus(false);
+			res.setMessage("Token không hợp lệ");
 			return res;
 		}
 		LocalDateTime current = LocalDateTime.now();
 		if(current.isAfter(user.getTokenExpire())) {
-			res.setIsSuccess(false);
-			res.setError("Token hết hạn");
+			res.setStatus(false);
+			res.setMessage("Token đã hết hạn");
 			return res;
 		}
 		
 		user.setPassword(passEncoder.encode(model.getNewPass()));
 		userRepo.save(user);
-		res.setIsSuccess(true);
+		res.setStatus(true);
+		res.setMessage("Mật khẩu đã được cập nhật");
 		return res;
 	}
 

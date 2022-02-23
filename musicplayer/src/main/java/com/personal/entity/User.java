@@ -34,7 +34,7 @@ public class User extends BaseEntity {
 	@Column(name = "email", nullable = false)
 	private String email;
 	
-	@Column(name = "phone", nullable = false)
+	@Column(name = "phone", nullable = true)
 	private String phone;
 	
 	@Column(name = "birthday", nullable = true)
@@ -51,6 +51,9 @@ public class User extends BaseEntity {
 	
 	@Column(name = "avatar", nullable = false)
 	private String avatar;
+	
+	@Column(name = "vip_expire_date", nullable = false)
+	private LocalDate vipExpireDate;
 	
 	@Column(name = "user_token", nullable = true)
 	private String userToken;

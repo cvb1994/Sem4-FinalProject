@@ -29,12 +29,18 @@ public class AdminService implements IAdminService{
 	PasswordEncoder passEncoder;
 
 	@Override
-	public List<AdminDto> getAll() {
-		return adminRepo.findAll().stream().map(adminMapper::entityToDto).collect(Collectors.toList());
+	public ResponseDto getAll() {
+		ResponseDto res = new ResponseDto();
+		List<AdminDto> list = adminRepo.findAll().stream().map(adminMapper::entityToDto).collect(Collectors.toList());
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
 	}
 
 	@Override
-	public PageDto gets(AdminDto criteria) {
+	public ResponseDto gets(AdminDto criteria) {
+		ResponseDto res = new ResponseDto();
+		
 		Page<Admin> page = adminRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<AdminDto> list = page.getContent().stream().map(adminMapper::entityToDto).collect(Collectors.toList());
 		
@@ -45,35 +51,38 @@ public class AdminService implements IAdminService{
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
-		return pageDto;
+
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
 	}
 
 	@Override
-	public AdminDto getById(int adminId) {
-		return adminRepo.findById(adminId).map(adminMapper::entityToDto).orElse(null);
-	}
-
-	@Override
-	public AdminDto getByName(String name) {
-//		return adminRepo.findByUsername(name).map(adminMapper::entityToDto).orElse(null);
-		return null;
-	}
-
-	@Override
-	public ResponseDto save(AdminDto model) {
+	public ResponseDto getById(int adminId) {
 		ResponseDto res = new ResponseDto();
-		if(model.getId() == 0) {
-			Admin admin = adminRepo.findByUsername(model.getUsername());
-			if(admin != null) {
-				res.setError("Tên tài khoản đã tồn tại");
-				res.setIsSuccess(false);
-				return res;
-			}
+		
+		AdminDto dto = adminRepo.findById(adminId).map(adminMapper::entityToDto).orElse(null);
+		
+		res.setStatus(true);
+		res.setContent(dto);
+		return res;
+	}
+
+	@Override
+	public ResponseDto create(AdminDto model) {
+		ResponseDto res = new ResponseDto();
+
+		Optional<Admin> checkAdmin = adminRepo.findByUsername(model.getUsername());
+		if(checkAdmin.isPresent()) {
+			res.setMessage("Tên tài khoản đã tồn tại");
+			res.setStatus(false);
+			return res;
 		}
+		
 		Admin admin = Optional.ofNullable(model).map(adminMapper::dtoToEntity).orElse(null);
 		if(admin == null) {
-			res.setError("Dữ liệu không đúng");
-			res.setIsSuccess(false);
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
 			return res;
 		}
 		
@@ -81,29 +90,65 @@ public class AdminService implements IAdminService{
 		
 		Admin savedAdmin = adminRepo.save(admin);
 		if(savedAdmin != null) {
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Thêm mới thành công");
 			return res;
 		}
 		
-		res.setError("Không thể tạo mới tài khoản admin");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tạo mới tài khoản admin");
+		res.setStatus(false);
+		return res;
+	}
+	
+	@Override
+	public ResponseDto update(AdminDto model) {
+		ResponseDto res = new ResponseDto();
+		
+		Optional<Admin> checkAdmin = adminRepo.findByUsernameAndIdNot(model.getUsername(), model.getId());
+		if(checkAdmin != null) {
+			res.setMessage("Tên tài khoản đã tồn tại");
+			res.setStatus(false);
+			return res;
+		}
+		
+		Optional<Admin> optAdmin = adminRepo.findById(model.getId());
+		if(!optAdmin.isPresent()) {
+			res.setMessage("Tài khoản không tồn tại");
+			res.setStatus(false);
+			return res;
+		}
+		
+		Admin admin = optAdmin.get();
+		admin.setPassword(passEncoder.encode(admin.getPassword()));
+		
+		Admin savedAdmin = adminRepo.save(admin);
+		if(savedAdmin != null) {
+			res.setStatus(true);
+			res.setMessage("Cập nhật thành công");
+			return res;
+		}
+		
+		res.setMessage("Cập nhật không thành công");
+		res.setStatus(false);
 		return res;
 	}
 
 	@Override
 	public ResponseDto delete(int adminId) {
 		ResponseDto res = new ResponseDto();
+		
 		Optional<Admin> optAdmin = adminRepo.findById(adminId);
 		if(optAdmin.isPresent()) {
 			Admin admin = optAdmin.get();
 			admin.setDeleted(true);
 			adminRepo.save(admin);
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Xóa thành công");
 			return res;
 		}
 		
-		res.setError("Không tìm thấy tài khoản");
-		res.setIsSuccess(false);
+		res.setMessage("Không tìm thấy tài khoản");
+		res.setStatus(false);
 		return res;
 	}
 

@@ -8,8 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.personal.dto.PaymentDto;
+import com.personal.dto.ResponseDto;
 
 public interface IPaymentService {
+	public ResponseDto getAll();
+	public ResponseDto gets(PaymentDto criteria);
+	public ResponseDto getById(int id);
 	public String sendQuery(PaymentDto model, HttpServletRequest req) throws UnsupportedEncodingException;
 	public String returnPayment(@RequestParam Map<String,String> allParams);
 }

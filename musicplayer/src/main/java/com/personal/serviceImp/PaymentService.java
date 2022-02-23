@@ -13,17 +13,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.personal.dto.PageDto;
 import com.personal.dto.PaymentDto;
+import com.personal.dto.ResponseDto;
 import com.personal.entity.Payment;
 import com.personal.entity.PaymentParam;
 import com.personal.entity.User;
+import com.personal.mapper.PaymentMapper;
 import com.personal.repository.PaymentParamRepository;
 import com.personal.repository.PaymentRepository;
 import com.personal.repository.UserRepository;
@@ -41,6 +48,8 @@ public class PaymentService implements IPaymentService {
 	private PaymentParamRepository paymentParamRepo;
 	@Autowired
 	private UserRepository userRepo;
+	@Autowired
+	private PaymentMapper paymentMapper;
 	@Autowired
 	private Utilities utils;
 
@@ -65,7 +74,6 @@ public class PaymentService implements IPaymentService {
 		payment.setExpireDate(utils.getDateExpire(paymentParam.getTimeExpire(), paymentParam.getUnit()));
 		payment.setPaymendMethod(model.getPaymentMethod());
 		payment.setTxnCode(vnp_TxnRef);
-		payment.setStatusActive(false);
 		payment.setTransCompleted(false);
 		payment.setUser(user);
 		paymentRepo.save(payment);
@@ -174,9 +182,12 @@ public class PaymentService implements IPaymentService {
 			if(optPayment.isPresent()) {
 				Payment payment = optPayment.get();
 				payment.setTransactionCode(allParams.get("vnp_TransactionNo"));
-				payment.setStatusActive(true);
 				payment.setTransCompleted(true);
 				paymentRepo.save(payment);
+				
+				User user = payment.getUser();
+				user.setVipExpireDate(payment.getExpireDate());
+				userRepo.save(user);
 				
 				return "Thanh toán thành công";
 			}
@@ -187,6 +198,44 @@ public class PaymentService implements IPaymentService {
 		}
 		
 		return "Giao dich không thành công";
+	}
+
+	@Override
+	public ResponseDto getAll() {
+		ResponseDto res = new ResponseDto();
+		List<PaymentDto> list = paymentRepo.findAll().stream().map(paymentMapper::entityToDto).collect(Collectors.toList());
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
+	}
+
+	@Override
+	public ResponseDto gets(PaymentDto criteria) {
+		ResponseDto res = new ResponseDto();
+		
+		Page<Payment> page = paymentRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
+		List<PaymentDto> list = page.getContent().stream().map(paymentMapper::entityToDto).collect(Collectors.toList());
+		
+		PageDto pageDto = new PageDto();
+		pageDto.setContent(list);
+		pageDto.setNumber(page.getNumber());
+		pageDto.setNumberOfElements(page.getNumberOfElements());
+		pageDto.setPage(page.getNumber());
+		pageDto.setSize(page.getSize());
+		pageDto.setTotalPages(page.getTotalPages());
+		
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
+	}
+
+	@Override
+	public ResponseDto getById(int id) {
+		ResponseDto res = new ResponseDto();
+		PaymentDto payment = paymentRepo.findById(id).map(paymentMapper::entityToDto).orElse(null);
+		res.setStatus(true);
+		res.setContent(payment);
+		return res;
 	}
 
 }

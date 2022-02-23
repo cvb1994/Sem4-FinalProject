@@ -1,7 +1,6 @@
 package com.personal.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+
+import com.personal.config.AppProperties;
 import com.personal.dto.ArtistDto;
 import com.personal.serviceImp.ArtistService;
 import com.personal.utils.Utilities;
@@ -23,26 +25,40 @@ import com.personal.utils.Utilities;
 public class ArtistController {
 	@Autowired
 	Utilities util;
-	
+	@Autowired
+	private AppProperties appPropertis;
 	@Autowired
 	ArtistService artistSer;
 	
 	@GetMapping
-	public ResponseEntity<List<ArtistDto>> gelAll(){
-		List<ArtistDto> list = artistSer.getAll();
-		return ResponseEntity.ok(list);
+	public ResponseEntity<?> gelAll(){
+		return ResponseEntity.ok(artistSer.getAll());
+	}
+	
+	@PostMapping(value = "/list")
+	public ResponseEntity<?> gelPage(@ModelAttribute ArtistDto model){
+		if(model.getPage() == 0) {
+			model.setPage(appPropertis.getDefaultPage());
+		}
+		if(model.getSize() == 0) {
+			model.setSize(appPropertis.getDefaultPageSize());
+		}
+		return ResponseEntity.ok(artistSer.gets(model));
 	}
 	
 	@GetMapping(value = "/{artistId}")
 	public ResponseEntity<?> getById(@PathVariable int artistId){
-		ArtistDto model = artistSer.getById(artistId);
-		return ResponseEntity.ok(model);
+		return ResponseEntity.ok(artistSer.getById(artistId));
 	}
 	
 	@PostMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<?> create(@ModelAttribute ArtistDto model) throws IOException{
-		return ResponseEntity.ok(artistSer.save(model));
-		
+		return ResponseEntity.ok(artistSer.create(model));
+	}
+	
+	@PutMapping(consumes = {"multipart/form-data"})
+	public ResponseEntity<?> update(@ModelAttribute ArtistDto model) throws IOException{
+		return ResponseEntity.ok(artistSer.create(model));
 	}
 	
 	@DeleteMapping(value = "/{artistId}")

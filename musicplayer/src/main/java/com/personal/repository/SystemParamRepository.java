@@ -10,4 +10,5 @@ import com.personal.entity.SystemParam;
 @Repository
 public interface SystemParamRepository extends JpaRepository<SystemParam, Integer>{
 	Optional<SystemParam> findByParamName(String name);
+	Optional<SystemParam> findByParamNameAndIdNot(String name, int id);
 }

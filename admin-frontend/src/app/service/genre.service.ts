@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ListGenreService {
+export class GenreService {
 
   constructor(private http: HttpClient) { }
   private baseurl = 'http://localhost:8080';
@@ -19,5 +19,18 @@ export class ListGenreService {
   public getAllGenre(): Observable<any>{
     const url = `${this.baseurl}/api/genre`;
     return this.http.get(url, this.httpOptions);
+  }
+
+  public getGenreById(genreId:any): Observable<any>{
+    const url = `${this.baseurl}/api/genre/${genreId}`;
+    return this.http.get(url, this.httpOptions);
+  }
+
+  public postGenre(form:any){
+    const url = `${this.baseurl}/api/genre`;
+    this.http.post<any>(url, form).subscribe(
+      (res) => console.log(res),
+      (err) => console.log(err)
+    );
   }
 }

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,8 +19,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import com.personal.config.AppProperties;
 import com.personal.dto.SongDto;
 import com.personal.serviceImp.SongService;
 
@@ -31,6 +32,8 @@ import com.personal.serviceImp.SongService;
 public class SongController {
 	@Autowired
 	SongService songSer;
+	@Autowired
+	private AppProperties appPropertis;
 	
 	private final String AUDIO_PATH = "E:\\Code\\Spring\\Personal Project\\musicplayer\\src\\main\\resources\\static\\upload\\mp3\\";
 	public static final int BYTE_RANGE = 128;
@@ -42,15 +45,24 @@ public class SongController {
 //	}
 	
 	@GetMapping
-	public ResponseEntity<List<SongDto>> getAll(){
-		List<SongDto> list = songSer.getAll();
-		return ResponseEntity.ok(list);
+	public ResponseEntity<?> getAll(){
+		return ResponseEntity.ok(songSer.getAll());
+	}
+	
+	@PostMapping(value = "/list")
+	public ResponseEntity<?> getpage(@ModelAttribute SongDto model, Authentication authentication){
+		if(model.getPage() == 0) {
+			model.setPage(appPropertis.getDefaultPage());
+		}
+		if(model.getSize() == 0) {
+			model.setSize(appPropertis.getDefaultPageSize());
+		}
+		return ResponseEntity.ok(songSer.gets(model, authentication));
 	}
 	
 	@GetMapping(value = "/{songId}")
-	public ResponseEntity<SongDto> getById(@PathVariable int songId, Authentication authentication){
-		SongDto model = songSer.getById(songId, authentication);
-		return ResponseEntity.ok(model);
+	public ResponseEntity<?> getById(@PathVariable int songId, Authentication authentication){
+		return ResponseEntity.ok(songSer.getById(songId, authentication));
 	}
 	
 	@GetMapping(value = "/count/{songId}")
@@ -61,7 +73,12 @@ public class SongController {
 	
 	@PostMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<?> create(@ModelAttribute SongDto model) throws IOException{
-		return ResponseEntity.ok(songSer.save(model));
+		return ResponseEntity.ok(songSer.create(model));
+	}
+	
+	@PutMapping(consumes = {"multipart/form-data"})
+	public ResponseEntity<?> update(@ModelAttribute SongDto model) throws IOException{
+		return ResponseEntity.ok(songSer.update(model));
 	}
 	
 	@DeleteMapping(value = "/{songId}")

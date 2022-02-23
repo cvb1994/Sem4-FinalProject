@@ -30,10 +30,10 @@ public class UserManagerService implements UserDetailsService{
 		String actualUserName = usernamewithPrefix.substring(0, checkUserName);
 		
 		if(prefix.equals(UserTypeEnum.ADMIN.name)) {	
-			Admin optAdmin = adminRepo.findByUsername(actualUserName);
-			if(optAdmin == null) throw new UsernameNotFoundException(actualUserName);
+			Optional<Admin> optAdmin = adminRepo.findByUsername(actualUserName);
+			if(!optAdmin.isPresent()) throw new UsernameNotFoundException(actualUserName);
 			
-			Admin admin = optAdmin;
+			Admin admin = optAdmin.get();
 			return new UserPrincipal(admin.getId(), admin.getUsername(), admin.getPassword(), UserTypeEnum.ADMIN.name);
 		} else {
 			Optional<User> optUser = userRepo.findByUsername(actualUserName);

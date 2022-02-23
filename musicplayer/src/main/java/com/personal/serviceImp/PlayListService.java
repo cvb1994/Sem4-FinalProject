@@ -35,12 +35,17 @@ public class PlayListService implements IPlayListService{
 	private PlayListMapper playListMapper;;
 
 	@Override
-	public List<PlayListDto> findByUser(int userId) {
-		return playListRepo.findByUser(userId).stream().map(playListMapper::entityToDto).collect(Collectors.toList());
+	public ResponseDto findByUser(int userId) {
+		ResponseDto res = new ResponseDto();
+		List<PlayListDto> list = playListRepo.findByUser(userId).stream().map(playListMapper::entityToDto).collect(Collectors.toList());
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
 	}
 
 	@Override
-	public PageDto gets(PlayListDto criteria) {
+	public ResponseDto gets(PlayListDto criteria) {
+		ResponseDto res = new ResponseDto();
 		Page<PlayList> page = playListRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<PlayListDto> list = page.getContent().stream().map(playListMapper::entityToDto).collect(Collectors.toList());
 		
@@ -51,29 +56,37 @@ public class PlayListService implements IPlayListService{
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
-		return pageDto;
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
 	}
 
 	@Override
-	public PlayListDto getById(int id) {
-		return playListRepo.findById(id).map(playListMapper::entityToDto).orElse(null);
+	public ResponseDto getById(int id) {
+		ResponseDto res = new ResponseDto();
+		PlayListDto dto =  playListRepo.findById(id).map(playListMapper::entityToDto).orElse(null);
+		res.setStatus(true);
+		res.setContent(dto);
+		return res;
 	}
 
 	@Override
-	public ResponseDto save(PlayListDto model) {
+	public ResponseDto create(PlayListDto model) {
 		ResponseDto res = new ResponseDto();
 		PlayList playList = Optional.ofNullable(model).map(playListMapper::dtoToEntity).orElse(null);
 		if(playList == null) {
-			res.setError("Dữ liệu không đúng");
-			res.setIsSuccess(false);
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
 			return res;
 		}
 		
-		if(model.getUserId() != 0) {
-			Optional<User> optUser = userRepo.findById(model.getUserId());
-			if(optUser.isPresent()) {
-				playList.setUser(optUser.get());
-			}
+		Optional<User> optUser = userRepo.findById(model.getUserId());
+		if(optUser.isPresent()) {
+			playList.setUser(optUser.get());
+		} else {
+			res.setMessage("Không tìm thấy user");
+			res.setStatus(false);
+			return res;
 		}
 		
 		List<Song> list = new ArrayList<>();
@@ -89,11 +102,53 @@ public class PlayListService implements IPlayListService{
 		
 		PlayList savedPlayList = playListRepo.save(playList);
 		if(savedPlayList != null) {
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Tạo mới thành công");
 			return res;
 		}
-		res.setError("Không thể tạo mới playlist");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tạo mới playlist");
+		res.setStatus(false);
+		return res;
+	}
+	
+	@Override
+	public ResponseDto update(PlayListDto model) {
+		ResponseDto res = new ResponseDto();
+		PlayList playList = Optional.ofNullable(model).map(playListMapper::dtoToEntity).orElse(null);
+		if(playList == null) {
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
+			return res;
+		}
+		
+		Optional<User> optUser = userRepo.findById(model.getUserId());
+		if(optUser.isPresent()) {
+			playList.setUser(optUser.get());
+		} else {
+			res.setMessage("Không tìm thấy user");
+			res.setStatus(false);
+			return res;
+		}
+		
+		List<Song> list = new ArrayList<>();
+		if(model.getListSongIds().size() > 0) {
+			for(Integer i : model.getListSongIds()) {
+				Optional<Song> optSong = songRepo.findById(i);
+				if(optSong.isPresent()) {
+					list.add(optSong.get());
+				}
+			}
+			playList.setSongs(list);
+		}
+		
+		PlayList savedPlayList = playListRepo.save(playList);
+		if(savedPlayList != null) {
+			res.setStatus(true);
+			res.setMessage("Cập nhật thành công");
+			return res;
+		}
+		res.setMessage("Không thể cập nhật playlist");
+		res.setStatus(false);
 		return res;
 	}
 
@@ -103,11 +158,12 @@ public class PlayListService implements IPlayListService{
 		Optional<PlayList> optPlayList = playListRepo.findById(id);
 		if(optPlayList.isPresent()) {
 			playListRepo.delete(optPlayList.get());
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Xóa thành công");
 			return res;
 		}
-		res.setError("Không tìm thấy playlist");
-		res.setIsSuccess(false);
+		res.setMessage("Không tìm thấy playlist");
+		res.setStatus(false);
 		return res;
 	}
 

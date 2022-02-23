@@ -30,7 +30,7 @@ public class PlayList extends BaseEntity{
 	private String name;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = true)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
 	@ManyToMany(cascade = CascadeType.ALL)

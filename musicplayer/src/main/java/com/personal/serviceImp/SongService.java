@@ -1,7 +1,7 @@
 package com.personal.serviceImp;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +24,6 @@ import com.personal.dto.SongDto;
 import com.personal.entity.Album;
 import com.personal.entity.Artist;
 import com.personal.entity.Genre;
-import com.personal.entity.Payment;
 import com.personal.entity.Song;
 import com.personal.entity.SystemParam;
 import com.personal.entity.User;
@@ -32,7 +31,6 @@ import com.personal.mapper.SongMapper;
 import com.personal.repository.AlbumRepository;
 import com.personal.repository.ArtistRepository;
 import com.personal.repository.GenreRepository;
-import com.personal.repository.PaymentRepository;
 import com.personal.repository.SongRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.repository.UserRepository;
@@ -54,8 +52,6 @@ public class SongService implements ISongService{
 	@Autowired
 	private UserRepository userRepo;
 	@Autowired
-	private PaymentRepository paymentRepo;
-	@Autowired
 	private SongMapper songMapper;
 	@Autowired
 	private SystemParamRepository systemRepo;
@@ -67,20 +63,24 @@ public class SongService implements ISongService{
 	private CloudStorageUtils uploadCloudStorage;
 	
 	@Override
-	public List<SongDto> getAll() {
+	public ResponseDto getAll() {
+		ResponseDto res = new ResponseDto();
 		List<SongDto> list = songRepo.findAll().stream().map(songMapper::entityToDto).collect(Collectors.toList());
-		return list;
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
 	}
 	
 	@Override
-	public PageDto gets(SongDto criteria, Authentication auth) {
+	public ResponseDto gets(SongDto criteria, Authentication auth) {
+		ResponseDto res = new ResponseDto();
 		Page<Song> page = songRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 		
 		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
 			User user = userRepo.findByUsername(auth.getName()).get();
-			Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(user.getId());
-			if(!optPayment.isPresent()) {
+			LocalDate current = LocalDate.now();
+			if(current.isAfter(user.getVipExpireDate())) {
 				list.stream().forEach(s -> {
 					if(s.getVipOnly()) {
 						s.setMediaUrl(null);
@@ -102,45 +102,58 @@ public class SongService implements ISongService{
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
-		return pageDto;
+		
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
 	}
 
 	@Override
-	public SongDto getById(int songId, Authentication auth) {
+	public ResponseDto getById(int songId, Authentication auth) {
+		ResponseDto res = new ResponseDto();
 		SongDto song = songRepo.findById(songId).map(songMapper::entityToDto).orElse(null);
 		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
 			if(song.getVipOnly()) {
 				User user = userRepo.findByUsername(auth.getName()).get();
-				Optional<Payment> optPayment = paymentRepo.findByUserIdAndStatusActiveTrue(user.getId());
-				if(!optPayment.isPresent()) {
+				LocalDate current = LocalDate.now();
+				if(current.isAfter(user.getVipExpireDate())) {
 					song.setMediaUrl(null);
-					return song;
+					
+					res.setStatus(true);
+					res.setContent(song);
+					return res;
 				}
 			}
 		} else if(auth == null) {
 			if(song.getVipOnly()) {
 				song.setMediaUrl(null);
-				return song;
+				res.setStatus(true);
+				res.setContent(song);
+				return res;
 			}
 		}
 		
-		return song;
+		res.setStatus(true);
+		res.setContent(song);
+		return res;
 	}
 
 	@Override
-	public ResponseDto save(SongDto model) {
+	public ResponseDto create(SongDto model) {
 		ResponseDto res = new ResponseDto();
 		Song song = Optional.ofNullable(model).map(songMapper::dtoToEntity).orElse(null);
 		if(song == null) {
-			res.setError("Dữ liệu không đúng");
-			res.setIsSuccess(false);
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
 			return res;
 		}
 		boolean isAlbumExist = false;
+		Album album = null;
 		
 		if(model.getAlbumId() != 0) {
 			Optional<Album> optAlbum = albumRepo.findById(model.getAlbumId());
 			if(optAlbum.isPresent()) {
+				album = optAlbum.get();
 				song.setAlbum(optAlbum.get());
 				song.setImage(optAlbum.get().getAvatar());
 				isAlbumExist = true;
@@ -153,8 +166,8 @@ public class SongService implements ISongService{
 			if(artist.isPresent()) listArtist.add(artist.get());
 		}
 		if(listArtist.size() == 0) {
-			res.setError("Không tìm thấy nghệ sĩ");
-			res.setIsSuccess(false);
+			res.setMessage("Không tìm thấy nghệ sĩ");
+			res.setStatus(false);
 			return res;
 		} else {
 			song.setArtists(listArtist);
@@ -166,8 +179,8 @@ public class SongService implements ISongService{
 			if(genre.isPresent()) listGenre.add(genre.get());
 		}
 		if(listGenre.size() == 0) {
-			res.setError("Không tìm thấy thể loại");
-			res.setIsSuccess(false);
+			res.setMessage("Không tìm thấy thể loại");
+			res.setStatus(false);
 			return res;
 		} else {
 			song.setGenres(listGenre);
@@ -178,59 +191,159 @@ public class SongService implements ISongService{
 			if(optParam.isPresent()) {
 				song.setImage(optParam.get().getParamValue());
 			} else {
-				res.setError("Không tìm thấy ảnh đại diện mặc định");
-				res.setIsSuccess(false);
+				res.setMessage("Không tìm thấy ảnh đại diện mặc định");
+				res.setStatus(false);
 				return res;
 			}
-		} else if(!isAlbumExist){
+		} else if(model.getFile() == null && isAlbumExist){
+			song.setImage(album.getAvatar());
+		} else {
 			String extension = util.getFileExtension(model.getFile());
-			if(extension != null) {
+			if(extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg") || extension.equalsIgnoreCase("png")) {
 				String name = util.nameIdentifier(model.getTitle(), extension);
 				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.SONG_IMAGE.name, name);
 				if(imageUrl == null) {
-					res.setError("Lỗi trong quá trình upload file");
-					res.setIsSuccess(false);
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
 					return res;
 				}
 				song.setImage(imageUrl);
 			} else {
-				res.setError("File không hợp lệ");
-				res.setIsSuccess(false);
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
 				return res;
 			}
 		}
 		
 		if(model.getMp3() == null) {
-			res.setError("File không tồn tại");
-			res.setIsSuccess(false);
+			res.setMessage("File không tồn tại");
+			res.setStatus(false);
 			return res;
 		}
 		String extension = util.getFileExtension(model.getMp3());
-		if(extension != null) {
+		if(extension.equalsIgnoreCase("mp3")) {
 			String name = util.nameIdentifier(model.getTitle(), extension);
 			String audioUrl = uploadCloudStorage.uploadObject(model.getMp3(), name);
 			if(audioUrl == null) {
-				res.setError("Lỗi trong quá trình upload file");
-				res.setIsSuccess(false);
+				res.setMessage("Lỗi trong quá trình upload file");
+				res.setStatus(false);
 				return res;
 			}
 			song.setMediaUrl(audioUrl);
 		} else {
-			res.setError("File không hợp lệ");
-			res.setIsSuccess(false);
+			res.setMessage("File không hợp lệ");
+			res.setStatus(false);
 			return res;
 		}
 		
 		Song savedSong = songRepo.save(song);
 		if(savedSong != null) {
-			res.setIsSuccess(true);
+			res.setStatus(true);
+			res.setMessage("Tạo mới bài hát thành công");
 			return res;
 		}
 		
-		res.setError("Không thể tạo mới bài hát");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tạo mới bài hát");
+		res.setStatus(false);
 		return res;
+	}
+	
+	@Override
+	public ResponseDto update(SongDto model) {
+		ResponseDto res = new ResponseDto();
+		Song song = Optional.ofNullable(model).map(songMapper::dtoToEntity).orElse(null);
+		if(song == null) {
+			res.setMessage("Dữ liệu không đúng");
+			res.setStatus(false);
+			return res;
+		}
 		
+		Song editSong = songRepo.findById(model.getId()).get();
+		
+		if(model.getAlbumId() != 0) {
+			Optional<Album> optAlbum = albumRepo.findById(model.getAlbumId());
+			if(optAlbum.isPresent()) {
+				song.setAlbum(optAlbum.get());
+				song.setImage(optAlbum.get().getAvatar());
+			}
+		} 
+		
+		List<Artist> listArtist = new ArrayList<>();
+		for(Integer i : model.getArtistIds()) {
+			Optional<Artist> artist = artistRepo.findById(i.intValue());
+			if(artist.isPresent()) listArtist.add(artist.get());
+		}
+		if(listArtist.size() == 0) {
+			res.setMessage("Không tìm thấy nghệ sĩ");
+			res.setStatus(false);
+			return res;
+		} else {
+			song.setArtists(listArtist);
+		}
+		
+		List<Genre> listGenre = new ArrayList<>();
+		for(Integer i : model.getGenreIds()) {
+			Optional<Genre> genre = genreRepo.findById(i.intValue());
+			if(genre.isPresent()) listGenre.add(genre.get());
+		}
+		if(listGenre.size() == 0) {
+			res.setMessage("Không tìm thấy thể loại");
+			res.setStatus(false);
+			return res;
+		} else {
+			song.setGenres(listGenre);
+		}
+		
+		if(model.getFile() == null) {
+			song.setImage(editSong.getImage());
+		} else {  
+			String extension = util.getFileExtension(model.getFile());
+			if(extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg") || extension.equalsIgnoreCase("png")) {
+				String name = util.nameIdentifier(model.getTitle(), extension);
+				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.SONG_IMAGE.name, name);
+				if(imageUrl == null) {
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
+					return res;
+				}
+				song.setImage(imageUrl);
+			} else {
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
+				return res;
+			}
+		}
+		
+		if(model.getMp3() == null) {
+			song.setMediaUrl(editSong.getMediaUrl());
+		} else {
+			String extension = util.getFileExtension(model.getMp3());
+			if(extension.equalsIgnoreCase("mp3")) {
+				String name = util.nameIdentifier(model.getTitle(), extension);
+				String audioUrl = uploadCloudStorage.uploadObject(model.getMp3(), name);
+				if(audioUrl == null) {
+					res.setMessage("Lỗi trong quá trình upload file");
+					res.setStatus(false);
+					return res;
+				}
+				song.setMediaUrl(audioUrl);
+			} else {
+				res.setMessage("File không hợp lệ");
+				res.setStatus(false);
+				return res;
+			}
+		}
+		
+		Song savedSong = songRepo.save(song);
+		if(savedSong != null) {
+			res.setStatus(true);
+			res.setMessage("Cập nhật bài hát thành công");
+			return res;
+		}
+		
+		res.setMessage("Không thể cập nhật bài hát");
+		res.setStatus(false);
+		return res;
 	}
 
 	@Override
@@ -241,12 +354,13 @@ public class SongService implements ISongService{
 			Song song = optSong.get();
 			song.setDeleted(true);
 			songRepo.save(song);
-			res.setIsSuccess(true);
+			res.setMessage("Xóa thành công");
+			res.setStatus(true);
 			return res;
 		}
 		
-		res.setError("Không thể tìm thấy bài hát");
-		res.setIsSuccess(false);
+		res.setMessage("Không thể tìm thấy bài hát");
+		res.setStatus(false);
 		return res;
 	}
 	
@@ -263,7 +377,7 @@ public class SongService implements ISongService{
 	}
 	
 	@Override
-	public List<SongDto> getTopSongByGenre(String genreName){
+	public ResponseDto getTopSongByGenre(String genreName){
 //		Optional<Genre> optGenre = genreRepo.findByNameIgnoreCase(genreName);
 //		if(optGenre.isPresent()) {
 //			return songRepo.findTop10ByGenreOrderByListenCountReset(optGenre.get()).stream().map(songMapper::entityToDto).collect(Collectors.toList());
