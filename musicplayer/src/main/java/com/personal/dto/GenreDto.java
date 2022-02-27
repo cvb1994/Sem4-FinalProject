@@ -14,5 +14,5 @@ public class GenreDto extends BaseDto{
 	private String name;
 	private String avatar;
 	
-	public MultipartFile file;
+	private MultipartFile file;
 }

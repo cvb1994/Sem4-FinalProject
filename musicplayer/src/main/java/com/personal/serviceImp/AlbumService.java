@@ -143,48 +143,57 @@ public class AlbumService implements IAlbumService {
 	
 	@Override
 	public ResponseDto update(AlbumDto model) {
-		ResponseDto res = new ResponseDto();
-		
-		Album album = Optional.ofNullable(model).map(albumMapper::dtoToEntity).orElse(null);
-		if(album == null) {
-			res.setMessage("Dữ liệu không đúng");
-			res.setStatus(false);
-			return res;
-		}
-		
-		if(model.getFile() == null) {
-			album.setAvatar(albumRepo.findById(model.getId()).get().getAvatar());
-		} else {
-			String extension = util.getFileExtension(model.getFile());
-			if(extension != null) {
-				String name = util.nameIdentifier(model.getName(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ALBUM_IMAGE.name, name);
-				if(imageUrl == null) {
-					res.setMessage("Lỗi trong quá trình upload file");
-					res.setStatus(false);
-					return res;
-				}
-				album.setAvatar(imageUrl);
-			} else {
-				res.setMessage("File không hợp lệ");
-				res.setStatus(false);
-				return res;
-			}
-		}
-		
-		Optional<Artist> artist = artistRepo.findById(model.getArtistId());
-		if(!artist.isPresent()) return null;
-		album.setArtist(artist.get());
-		Album savedAlbum = albumRepo.save(album);
-		if(savedAlbum != null) {
-			res.setStatus(true);
-			res.setMessage("Cập nhật thành công");
-			return res;
-		}
-		
-		res.setMessage("Không thể cập nhật album");
-		res.setStatus(false);
-		return res;
+//		ResponseDto res = new ResponseDto();
+//		
+//		Optional<Album> optEditAlbum = albumRepo.findById(model.getId());
+//		if(!optEditAlbum.isPresent()) {
+//			res.setMessage("Không tìm thấy album");
+//			res.setStatus(false);
+//			return res;
+//		}
+//		Album editAlbum = optEditAlbum.get();
+//		
+//		editAlbum.setName(model.getName());
+//		editAlbum.setTotalTime(model.getTotalTime());
+//		
+//		if(model.getFile() == null) {
+//			album.setAvatar(albumRepo.findById(model.getId()).get().getAvatar());
+//		} else {
+//			String extension = util.getFileExtension(model.getFile());
+//			if(extension != null) {
+//				String name = util.nameIdentifier(model.getName(), extension);
+//				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ALBUM_IMAGE.name, name);
+//				if(imageUrl == null) {
+//					res.setMessage("Lỗi trong quá trình upload file");
+//					res.setStatus(false);
+//					return res;
+//				}
+//				album.setAvatar(imageUrl);
+//			} else {
+//				res.setMessage("File không hợp lệ");
+//				res.setStatus(false);
+//				return res;
+//			}
+//		}
+//		
+//		Optional<Artist> artist = artistRepo.findById(model.getArtistId());
+//		if(!artist.isPresent()) {
+//			res.setMessage("Không tìm thấy nghệ sĩ");
+//			res.setStatus(false);
+//			return res;
+//		}
+//		album.setArtist(artist.get());
+//		Album savedAlbum = albumRepo.save(album);
+//		if(savedAlbum != null) {
+//			res.setStatus(true);
+//			res.setMessage("Cập nhật thành công");
+//			return res;
+//		}
+//		
+//		res.setMessage("Không thể cập nhật album");
+//		res.setStatus(false);
+//		return res;
+		return null;
 	}
 
 	@Override

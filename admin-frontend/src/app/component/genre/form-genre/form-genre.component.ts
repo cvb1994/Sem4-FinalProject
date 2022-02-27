@@ -16,8 +16,6 @@ export class FormGenreComponent implements OnInit {
   @ViewChild('previewImg')
   public myImg!: ElementRef;
 
-  
-
   genreForm = new FormGroup({
     id: new FormControl('0'),
     name: new FormControl(''),
@@ -34,12 +32,14 @@ export class FormGenreComponent implements OnInit {
       this.genreId = params.get('genreId');
       if(this.genreId != null){
         this.genreSer.getGenreById(this.genreId).subscribe((data) =>{
-          this.editGenre = data;
+          this.editGenre = data.content;
+          this.genreForm.get("id")?.setValue(data.content.id);
+          this.genreForm.get("name")?.setValue(data.content.name);
+          this.divStyle = 300;
           console.log(this.editGenre);
         });
       }
     });
-
   }
 
   onFileSelect(event:any) {
@@ -55,8 +55,18 @@ export class FormGenreComponent implements OnInit {
     const formData = new FormData();
     formData.append('id', this.genreForm.get("id")?.value);
     formData.append('name', this.genreForm.get("name")?.value);
-    formData.append('file', this.genreForm.get("avatar")?.value);
-    this.genreSer.postGenre(formData);
+    var file:any = this.genreForm.get("avatar");
+    if(file.value != ""){
+      formData.append('file', this.genreForm.get("avatar")?.value);
+    }
+    var id:any = this.genreForm.get("id");
+    if(id == 0){
+      this.genreSer.postGenre(formData);
+    } else {
+      formData.append('createdDate', this.editGenre.createdDate);
+      this.genreSer.updateGenre(formData);
+    }
+    
   }
 
 }

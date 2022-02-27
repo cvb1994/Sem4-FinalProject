@@ -33,4 +33,12 @@ export class GenreService {
       (err) => console.log(err)
     );
   }
+
+  public updateGenre(form:any){
+    const url = `${this.baseurl}/api/genre`;
+    this.http.put<any>(url, form).subscribe(
+      (res) => console.log(res),
+      (err) => console.log(err)
+    );
+  }
 }

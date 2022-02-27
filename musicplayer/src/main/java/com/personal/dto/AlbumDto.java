@@ -3,7 +3,10 @@ package com.personal.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,18 +16,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class AlbumDto extends BaseDto{
-	public int id;
-	public String name;						//required
-	public String avatar;
-	public String totalTime;
-	public LocalDate releaseDate;
-	public int totalListen;
-	public ArtistDto artist;
-	public List<SongDto> songs;
+	private int id;
+	private String name;						//required
+	private String avatar;
+	private String totalTime;
 	
-	public int artistId;					//required
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	private LocalDate releaseDate;
 	
-	public MultipartFile file;				//required
+	private int totalListen;
+	private ArtistDto artist;
+	private List<SongDto> songs;
+	
+	private int artistId;					//required
+	
+	private MultipartFile file;				//required
 	
 	
 }

@@ -15,7 +15,7 @@ export class ListGenreComponent implements OnInit {
 
   ngOnInit(): void {
     this.genreSer.getAllGenre().subscribe((data) =>{
-      this.listGenre = data;
+      this.listGenre = data.content;
       console.log(this.listGenre);
     });
   }

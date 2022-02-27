@@ -119,7 +119,7 @@ public class AdminService implements IAdminService{
 		}
 		
 		Admin admin = optAdmin.get();
-		admin.setPassword(passEncoder.encode(admin.getPassword()));
+		admin.setPassword(passEncoder.encode(model.getPassword()));
 		
 		Admin savedAdmin = adminRepo.save(admin);
 		if(savedAdmin != null) {
