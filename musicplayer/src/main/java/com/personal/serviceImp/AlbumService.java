@@ -214,4 +214,14 @@ public class AlbumService implements IAlbumService {
 		return res;
 	}
 
+	@Override
+	public List<AlbumDto> getTop5ByModifiedDateDesc() {
+		return albumRepo.findTop5ByOrderByModifiedDateDesc().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<AlbumDto> getTop10ByModifiedDateDesc() {
+		return albumRepo.findTop10ByOrderByModifiedDateDesc().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+	}
+
 }
