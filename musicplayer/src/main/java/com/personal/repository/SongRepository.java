@@ -18,6 +18,7 @@ public interface SongRepository extends JpaRepository<Song, Integer>, JpaSpecifi
 //	@Query(value = "Select s.* From songs s Where s.id = :songId And s.deleted = false" , nativeQuery = true)
 //	Song findBySongId(@Param("songId") int id);
 	Optional<Song> findByTitle(String title);
+	List<Song> findTop10ByOrderByListenCountResetDesc();
 //	
 //	List<Song> findAllByAlbum_id(int albumId);
 //	List<Song> findBySongArtist(Artist artist);

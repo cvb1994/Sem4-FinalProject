@@ -5,6 +5,8 @@ import org.springframework.security.core.Authentication;
 import com.personal.dto.ResponseDto;
 import com.personal.dto.SongDto;
 
+import java.util.List;
+
 
 public interface ISongService {
 	public ResponseDto getAll();
@@ -16,4 +18,5 @@ public interface ISongService {
 	public void increase(int songId);
 	
 	public ResponseDto getTopSongByGenre(String genreName);
+	List<SongDto> ListTrending();
 }

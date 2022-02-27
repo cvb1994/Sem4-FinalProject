@@ -25,6 +25,7 @@ public abstract class BaseEntity {
 	@PrePersist
     public void prePersist() {
     	setCreatedDate(LocalDateTime.now());
+		setModifiedDate(LocalDateTime.now());
     }
     
     @PreUpdate

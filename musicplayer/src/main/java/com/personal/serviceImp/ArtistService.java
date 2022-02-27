@@ -190,4 +190,9 @@ public class ArtistService implements IArtistService{
 		return res;
 	}
 
+	@Override
+	public List<ArtistDto> getTop10ByModifiedDateDesc() {
+		return artistRepo.findTop10ByOrderByModifiedDateDesc().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+	}
+
 }

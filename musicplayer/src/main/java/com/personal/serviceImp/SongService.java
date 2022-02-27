@@ -385,4 +385,9 @@ public class SongService implements ISongService{
 		return null;
 	}
 
+	@Override
+	public List<SongDto> ListTrending() {
+		return songRepo.findTop10ByOrderByListenCountResetDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+	}
+
 }

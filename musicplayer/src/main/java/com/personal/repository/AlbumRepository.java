@@ -1,5 +1,6 @@
 package com.personal.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,8 @@ import com.personal.entity.Album;
 public interface AlbumRepository extends JpaRepository<Album, Integer>, JpaSpecificationExecutor<Album>{
 	Optional<Album> findById(int id);
 	Optional<Album> findByName(String name);
+	List<Album> findTop5ByOrderByModifiedDateDesc();
+	List<Album> findTop10ByOrderByModifiedDateDesc();
 	
 //	List<Album> findAllByArtist_id(int artistId);
 //	

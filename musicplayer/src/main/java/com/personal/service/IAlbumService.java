@@ -2,6 +2,9 @@ package com.personal.service;
 
 import com.personal.dto.AlbumDto;
 import com.personal.dto.ResponseDto;
+import com.personal.entity.Album;
+
+import java.util.List;
 
 public interface IAlbumService {
 	public ResponseDto getAll();
@@ -11,4 +14,6 @@ public interface IAlbumService {
 	public ResponseDto create(AlbumDto model);
 	public ResponseDto update(AlbumDto model);
 	public ResponseDto delete(int albumId);
+	public List<AlbumDto> getTop5ByModifiedDateDesc();
+	public List<AlbumDto> getTop10ByModifiedDateDesc();
 }
