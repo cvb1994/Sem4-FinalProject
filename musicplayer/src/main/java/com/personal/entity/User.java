@@ -52,7 +52,7 @@ public class User extends BaseEntity {
 	@Column(name = "avatar", nullable = false)
 	private String avatar;
 	
-	@Column(name = "vip_expire_date", nullable = false)
+	@Column(name = "vip_expire_date", nullable = true)
 	private LocalDate vipExpireDate;
 	
 	@Column(name = "user_token", nullable = true)

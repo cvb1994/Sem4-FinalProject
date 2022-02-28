@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.personal.common.UserTypeEnum;
 import com.personal.dto.LoginDto;
 import com.personal.dto.ResponseDto;
+import com.personal.dto.UserDto;
 import com.personal.entity.UserPrincipal;
+import com.personal.repository.UserRepository;
+import com.personal.serviceImp.UserService;
 import com.personal.utils.JwtTokenProvider;
 
 @RestController
@@ -26,6 +29,8 @@ public class LoginController {
     AuthenticationManager authenticationManager;
     @Autowired
     private JwtTokenProvider tokenProvider;
+    @Autowired
+    private UserService userSer;
     
     @PostMapping("/admin/login")
     public ResponseEntity<?> adminLogin(@ModelAttribute LoginDto model) {
@@ -35,8 +40,9 @@ public class LoginController {
                     .authenticate(new UsernamePasswordAuthenticationToken(loginUserName, model.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authenticate);
+            UserPrincipal principal = (UserPrincipal) authenticate.getPrincipal();
             
-            String jwt = tokenProvider.generateToken((UserPrincipal) authenticate.getPrincipal());
+            String jwt = tokenProvider.generateToken(principal);
 
             return ResponseEntity.ok(jwt);
         } catch (BadCredentialsException ex) {
@@ -52,10 +58,15 @@ public class LoginController {
                     .authenticate(new UsernamePasswordAuthenticationToken(loginUserName, model.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authenticate);
+            UserPrincipal principal = (UserPrincipal) authenticate.getPrincipal();
             
-            String jwt = tokenProvider.generateToken((UserPrincipal) authenticate.getPrincipal());
+            String jwt = tokenProvider.generateToken(principal);
+            ResponseDto res = userSer.getById(principal.getId());
+            UserDto userDto = (UserDto) res.getContent();
+            userDto.setJwtToken(jwt);
+            res.setContent(userDto);
 
-            return ResponseEntity.ok(jwt);
+            return ResponseEntity.ok(res);
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username hoặc Password không đúng");
         }

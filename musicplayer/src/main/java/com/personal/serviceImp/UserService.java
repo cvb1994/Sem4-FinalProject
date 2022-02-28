@@ -95,15 +95,24 @@ public class UserService implements IUserService{
 		ResponseDto res = new ResponseDto();
 		UserDto userDto =  userRepo.findById(userId).map(userMapper::entityToDto).orElse(null);
 		if(userDto != null) {
-			LocalDate current = LocalDate.now();
-			if(current.isBefore(userDto.getVipExpireDate())) {
-				userDto.setIsVip(true);
+			if(userDto.getVipExpireDate() != null) {
+				LocalDate current = LocalDate.now();
+				if(current.isBefore(userDto.getVipExpireDate())) {
+					userDto.setIsVip(true);
+				} else {
+					userDto.setIsVip(false);
+				}
 			} else {
 				userDto.setIsVip(false);
 			}
+			userDto.setPassword(null);
+			res.setStatus(true);
+			res.setContent(userDto);
+		} else {
+			res.setStatus(false);
+			res.setMessage("Không tìm thấy tài khoản");
 		}
-		res.setStatus(true);
-		res.setContent(userDto);
+		
 		return res;
 	}
 
@@ -112,15 +121,24 @@ public class UserService implements IUserService{
 		ResponseDto res = new ResponseDto();
 		UserDto userDto =  userRepo.findByUsername(name).map(userMapper::entityToDto).orElse(null);
 		if(userDto != null) {
-			LocalDate current = LocalDate.now();
-			if(current.isBefore(userDto.getVipExpireDate())) {
-				userDto.setIsVip(true);
+			if(userDto.getVipExpireDate() != null) {
+				LocalDate current = LocalDate.now();
+				if(current.isBefore(userDto.getVipExpireDate())) {
+					userDto.setIsVip(true);
+				} else {
+					userDto.setIsVip(false);
+				}
 			} else {
 				userDto.setIsVip(false);
 			}
+			userDto.setPassword(null);
+			res.setStatus(true);
+			res.setContent(userDto);
+		} else {
+			res.setStatus(false);
+			res.setMessage("Không tìm thấy tài khoản");
 		}
-		res.setStatus(true);
-		res.setContent(userDto);
+		
 		return res;
 	}
 
