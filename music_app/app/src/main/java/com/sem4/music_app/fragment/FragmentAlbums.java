@@ -28,6 +28,9 @@ import com.sem4.music_app.adapter.AdapterAlbums;
 import com.sem4.music_app.item.ItemAlbums;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
+import com.sem4.music_app.response.BasePaginate;
+import com.sem4.music_app.response.BaseResponse;
+import com.sem4.music_app.utils.EndlessRecyclerViewScrollListener;
 import com.sem4.music_app.utils.Methods;
 
 import java.util.ArrayList;
@@ -49,7 +52,7 @@ public class FragmentAlbums extends Fragment {
     private FrameLayout frameLayout;
     private String errr_msg;
     private GridLayoutManager glm_banner;
-    private int page = 1;
+    private int page = 0;
     private Boolean isOver = false, isScroll = false, isLoading = false;
     private ApiManager apiManager;
 
@@ -87,30 +90,23 @@ public class FragmentAlbums extends Fragment {
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setHasFixedSize(true);
 
-//        rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                methods.showInterAd(position, "");
-//            }
-//        }));
-//
-//        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
-//            @Override
-//            public void onLoadMore(int p, int totalItemsCount) {
-//                if (!isOver) {
-//                    if (!isLoading) {
-//                        isLoading = true;
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                isScroll = true;
-//                                loadAlbums();
-//                            }
-//                        }, 0);
-//                    }
-//                }
-//            }
-//        });
+        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
+            @Override
+            public void onLoadMore(int p, int totalItemsCount) {
+                if (!isOver) {
+                    if (!isLoading) {
+                        isLoading = true;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                isScroll = true;
+                                loadAlbums();
+                            }
+                        }, 0);
+                    }
+                }
+            }
+        });
 
         loadAlbums();
 
@@ -157,11 +153,11 @@ public class FragmentAlbums extends Fragment {
                 rv.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
             }
-            apiManager.listAlbums()
-                    .enqueue(new Callback<List<ItemAlbums>>() {
+            apiManager.listAlbums(page, 15)
+                    .enqueue(new Callback<BaseResponse<BasePaginate<ItemAlbums>>>() {
                         @Override
-                        public void onResponse(Call<List<ItemAlbums>> call, Response<List<ItemAlbums>> response) {
-                            if (response.body().size() == 0) {
+                        public void onResponse(Call<BaseResponse<BasePaginate<ItemAlbums>>> call, Response<BaseResponse<BasePaginate<ItemAlbums>>> response) {
+                            if (response.body().getContent().getContent().size() == 0) {
                                 isOver = true;
                                 errr_msg = getString(R.string.err_no_albums_found);
                                 try {
@@ -172,7 +168,7 @@ public class FragmentAlbums extends Fragment {
                                 setEmpty();
                             } else {
                                 page = page + 1;
-                                arrayList.addAll(response.body());
+                                arrayList.addAll(response.body().getContent().getContent());
                                 setAdapter();
                             }
                             progressBar.setVisibility(View.GONE);
@@ -180,7 +176,7 @@ public class FragmentAlbums extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(Call<List<ItemAlbums>> call, Throwable t) {
+                        public void onFailure(Call<BaseResponse<BasePaginate<ItemAlbums>>> call, Throwable t) {
                             errr_msg = getString(R.string.err_server);
                             setEmpty();
                             progressBar.setVisibility(View.GONE);

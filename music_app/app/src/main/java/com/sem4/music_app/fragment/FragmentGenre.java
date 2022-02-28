@@ -2,6 +2,7 @@ package com.sem4.music_app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +27,9 @@ import com.sem4.music_app.item.ItemArtist;
 import com.sem4.music_app.item.ItemGenre;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
+import com.sem4.music_app.response.BasePaginate;
+import com.sem4.music_app.response.BaseResponse;
+import com.sem4.music_app.utils.EndlessRecyclerViewScrollListener;
 import com.sem4.music_app.utils.Methods;
 
 import java.util.ArrayList;
@@ -47,7 +51,7 @@ public class FragmentGenre extends Fragment {
     private GridLayoutManager glm_banner;
 
     private String errr_msg;
-    private int page = 1;
+    private int page = 0;
     private Boolean isOver = false, isScroll = false, isLoading = false;
     private ApiManager apiManager;
 
@@ -91,30 +95,23 @@ public class FragmentGenre extends Fragment {
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setHasFixedSize(true);
 
-//        rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                methods.showInterAd(position,"");
-//            }
-//        }));
-//
-//        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
-//            @Override
-//            public void onLoadMore(int p, int totalItemsCount) {
-//                if (!isOver) {
-//                    if(!isLoading) {
-//                        isLoading = true;
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                isScroll = true;
-//                                loadArtists();
-//                            }
-//                        }, 0);
-//                    }
-//                }
-//            }
-//        });
+        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
+            @Override
+            public void onLoadMore(int p, int totalItemsCount) {
+                if (!isOver) {
+                    if(!isLoading) {
+                        isLoading = true;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                isScroll = true;
+                                loadArtists();
+                            }
+                        }, 0);
+                    }
+                }
+            }
+        });
 
         loadArtists();
 
@@ -161,11 +158,11 @@ public class FragmentGenre extends Fragment {
                 rv.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
             }
-            apiManager.listGenre()
-                    .enqueue(new Callback<List<ItemGenre>>() {
+            apiManager.listGenre(page, 15)
+                    .enqueue(new Callback<BaseResponse<BasePaginate<ItemGenre>>>() {
                         @Override
-                        public void onResponse(Call<List<ItemGenre>> call, Response<List<ItemGenre>> response) {
-                            if (response.body().size() == 0) {
+                        public void onResponse(Call<BaseResponse<BasePaginate<ItemGenre>>> call, Response<BaseResponse<BasePaginate<ItemGenre>>> response) {
+                            if (response.body().getContent().getContent().size() == 0) {
                                 isOver = true;
                                 errr_msg = getString(R.string.err_no_artist_found);
 //                                    try {
@@ -176,7 +173,7 @@ public class FragmentGenre extends Fragment {
                                 setEmpty();
                             } else {
                                 page = page + 1;
-                                arrayList.addAll(response.body());
+                                arrayList.addAll(response.body().getContent().getContent());
                                 setAdapter();
                             }
                             progressBar.setVisibility(View.GONE);
@@ -184,7 +181,7 @@ public class FragmentGenre extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(Call<List<ItemGenre>> call, Throwable t) {
+                        public void onFailure(Call<BaseResponse<BasePaginate<ItemGenre>>> call, Throwable t) {
                             errr_msg = getString(R.string.err_server);
                             setEmpty();
                             progressBar.setVisibility(View.GONE);

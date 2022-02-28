@@ -71,6 +71,13 @@
             android:name=".activity.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan|adjustNothing" />
+
+        <receiver android:name=".receiver.MediaButtonIntentReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

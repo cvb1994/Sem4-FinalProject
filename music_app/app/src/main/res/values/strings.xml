@@ -28,9 +28,10 @@
     <string name="see_all">Xem tất cả</string>
     <string name="search">Search</string>
     <string name="err_server">Không thể kết nối đến server</string>
-    <string name="recent">Recent</string>
+    <string name="recent">Gần đây</string>
+    <string name="chart">BXH</string>
     <string name="categories">Categories</string>
-    <string name="latest">Latest</string>
+    <string name="latest">Mới nhất</string>
     <string name="exit">Thoát ứng dụng</string>
     <string name="sure_exit">Bạn có chắc chắc muốn thoát?</string>
     <string name="cancel">Hủy bỏ</string>
@@ -98,7 +99,7 @@
     <string name="add_to_queue">Add to Queue</string>
     <string name="rateapp">Rate App</string>
     <string name="shareapp">Share App</string>
-    <string name="trending_songs">Trending Songs</string>
+    <string name="trending_songs">Thịnh hành</string>
     <string name="all_songs">Tất cả bài hát</string>
     <string name="banner">Banner</string>
     <string name="downloads">Tải xuống</string>
@@ -196,4 +197,6 @@
     <string name="username">Tên đăng nhập</string>
     <string name="first_name">Họ</string>
     <string name="last_name">Tên</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

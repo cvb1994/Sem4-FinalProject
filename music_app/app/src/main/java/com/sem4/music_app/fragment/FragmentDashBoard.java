@@ -11,47 +11,50 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.sem4.bottomnavigationlib.SpaceItem;
+import com.sem4.bottomnavigationlib.SpaceNavigationView;
+import com.sem4.bottomnavigationlib.SpaceOnClickListener;
 import com.sem4.music_app.R;
 import com.sem4.music_app.activity.MainActivity;
 import com.sem4.music_app.activity.OfflineMusicActivity;
 
 public class FragmentDashBoard extends Fragment {
-//
-//    static SpaceNavigationView spaceNavigationView;
-//    private FragmentManager fm;
-//
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//
-//        View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
-//        setHasOptionsMenu(true);
-//
-//        fm = getFragmentManager();
-//
-//        spaceNavigationView = rootView.findViewById(R.id.space);
-//        spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
-//        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.home), R.mipmap.ic_home_bottom));
-//        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.recent), R.mipmap.ic_recent));
-//        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.categories), R.mipmap.ic_categories));
-//        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.latest), R.mipmap.ic_latest));
-//
-//        FragmentHome f1 = new FragmentHome();
-//        loadFrag(f1, getString(R.string.home));
-//
-//        spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
-//            @Override
-//            public void onCentreButtonClick() {
-//                Intent intent = new Intent(getActivity(), OfflineMusicActivity.class);
-//                startActivity(intent);
-//            }
-//
-//            @Override
-//            public void onItemClick(int itemIndex, String itemName) {
-//                switch (itemIndex) {
-//                    case 0:
-//                        FragmentHome f1 = new FragmentHome();
-//                        loadFrag(f1, getString(R.string.home));
-//                        break;
+
+    static SpaceNavigationView spaceNavigationView;
+    private FragmentManager fm;
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        setHasOptionsMenu(true);
+
+        fm = getActivity().getSupportFragmentManager();
+
+        spaceNavigationView = rootView.findViewById(R.id.space);
+        spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
+        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.home), R.mipmap.ic_home_bottom));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.recent), R.mipmap.ic_recent));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.chart), R.drawable.ic_chart));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.latest), R.mipmap.ic_latest));
+
+        FragmentHome f1 = new FragmentHome();
+        loadFrag(f1, getString(R.string.home));
+
+        spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
+            @Override
+            public void onCentreButtonClick() {
+                Intent intent = new Intent(getActivity(), OfflineMusicActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onItemClick(int itemIndex, String itemName) {
+                switch (itemIndex) {
+                    case 0:
+                        FragmentHome f1 = new FragmentHome();
+                        loadFrag(f1, getString(R.string.home));
+                        break;
 //                    case 1:
 //                        FragmentRecentSongs frecent = new FragmentRecentSongs();
 //                        loadFrag(frecent, getString(R.string.recently_played));
@@ -64,30 +67,30 @@ public class FragmentDashBoard extends Fragment {
 //                        FragmentLatest flatest = new FragmentLatest();
 //                        loadFrag(flatest, getString(R.string.latest));
 //                        break;
-//                }
-//            }
-//
-//            @Override
-//            public void onItemReselected(int itemIndex, String itemName) {
-//
-//            }
-//        });
-//
-//        return rootView;
-//    }
-//
-//    public void loadFrag(Fragment f1, String name) {
-//        FragmentTransaction ft = fm.beginTransaction();
-//        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//        if (name.equals(getString(R.string.search))) {
-//            ft.hide(fm.getFragments().get(fm.getBackStackEntryCount()));
-//            ft.add(R.id.fragment_dash, f1, name);
-//            ft.addToBackStack(name);
-//        } else {
-//            ft.replace(R.id.fragment_dash, f1, name);
-//        }
-//        ft.commit();
-//
-//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(name);
-//    }
+                }
+            }
+
+            @Override
+            public void onItemReselected(int itemIndex, String itemName) {
+
+            }
+        });
+
+        return rootView;
+    }
+
+    public void loadFrag(Fragment f1, String name) {
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        if (name.equals(getString(R.string.search))) {
+            ft.hide(fm.getFragments().get(fm.getBackStackEntryCount()));
+            ft.add(R.id.fragment_dash, f1, name);
+            ft.addToBackStack(name);
+        } else {
+            ft.replace(R.id.fragment_dash, f1, name);
+        }
+        ft.commit();
+
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(name);
+    }
 }
