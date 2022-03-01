@@ -64,7 +64,13 @@ public class AlbumService implements IAlbumService {
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
-		
+		if(page.getNumber() == 0) {
+			pageDto.setFirst(true);
+			pageDto.setLast(false);
+		} else if(page.getNumber() == page.getTotalPages()) {
+			pageDto.setFirst(false);
+			pageDto.setLast(true);
+		}
 		res.setStatus(true);
 		res.setContent(pageDto);
 		return res;

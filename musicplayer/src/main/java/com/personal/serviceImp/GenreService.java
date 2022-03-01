@@ -18,6 +18,7 @@ import com.personal.dto.ResponseDto;
 import com.personal.entity.Genre;
 import com.personal.entity.SystemParam;
 import com.personal.mapper.GenreMapper;
+import com.personal.musicplayer.specification.GenreSpecification;
 import com.personal.repository.GenreRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.service.IGenreService;
@@ -28,6 +29,8 @@ import com.personal.utils.Utilities;
 public class GenreService implements IGenreService{
 	@Autowired
 	private GenreRepository genreRepo;
+	@Autowired
+	private GenreSpecification genreSpec;
 	@Autowired
 	private SystemParamRepository systemRepo;
 	@Autowired
@@ -49,7 +52,7 @@ public class GenreService implements IGenreService{
 	@Override
 	public ResponseDto gets(GenreDto criteria) {
 		ResponseDto res = new ResponseDto();
-		Page<Genre> page = genreRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(),Sort.by("id").descending()));
+		Page<Genre> page = genreRepo.findAll(genreSpec.filter(criteria) ,PageRequest.of(criteria.getPage(), criteria.getSize(),Sort.by("id").descending()));
 		List<GenreDto> list = page.getContent().stream().map(genreMapper::entityToDto).collect(Collectors.toList());
 		
 		PageDto pageDto = new PageDto();
@@ -59,6 +62,13 @@ public class GenreService implements IGenreService{
 		pageDto.setPage(page.getNumber());
 		pageDto.setSize(page.getSize());
 		pageDto.setTotalPages(page.getTotalPages());
+		if(page.getNumber() == 0) {
+			pageDto.setFirst(true);
+			pageDto.setLast(false);
+		} else if(page.getNumber() == page.getTotalPages()-1) {
+			pageDto.setFirst(false);
+			pageDto.setLast(true);
+		}
 		res.setStatus(true);
 		res.setContent(pageDto);
 		return res;

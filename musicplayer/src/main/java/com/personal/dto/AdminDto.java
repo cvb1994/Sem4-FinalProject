@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class AdminDto extends BaseDto{
-	public int id;
-	public String username;		//required
-	public String password;		//required
+	private int id;
+	private String username;		//required
+	private String password;		//required
+	private String jwt;
+	
 }

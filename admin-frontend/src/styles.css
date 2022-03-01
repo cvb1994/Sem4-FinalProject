@@ -1,1 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+.dropdown-menu > li > a.item-dropdown:hover {
+    background-image: none;
+    background-color: #a36c6cb2;
+}

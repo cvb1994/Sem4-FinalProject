@@ -1,10 +1,26 @@
 <div class="page-breadcrumb bg-white">
-    <div class="row align-items-center">
-        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-            <h4 class="page-title">Danh sách thể loại</h4>
+    <form class="form-group" [formGroup]="genreForm" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title">Search</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Genre Name</label>
+                            <input type="text" formControlName="name" class="form-control" id="name" name="name" placeholder="Insert name">
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-right">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-    </div>
+    </form>
     <!-- /.col-lg-12 -->
 </div>
 <!-- ============================================================== -->
@@ -20,6 +36,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
+                <h3 class="box-title">Genre List</h3>
                 <a class="btn btn-primary" [routerLink]="['/form-genre']">Add New</a>
                 <div class="table-responsive">
                     <table class="table text-nowrap">
@@ -33,7 +50,7 @@
                         </thead>
                         <tbody *ngFor="let genre of listGenre; let i = index">
                             <tr>
-                                <td class="text-center">{{i+1}}</td>
+                                <td class="text-center">{{(currentPage*5)+i+1}}</td>
                                 <td class="text-center">
                                     <img [src]="genre.avatar" alt="" class="img-fluid" style="height: 100px;">
                                 </td>
@@ -44,7 +61,8 @@
                                           Action
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                          <li><a class="dropdown-item" [routerLink]="['/form-genre/',genre.id]">Edit</a></li>
+                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-genre/',genre.id]">Edit</a></li>
+                                          <li><a class="dropdown-item item-dropdown" (click)="onDelete(genre.id)">Delete</a></li>
                                         </ul>
                                       </div>
                                 </td>
@@ -52,6 +70,19 @@
                             
                         </tbody>
                     </table>
+                    <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
+                        <ul class="pagination ">
+                          <li class="page-item ">
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Previous</button>
+                          </li>
+                          <li class="page-item active">
+                            <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
+                          </li>
+                          <li class="page-item">
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Next</button>
+                          </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

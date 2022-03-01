@@ -1,3 +1,4 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
 <div class="page-breadcrumb bg-white">
     <div class="row align-items-center">
         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
@@ -21,25 +22,29 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="#" id="createForm">
-                        <form class="form-group" [formGroup]="genreForm" (ngSubmit)="onSubmit()">
-                            <input type="hidden" formControlName="id">
+                    <form class="form-group" [formGroup]="genreForm" (ngSubmit)="onSubmit()">
+                        <input type="hidden" formControlName="id">
 
+                        <div class="form-group">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" formControlName="name" class="form-control" id="name" name="name" placeholder="Insert name">
+                            <input
+                                (focusout)="validateName()"
+                                type="text" formControlName="name" class="form-control" required 
+                                id="name" name="name" placeholder="Insert name">
                             <small id="issue-subject" class="text-danger"></small>
+                        </div>
 
+                        <div class="form-group">
                             <label for="avatar" class="form-label">Avatar</label>
-                            <input type="file" (change)="onFileSelect($event)" class="form-control" id="avatar" name="avatar" placeholder="Insert name">
+                            <input type="file" (change)="onFileSelect($event)" class="form-control" id="avatar" name="avatar">
                             <small id="issue-subject" class="text-danger"></small>
-
-                            <div>
-                                <img id="preview" #previewImg [(src)]="editGenre.avatar" [ngStyle]="{'height.px': divStyle}"> 
-                            </div>
-                            
-                            <button  type="submit" id="saveForm" class="btn btn-primary">Save</button>
-                        </form>
+                        </div>
                         
+                        <div>
+                            <img id="preview" #previewImg [ngStyle]="{'height.px': divStyle}"> 
+                        </div>
+                        
+                        <button [disabled]="disableSubmit"  type="submit" id="saveForm" class="btn btn-primary">Save</button>
                     </form>
                 </div>
             </div>

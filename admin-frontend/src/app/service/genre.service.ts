@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GenreService {
+  public genreChanged: Subject<boolean>;
+  public message: Subject<string>;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.genreChanged = new Subject<boolean>();
+    this.message = new Subject<string>();
+  }
   private baseurl = 'http://localhost:8080';
 
   private httpOptions = {
@@ -21,17 +26,19 @@ export class GenreService {
     return this.http.get(url, this.httpOptions);
   }
 
+  public getGenreByPage(form:any): Observable<any>{
+    const url = `${this.baseurl}/api/genre/list`;
+    return this.http.post<any>(url, form);
+  }
+
   public getGenreById(genreId:any): Observable<any>{
     const url = `${this.baseurl}/api/genre/${genreId}`;
     return this.http.get(url, this.httpOptions);
   }
 
-  public postGenre(form:any){
+  public postGenre(form:any): Observable<any>{
     const url = `${this.baseurl}/api/genre`;
-    this.http.post<any>(url, form).subscribe(
-      (res) => console.log(res),
-      (err) => console.log(err)
-    );
+    return this.http.post<any>(url, form);
   }
 
   public updateGenre(form:any){
@@ -40,5 +47,10 @@ export class GenreService {
       (res) => console.log(res),
       (err) => console.log(err)
     );
+  }
+
+  public deleteGenre(genreId : number): Observable<any>{
+    const url = `${this.baseurl}/api/genre/${genreId}`;
+    return this.http.delete(url, this.httpOptions);
   }
 }

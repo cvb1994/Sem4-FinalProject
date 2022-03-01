@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgxSpinnerService } from "ngx-spinner";
 import { GenreService } from 'src/app/service/genre.service';
 
 @Component({
@@ -12,6 +13,7 @@ export class FormGenreComponent implements OnInit {
   public genreId:any;
   public editGenre:any;
   public divStyle:any;
+  disableSubmit : boolean = false;
 
   @ViewChild('previewImg')
   public myImg!: ElementRef;
@@ -24,7 +26,9 @@ export class FormGenreComponent implements OnInit {
 
   constructor(
     private genreSer : GenreService,
-    private _Activatedroute:ActivatedRoute
+    private _Activatedroute:ActivatedRoute,
+    private _router: Router,
+    private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -59,14 +63,37 @@ export class FormGenreComponent implements OnInit {
     if(file.value != ""){
       formData.append('file', this.genreForm.get("avatar")?.value);
     }
-    var id:any = this.genreForm.get("id");
-    if(id == 0){
-      this.genreSer.postGenre(formData);
-    } else {
-      formData.append('createdDate', this.editGenre.createdDate);
-      this.genreSer.updateGenre(formData);
+    var id:any = this.genreForm.get("id")?.value;
+    if(this.validateName()){
+      if(id == 0){
+        this.spinner.show();
+        this.genreSer.postGenre(formData).subscribe((data) =>{
+          if(data.status == true){
+            this.spinner.hide();
+            this._router.navigateByUrl('list-genre')
+            this.genreSer.genreChanged.next(true);
+            this.genreSer.message.next(data.message);
+          }
+        });
+        
+      } else {
+        formData.append('createdDate', this.editGenre.createdDate);
+        this.genreSer.updateGenre(formData);
+      }
     }
-    
   }
+
+  public validateName() : boolean{
+    var check = this.genreForm.get("name")?.value;
+    if(check == ""){
+      (document.getElementById('issue-subject') as HTMLImageElement).innerText = "Vui lòng nhập tên thể loại";
+      this.disableSubmit = true;
+      return false;
+    }
+    (document.getElementById('issue-subject') as HTMLImageElement).innerText = "";
+    this.disableSubmit = false;
+    return true;
+  }
+
 
 }
