@@ -77,7 +77,7 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
 //            startAdTimeCount();
 //        }
 //
-//        loadDashboardFrag();
+        loadDashboardFrag();
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -85,8 +85,8 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
 
         switch (id) {
             case R.id.nav_home:
-//                FragmentDashBoard f_home = new FragmentDashBoard();
-//                loadFrag(f_home, getString(R.string.dashboard), fm);
+                FragmentDashBoard f_home = new FragmentDashBoard();
+                loadFrag(f_home, getString(R.string.dashboard), fm);
                 break;
             case R.id.nav_albums:
                 FragmentAlbums f_album = new FragmentAlbums();
@@ -148,11 +148,11 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
         return true;
     }
 
-//    private void loadDashboardFrag() {
-//        FragmentDashBoard f1 = new FragmentDashBoard();
-//        loadFrag(f1, getResources().getString(R.string.dashboard), fm);
-//        navigationView.setCheckedItem(R.id.nav_home);
-//    }
+    private void loadDashboardFrag() {
+        FragmentDashBoard f1 = new FragmentDashBoard();
+        loadFrag(f1, getResources().getString(R.string.dashboard), fm);
+        navigationView.setCheckedItem(R.id.nav_home);
+    }
 
     public void loadFrag(Fragment f1, String name, FragmentManager fm) {
         selectedFragment = name;
@@ -163,7 +163,7 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
         FragmentTransaction ft = fm.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         if (!name.equals(getString(R.string.dashboard))) {
-//            ft.hide(fm.getFragments().get(fm.getBackStackEntryCount()));
+            ft.hide(fm.getFragments().get(fm.getBackStackEntryCount()));
             ft.add(R.id.fragment, f1, name);
             ft.addToBackStack(name);
         } else {

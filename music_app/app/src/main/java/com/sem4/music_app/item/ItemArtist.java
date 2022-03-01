@@ -1,6 +1,8 @@
 package com.sem4.music_app.item;
 
-public class ItemArtist {
+import java.io.Serializable;
+
+public class ItemArtist implements Serializable {
     private Integer id;
     private String name;
     private String avatar;

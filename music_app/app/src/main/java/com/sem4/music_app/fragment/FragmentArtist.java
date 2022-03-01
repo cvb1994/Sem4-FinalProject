@@ -23,10 +23,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sem4.music_app.R;
+import com.sem4.music_app.activity.MainActivity;
 import com.sem4.music_app.adapter.AdapterArtist;
+import com.sem4.music_app.interfaces.OnClickListener;
 import com.sem4.music_app.item.ItemArtist;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
+import com.sem4.music_app.response.BasePaginate;
+import com.sem4.music_app.response.BaseResponse;
+import com.sem4.music_app.utils.EndlessRecyclerViewScrollListener;
 import com.sem4.music_app.utils.Methods;
 
 import java.util.ArrayList;
@@ -48,7 +53,7 @@ public class FragmentArtist extends Fragment {
     private GridLayoutManager glm_banner;
 
     private String errr_msg;
-    private int page = 1;
+    private int page = 0;
     private Boolean isOver = false, isScroll = false, isLoading = false;
     private ApiManager apiManager;
 
@@ -57,16 +62,16 @@ public class FragmentArtist extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_categories, container, false);
         apiManager = Common.getAPI();
         methods = new Methods(getActivity());
-//        methods = new Methods(getActivity(), new InterAdListener() {
+//        methods = new Methods(getActivity(), new OnClickListener() {
 //            @Override
 //            public void onClick(int position, String type) {
 //                FragmentAlbumsByArtist f_alb = new FragmentAlbumsByArtist();
 //                Bundle bundle = new Bundle();
 //                bundle.putSerializable("item", arrayList.get(position));
 //                f_alb.setArguments(bundle);
-//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 //                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                ft.hide(getFragmentManager().getFragments().get(getFragmentManager().getBackStackEntryCount()));
+//                ft.hide(getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getBackStackEntryCount()));
 //                ft.add(R.id.fragment, f_alb, getString(R.string.albums));
 //                ft.addToBackStack(getString(R.string.albums));
 //                ft.commit();
@@ -92,30 +97,23 @@ public class FragmentArtist extends Fragment {
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setHasFixedSize(true);
 
-//        rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                methods.showInterAd(position,"");
-//            }
-//        }));
-//
-//        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
-//            @Override
-//            public void onLoadMore(int p, int totalItemsCount) {
-//                if (!isOver) {
-//                    if(!isLoading) {
-//                        isLoading = true;
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                isScroll = true;
-//                                loadArtists();
-//                            }
-//                        }, 0);
-//                    }
-//                }
-//            }
-//        });
+        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
+            @Override
+            public void onLoadMore(int p, int totalItemsCount) {
+                if (!isOver) {
+                    if(!isLoading) {
+                        isLoading = true;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                isScroll = true;
+                                loadArtists();
+                            }
+                        }, 0);
+                    }
+                }
+            }
+        });
 
         loadArtists();
 
@@ -162,11 +160,11 @@ public class FragmentArtist extends Fragment {
                 rv.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
             }
-            apiManager.listArtist()
-                    .enqueue(new Callback<List<ItemArtist>>() {
+            apiManager.listArtist(page, 15)
+                    .enqueue(new Callback<BaseResponse<BasePaginate<ItemArtist>>>() {
                         @Override
-                        public void onResponse(Call<List<ItemArtist>> call, Response<List<ItemArtist>> response) {
-                            if (response.body().size() == 0) {
+                        public void onResponse(Call<BaseResponse<BasePaginate<ItemArtist>>> call, Response<BaseResponse<BasePaginate<ItemArtist>>> response) {
+                            if(response.body().getContent().getContent().size() == 0){
                                 isOver = true;
                                 errr_msg = getString(R.string.err_no_artist_found);
 //                                    try {
@@ -175,9 +173,9 @@ public class FragmentArtist extends Fragment {
 //                                        e.printStackTrace();
 //                                    }
                                 setEmpty();
-                            } else {
+                            }else{
                                 page = page + 1;
-                                arrayList.addAll(response.body());
+                                arrayList.addAll(response.body().getContent().getContent());
                                 setAdapter();
                             }
                             progressBar.setVisibility(View.GONE);
@@ -185,7 +183,7 @@ public class FragmentArtist extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(Call<List<ItemArtist>> call, Throwable t) {
+                        public void onFailure(Call<BaseResponse<BasePaginate<ItemArtist>>> call, Throwable t) {
                             errr_msg = getString(R.string.err_server);
                             setEmpty();
                             progressBar.setVisibility(View.GONE);

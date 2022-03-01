@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "music_app"
 include ':app'
+include ':bottomnavigationlib'

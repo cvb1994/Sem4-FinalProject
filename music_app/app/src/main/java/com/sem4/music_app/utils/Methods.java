@@ -2,10 +2,13 @@ package com.sem4.music_app.utils;
 
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
@@ -17,22 +20,40 @@ import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import com.sem4.music_app.R;
 import com.sem4.music_app.activity.LoginActivity;
+import com.sem4.music_app.interfaces.OnClickListener;
+import com.sem4.music_app.item.ItemSong;
 import com.sem4.music_app.item.ItemUser;
 import com.yakivmospan.scytale.Crypto;
 import com.yakivmospan.scytale.Options;
 import com.yakivmospan.scytale.Store;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import javax.crypto.SecretKey;
+import javax.net.ssl.HttpsURLConnection;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -45,6 +66,7 @@ public class Methods {
 
     private Context context;
     private DBHelper dbHelper;
+    private OnClickListener onClickListener;
     private SecretKey key;
 
     public Methods(Context context, Boolean flag) {
@@ -55,6 +77,11 @@ public class Methods {
     public Methods(Context context) {
         this.context = context;
         dbHelper = new DBHelper(context);
+    }
+
+    public Methods(Context context, OnClickListener onClickListener) {
+        this.context = context;
+        this.onClickListener = onClickListener;
     }
 
     public void forceRTLIfSupported(Window window) {
@@ -210,4 +237,38 @@ public class Methods {
         columnWidth = point.x;
         return columnWidth;
     }
+
+    public Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            InputStream input;
+            if(Constant.SERVER_URL.contains("https://")) {
+                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                input = connection.getInputStream();
+            } else {
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                input = connection.getInputStream();
+            }
+            return BitmapFactory.decodeStream(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public GradientDrawable getGradientDrawable(int first, int second) {
+        GradientDrawable gd = new GradientDrawable();
+        gd.setCornerRadius(15);
+        gd.setColors(new int[]{first, second});
+        gd.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+        gd.setOrientation(GradientDrawable.Orientation.BOTTOM_TOP);
+        gd.mutate();
+        return gd;
+    }
+
+
 }

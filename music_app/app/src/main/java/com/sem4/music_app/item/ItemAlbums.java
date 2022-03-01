@@ -1,10 +1,13 @@
 package com.sem4.music_app.item;
 
+import java.util.List;
+
 public class ItemAlbums {
     private Integer id;
     private String name;
     private String avatar;
     private ItemArtist artist;
+    private List<ItemSong> songs;
 
     public ItemArtist getArtist() {
         return artist;
@@ -36,5 +39,13 @@ public class ItemAlbums {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public List<ItemSong> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<ItemSong> songs) {
+        this.songs = songs;
     }
 }
