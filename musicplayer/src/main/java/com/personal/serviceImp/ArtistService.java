@@ -18,6 +18,7 @@ import com.personal.dto.ResponseDto;
 import com.personal.entity.Artist;
 import com.personal.entity.SystemParam;
 import com.personal.mapper.ArtistMapper;
+import com.personal.musicplayer.specification.ArtistSpecification;
 import com.personal.repository.ArtistRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.service.IArtistService;
@@ -28,6 +29,8 @@ import com.personal.utils.Utilities;
 public class ArtistService implements IArtistService{
 	@Autowired
 	private ArtistRepository artistRepo;
+	@Autowired
+	private ArtistSpecification artistSpec;
 	@Autowired
 	private SystemParamRepository systemRepo;
 	@Autowired
@@ -49,7 +52,7 @@ public class ArtistService implements IArtistService{
 	@Override
 	public ResponseDto gets(ArtistDto criteria) {
 		ResponseDto res = new ResponseDto();
-		Page<Artist> page = artistRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(),Sort.by("id").descending()));
+		Page<Artist> page = artistRepo.findAll(artistSpec.filter(criteria), PageRequest.of(criteria.getPage(), criteria.getSize(),Sort.by("id").descending()));
 		List<ArtistDto> list = page.getContent().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
 		
 		PageDto pageDto = new PageDto();
@@ -61,9 +64,8 @@ public class ArtistService implements IArtistService{
 		pageDto.setTotalPages(page.getTotalPages());
 		if(page.getNumber() == 0) {
 			pageDto.setFirst(true);
-			pageDto.setLast(false);
-		} else if(page.getNumber() == page.getTotalPages()-1) {
-			pageDto.setFirst(false);
+		}
+		if(page.getNumber() == page.getTotalPages()-1) {
 			pageDto.setLast(true);
 		}
 		res.setStatus(true);

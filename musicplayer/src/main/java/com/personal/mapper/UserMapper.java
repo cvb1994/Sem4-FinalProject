@@ -16,7 +16,7 @@ public interface UserMapper {
 	User dtoToEntity(UserDto dto);
 	
 	@Mapping(target = "songs", expression = "java(null)")
-	@Mapping(target = "user", expression = "java(null)")
+//	@Mapping(target = "user", expression = "java(null)")
 	PlayListDto playListToPlayListDto(PlayList playList);
 	
 	@Mapping(target = "user", expression = "java(null)")

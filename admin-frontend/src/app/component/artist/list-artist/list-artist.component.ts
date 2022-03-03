@@ -1,26 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { GenreService } from 'src/app/service/genre.service';
+import { ArtistService } from 'src/app/service/artist.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2'
 
 @Component({
-  selector: 'app-list-genre',
-  templateUrl: './list-genre.component.html',
-  styleUrls: ['./list-genre.component.css']
+  selector: 'app-list-artist',
+  templateUrl: './list-artist.component.html',
+  styleUrls: ['./list-artist.component.css']
 })
-export class ListGenreComponent implements OnInit {
-  public listGenre : any;
+export class ListArtistComponent implements OnInit {
+  public listArtist : any;
   public currentPage : any = 0;
   previousPageDisable : any = false;
   nextPageDisable : any = false;
 
-  genreForm = new FormGroup({
+  artistFormSearch = new FormGroup({
     name: new FormControl(''),
+    gender: new FormControl(''),
+    nationality: new FormControl('')
   });
 
-  constructor(
-    private genreSer : GenreService
-  ) { }
+
+  constructor(private artistSer: ArtistService) { }
 
   ngOnInit(): void {
     var formData = new FormData();
@@ -29,12 +30,12 @@ export class ListGenreComponent implements OnInit {
   }
 
   public refreshDataOnChange(){
-    this.genreSer.genreChanged.subscribe((data:boolean) =>{
+    this.artistSer.artistChanged.subscribe((data:boolean) =>{
       if(data){
         var formData = new FormData();
         this.loadListData(formData);
 
-        this.genreSer.message.subscribe((message:string) =>{
+        this.artistSer.message.subscribe((message:string) =>{
           if(message != "" || message != null){
             this.simpleAlert(message);
           }
@@ -44,8 +45,8 @@ export class ListGenreComponent implements OnInit {
   }
 
   public loadListData(form:any){
-    this.genreSer.getGenreByPage(form).subscribe((data) =>{
-      this.listGenre = data.content.content;
+    this.artistSer.getArtists(form).subscribe((data) =>{
+      this.listArtist = data.content.content;
       this.currentPage = data.content.page;
       if(data.content.first == true && data.content.last == true){
         this.previousPageDisable = true;
@@ -67,35 +68,12 @@ export class ListGenreComponent implements OnInit {
     Swal.fire(message);
   }
 
-  alertConfirmationDelete(genreId : number){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Your Action cannot be rollback.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    }).then((result) => {
-      if (result.value) {
-        this.genreSer.deleteGenre(genreId).subscribe((data) =>{
-          if(data.status == true){
-            Swal.fire(
-              'Success!',
-              data.message,
-              'success'
-            )
-            window.location.reload();
-          }
-        })
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire(
-          'Cancelled',
-          'Performed action record present in cloud and databstore.)',
-          'error'
-        )
-      }
-    })
-
+  onSubmit() {
+    const searchForm = new FormData();
+    searchForm.append('name', this.artistFormSearch.get("name")?.value);
+    searchForm.append('gender', this.artistFormSearch.get("gender")?.value);
+    searchForm.append('nationality', this.artistFormSearch.get("nationality")?.value);
+    this.loadListData(searchForm);
   }
 
   public nextPage(){
@@ -112,17 +90,6 @@ export class ListGenreComponent implements OnInit {
     var form = new FormData();
     form.append('page', page);
     this.loadListData(form);
-  }
-
-  onSubmit() {
-    const searchForm = new FormData();
-    searchForm.append('name', this.genreForm.get("name")?.value);
-    this.loadListData(searchForm);
-  }
-
-  onDelete(genreId: number){
-    console.log(genreId);
-    this.alertConfirmationDelete(genreId);
   }
 
 }

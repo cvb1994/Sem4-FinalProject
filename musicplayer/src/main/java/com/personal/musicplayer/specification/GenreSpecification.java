@@ -19,7 +19,7 @@ public class GenreSpecification {
             List<Predicate> predicates = new ArrayList<>();
             
             if(StringUtils.isNoneBlank(criteria.getName())) {
-            	predicates.add(cb.like(root.get("name"), "%" + criteria.getName().toUpperCase() + "%"));
+            	predicates.add(cb.like(cb.upper(root.get("name")), "%" + criteria.getName().toUpperCase() + "%"));
             }
             predicates.add(cb.equal(root.get("deleted"), false));
             

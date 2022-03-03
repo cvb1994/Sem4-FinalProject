@@ -225,9 +225,8 @@ public class PaymentService implements IPaymentService {
 		pageDto.setTotalPages(page.getTotalPages());
 		if(page.getNumber() == 0) {
 			pageDto.setFirst(true);
-			pageDto.setLast(false);
-		} else if(page.getNumber() == page.getTotalPages()-1) {
-			pageDto.setFirst(false);
+		}
+		if(page.getNumber() == page.getTotalPages()-1) {
 			pageDto.setLast(true);
 		}
 		res.setStatus(true);

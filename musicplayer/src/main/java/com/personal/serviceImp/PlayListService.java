@@ -32,7 +32,9 @@ public class PlayListService implements IPlayListService{
 	@Autowired
 	private SongRepository songRepo;
 	@Autowired
-	private PlayListMapper playListMapper;;
+	private PlayListMapper playListMapper;
+	
+	private final String PLAYLIST_LIKE = "playlist-like";
 
 	@Override
 	public ResponseDto findByUser(int userId) {
@@ -58,9 +60,8 @@ public class PlayListService implements IPlayListService{
 		pageDto.setTotalPages(page.getTotalPages());
 		if(page.getNumber() == 0) {
 			pageDto.setFirst(true);
-			pageDto.setLast(false);
-		} else if(page.getNumber() == page.getTotalPages()-1) {
-			pageDto.setFirst(false);
+		}
+		if(page.getNumber() == page.getTotalPages()-1) {
 			pageDto.setLast(true);
 		}
 		res.setStatus(true);
@@ -170,6 +171,76 @@ public class PlayListService implements IPlayListService{
 			return res;
 		}
 		res.setMessage("Không tìm thấy playlist");
+		res.setStatus(false);
+		return res;
+	}
+
+	@Override
+	public ResponseDto addRemoveToFavoritePlaylist(PlayListDto model) {
+		ResponseDto res = new ResponseDto();
+		
+		Song song = songRepo.findById(model.getSongId()).get();
+		
+		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndName(model.getUserId(), PLAYLIST_LIKE);
+		if(optPlayList.isPresent()) {
+			PlayList playlist = optPlayList.get();
+			List<Song> listSong = playlist.getSongs();
+			if(listSong.contains(song)) {
+				listSong.remove(song);
+			} else {
+				listSong.add(song);
+			}
+			playlist.setSongs(listSong);
+			playListRepo.save(playlist);
+		} else {
+			PlayList playlist = new PlayList();
+			playlist.setName(PLAYLIST_LIKE);
+			
+			User user = userRepo.findById(model.getUserId()).get();
+			playlist.setUser(user);
+			
+			List<Song> list = new ArrayList<>();
+			list.add(song);
+			playlist.setSongs(list);
+			playListRepo.save(playlist);
+		}
+		
+		res.setStatus(true);
+		return res;
+	}
+
+	@Override
+	public ResponseDto getFavoritePlaylistUser(int userId) {
+		ResponseDto res = new ResponseDto();
+		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndName(userId, PLAYLIST_LIKE);
+		if(optPlayList.isPresent()) {
+			PlayListDto playlistDto = optPlayList.map(playListMapper::entityToDto).orElse(null);
+			res.setStatus(true);
+			res.setContent(playlistDto);
+			return res;
+		}
+		
+		res.setStatus(false);
+		res.setMessage("Chưa có danh sách yêu thích");
+		return res;
+	}
+
+	@Override
+	public ResponseDto checkFavoriteSong(int userId, int songId) {
+		ResponseDto res = new ResponseDto();
+		Song song = songRepo.findById(songId).get();
+		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndName(userId, PLAYLIST_LIKE);
+		if(optPlayList.isPresent()) {
+			PlayList playList = optPlayList.get();
+			List<Song> listSong = playList.getSongs();
+			if(listSong.contains(song)) {
+				res.setStatus(true);
+			} else {
+				res.setStatus(false);
+			}
+			
+			return res;
+		}
 		res.setStatus(false);
 		return res;
 	}

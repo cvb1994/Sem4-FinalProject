@@ -10,4 +10,8 @@ public interface IPlayListService {
 	public ResponseDto create(PlayListDto model);
 	public ResponseDto update(PlayListDto model);
 	public ResponseDto delete(int id);
+	public ResponseDto addRemoveToFavoritePlaylist(PlayListDto model);
+	public ResponseDto getFavoritePlaylistUser(int userId);
+	public ResponseDto checkFavoriteSong(int userId, int songId);
+	
 }

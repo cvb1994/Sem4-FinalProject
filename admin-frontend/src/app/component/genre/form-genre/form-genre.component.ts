@@ -13,16 +13,17 @@ export class FormGenreComponent implements OnInit {
   public genreId:any;
   public editGenre:any;
   public divStyle:any;
-  disableSubmit : boolean = false;
 
   @ViewChild('previewImg')
   public myImg!: ElementRef;
 
   genreForm = new FormGroup({
     id: new FormControl('0'),
-    name: new FormControl(''),
+    name: new FormControl('', Validators.required),
     avatar: new FormControl(''),
   });
+
+  get name(){return this.genreForm.get('name')};
 
   constructor(
     private genreSer : GenreService,
@@ -64,36 +65,20 @@ export class FormGenreComponent implements OnInit {
       formData.append('file', this.genreForm.get("avatar")?.value);
     }
     var id:any = this.genreForm.get("id")?.value;
-    if(this.validateName()){
-      if(id == 0){
-        this.spinner.show();
-        this.genreSer.postGenre(formData).subscribe((data) =>{
-          if(data.status == true){
-            this.spinner.hide();
-            this._router.navigateByUrl('list-genre')
-            this.genreSer.genreChanged.next(true);
-            this.genreSer.message.next(data.message);
-          }
-        });
-        
-      } else {
-        formData.append('createdDate', this.editGenre.createdDate);
-        this.genreSer.updateGenre(formData);
-      }
+    if(id == 0){
+      this.spinner.show();
+      this.genreSer.postGenre(formData).subscribe((data) =>{
+        if(data.status == true){
+          this.spinner.hide();
+          this._router.navigateByUrl('list-genre')
+          this.genreSer.genreChanged.next(true);
+          this.genreSer.message.next(data.message);
+        }
+      });
+      
+    } else {
+      formData.append('createdDate', this.editGenre.createdDate);
+      this.genreSer.updateGenre(formData);
     }
   }
-
-  public validateName() : boolean{
-    var check = this.genreForm.get("name")?.value;
-    if(check == ""){
-      (document.getElementById('issue-subject') as HTMLImageElement).innerText = "Vui lòng nhập tên thể loại";
-      this.disableSubmit = true;
-      return false;
-    }
-    (document.getElementById('issue-subject') as HTMLImageElement).innerText = "";
-    this.disableSubmit = false;
-    return true;
-  }
-
-
 }
