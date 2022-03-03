@@ -95,7 +95,6 @@ export class ListGenreComponent implements OnInit {
         )
       }
     })
-
   }
 
   public nextPage(){

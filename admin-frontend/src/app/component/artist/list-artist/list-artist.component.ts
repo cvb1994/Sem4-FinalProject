@@ -92,4 +92,38 @@ export class ListArtistComponent implements OnInit {
     this.loadListData(form);
   }
 
+  onDelete(artistId: number){
+    this.alertConfirmationDelete(artistId);
+  }
+
+  alertConfirmationDelete(artistId : number){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Your Action cannot be rollback.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.value) {
+        this.artistSer.deleteArtist(artistId).subscribe((data) =>{
+          if(data.status == true){
+            Swal.fire(
+              'Success!',
+              data.message,
+              'success'
+            )
+            window.location.reload();
+          }
+        })
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire(
+          'Cancelled',
+          'Performed action record present in cloud and databstore.)',
+          'error'
+        )
+      }
+    })
+  }
+
 }

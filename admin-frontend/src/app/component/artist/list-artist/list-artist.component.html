@@ -53,7 +53,7 @@
         <div class="col-sm-12">
             <div class="white-box">
                 <h3 class="box-title">Artist List</h3>
-                <a class="btn btn-primary" [routerLink]="['/form-genre']">Add New</a>
+                <a class="btn btn-primary" [routerLink]="['/form-artist']">Add New</a>
                 <div class="table-responsive">
                     <table class="table text-nowrap">
                         <thead>
@@ -83,8 +83,8 @@
                                           Action
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-genre/',artist.id]">Edit</a></li>
-                                          <!-- <li><a class="dropdown-item item-dropdown" (click)="onDelete(genre.id)">Delete</a></li> -->
+                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-artist/',artist.id]">Edit</a></li>
+                                          <li><a class="dropdown-item item-dropdown" (click)="onDelete(artist.id)">Delete</a></li>
                                         </ul>
                                       </div>
                                 </td>

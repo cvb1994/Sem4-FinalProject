@@ -39,11 +39,15 @@
                             <small id="issue-subject" class="text-danger"></small>
                         </div>
                         
-                        <div>
+                        <div class="text-center">
                             <img id="preview" #previewImg [ngStyle]="{'height.px': divStyle}"> 
                         </div>
+
+                        <div class="col-md-12 text-center">
+                            <button style="margin-top: 10px;" [disabled]="genreForm.invalid" type="submit" id="saveForm" class="btn btn-primary">Save</button>
+                        </div>
                         
-                        <button [disabled]="genreForm.invalid"  type="submit" id="saveForm" class="btn btn-primary">Save</button>
+                        
                     </form>
                 </div>
             </div>

@@ -40,7 +40,8 @@ export class FormGenreComponent implements OnInit {
           this.editGenre = data.content;
           this.genreForm.get("id")?.setValue(data.content.id);
           this.genreForm.get("name")?.setValue(data.content.name);
-          this.divStyle = 300;
+          this.myImg.nativeElement.src = data.content.avatar;
+          this.divStyle = 200;
           console.log(this.editGenre);
         });
       }
@@ -52,7 +53,7 @@ export class FormGenreComponent implements OnInit {
       const file = event.target.files[0];
       this.genreForm.get('avatar')?.setValue(file);
       this.myImg.nativeElement.src = URL.createObjectURL(file);
-      this.divStyle = 300;
+      this.divStyle = 200;
     }
   }
 
