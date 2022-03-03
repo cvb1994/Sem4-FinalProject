@@ -58,7 +58,7 @@ public class ArtistController {
 	
 	@PutMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<?> update(@ModelAttribute ArtistDto model) throws IOException{
-		return ResponseEntity.ok(artistSer.create(model));
+		return ResponseEntity.ok(artistSer.update(model));
 	}
 	
 	@DeleteMapping(value = "/{artistId}")

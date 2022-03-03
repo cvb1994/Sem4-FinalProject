@@ -87,15 +87,22 @@ export class FormArtistComponent implements OnInit {
       this.artistSer.postArtist(formData).subscribe((data) =>{
         if(data.status == true){
           this.spinner.hide();
-          this._router.navigateByUrl('list-genre')
+          this._router.navigateByUrl('list-artist')
           this.artistSer.artistChanged.next(true);
           this.artistSer.message.next(data.message);
         }
       });
-      
     } else {
       formData.append('createdDate', this.editArtist.createdDate);
-      this.artistSer.updateArtist(formData);
+      this.spinner.show();
+      this.artistSer.updateArtist(formData).subscribe((data) => {
+        if(data.status == true){
+          this.spinner.hide();
+          this._router.navigateByUrl('list-artist')
+          this.artistSer.artistChanged.next(true);
+          this.artistSer.message.next(data.message);
+        }
+      })
     }
   }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ArtistService } from 'src/app/service/artist.service';
+import { UtilitiesService } from 'src/app/service/utilities.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2'
 
@@ -13,6 +14,7 @@ export class ListArtistComponent implements OnInit {
   public currentPage : any = 0;
   previousPageDisable : any = false;
   nextPageDisable : any = false;
+  listCountries : any;
 
   artistFormSearch = new FormGroup({
     name: new FormControl(''),
@@ -21,12 +23,16 @@ export class ListArtistComponent implements OnInit {
   });
 
 
-  constructor(private artistSer: ArtistService) { }
+  constructor(
+    private artistSer: ArtistService,
+    private utilSer : UtilitiesService
+  ) { }
 
   ngOnInit(): void {
     var formData = new FormData();
     this.loadListData(formData);
     this.refreshDataOnChange();
+    this.listCountries = this.utilSer.getListCountries();
   }
 
   public refreshDataOnChange(){
@@ -38,6 +44,7 @@ export class ListArtistComponent implements OnInit {
         this.artistSer.message.subscribe((message:string) =>{
           if(message != "" || message != null){
             this.simpleAlert(message);
+            console.log("da vao thong bao");
           }
         })
       }

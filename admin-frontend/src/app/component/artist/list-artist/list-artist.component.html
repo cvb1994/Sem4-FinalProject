@@ -14,18 +14,20 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="name" class="form-label">Gender</label>
+                            <label for="gender" class="form-label">Gender</label>
                             <select formControlName="gender" class="form-select">
                                 <option value="">Select Gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="name" class="form-label">Nationality</label>
-                            <input type="text" formControlName="nationality" class="form-control" placeholder="Insert name">
+                            <label for="nationality" class="form-label">Nationality</label>
+                            <select formControlName="nationality" class="form-select">
+                                <option *ngFor="let item of listCountries" value="{{item.name}}">{{item.name}}</option>
+                            </select>
                         </div>
                     </div>
                 </div>
