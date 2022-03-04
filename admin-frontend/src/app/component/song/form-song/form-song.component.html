@@ -1,0 +1,187 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<div class="page-breadcrumb bg-white">
+    <div class="row align-items-center">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h4  id="page-title"  class="page-title">Add New</h4>
+        </div>
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+            <div class="d-md-flex">
+                <!-- <ol class="breadcrumb ms-auto">
+                    <li><a href="#" class="fw-normal">Dashboard</a></li>
+                </ol>
+                <a href="https://www.wrappixel.com/templates/ampleadmin/" target="_blank"
+                    class="btn btn-danger  d-none d-md-block pull-right ms-3 hidden-xs hidden-sm waves-effect waves-light text-white">Upgrade
+                    to Pro</a> -->
+            </div>
+        </div>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form class="form-group" [formGroup]="songForm" (ngSubmit)="onSubmit()">
+                        <input type="hidden" formControlName="id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" formControlName="title" class="form-control" required placeholder="Insert title">
+                                    <small id="issue-subject" *ngIf="title?.invalid && title?.touched" class="text-danger">Title is required</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="composer" class="form-label">Composer</label>
+                                    <input type="text" formControlName="composer" class="form-control" placeholder="Insert composer">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Time Play</label>
+                                    <input type="text" formControlName="timePlay" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Album</label>
+                                    <select formControlName="albumId" class="form-select">
+                                        <option value="0">Select Album</option>
+                                        <option *ngFor="let album of listAlbum" value="{{album.id}}">{{album.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <mat-form-field class="example-chip-list" appearance="fill">
+                                    <mat-label>List Artist</mat-label>
+                                    <mat-chip-list #chipListArtist aria-label="Artist selection">
+                                      <mat-chip
+                                        *ngFor="let artist of listArtistSelect"
+                                        (removed)="removeArtist(artist)">
+                                        <mat-chip-avatar>
+                                            <img [src]="artist.avatar" style="max-width: 100%; max-height: 100%;">
+                                        </mat-chip-avatar>
+                                        {{artist.name}}
+                                        <button matChipRemove>
+                                          <mat-icon>cancel</mat-icon>
+                                        </button>
+                                      </mat-chip>
+                                      <input
+                                        placeholder="Add Artist"
+                                        #artistSelectInput
+                                        [formControl]="artistSelectCtrl"
+                                        [matAutocomplete]="autoArtist"
+                                        [matChipInputFor]="chipListArtist"
+                                        >
+                                    </mat-chip-list>
+                                    <mat-autocomplete #autoArtist="matAutocomplete" (optionSelected)="selectedArtist($event)">
+                                      <mat-option *ngFor="let artist of filterListArtist | async" [value]="artist">
+                                        {{artist.name}}
+                                      </mat-option>
+                                    </mat-autocomplete>
+                                  </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <mat-form-field class="example-chip-list" appearance="fill">
+                                    <mat-label>List Genre</mat-label>
+                                    <mat-chip-list #chipListGenre aria-label="Fruit selection">
+                                      <mat-chip
+                                        *ngFor="let genre of listGenreSelect"
+                                        (removed)="removeGenre(genre)">
+                                        {{genre.name}}
+                                        <button matChipRemove>
+                                          <mat-icon>cancel</mat-icon>
+                                        </button>
+                                      </mat-chip>
+                                      <input
+                                        placeholder="Add Artist"
+                                        #genreSelectInput
+                                        [formControl]="genreSelectCtrl"
+                                        [matAutocomplete]="autoGenre"
+                                        [matChipInputFor]="chipListGenre"
+                                        >
+                                    </mat-chip-list>
+                                    <mat-autocomplete #autoGenre="matAutocomplete" (optionSelected)="selectedGenre($event)">
+                                      <mat-option *ngFor="let genre of filterListgenre | async" [value]="genre">
+                                        {{genre.name}}
+                                      </mat-option>
+                                    </mat-autocomplete>
+                                  </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">File Audio</label>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <input type="file" (change)="onAudioSelect($event)" class="form-control" id="audioFile" name="audioFile">
+                                        </div>
+                                        <div *ngIf="audioLoaded" class="col-md-2 text-center">
+                                            <a (click)="onPlayPause()"  type="button" id="previewAudio">
+                                                <i *ngIf="!audioPlaying" class="fa fa-play fa-2x"></i>
+                                                <i *ngIf="audioPlaying" class="fa fa-pause fa-2x"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Vip</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check-inline">
+                                        <input class="form-check-input" type="radio" value="true" name="vipOnly" formControlName="vipOnly" id="flexRadioDefault1" [checked]="songForm.get('vipOnly')?.value == true">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                        <input class="form-check-input" type="radio" value="false" name="vipOnly" formControlName="vipOnly" id="flexRadioDefault2" [checked]="songForm.get('vipOnly')?.value == false">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="avatar" class="form-label">Avatar</label>
+                                    <input type="file" (change)="onFileSelect($event)" class="form-control" id="avatar" name="avatar">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="text-center">
+                                    <img id="preview" #previewImg [ngStyle]="{'height.px': divStyle}"> 
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button style="margin-top: 10px;" [disabled]="songForm.invalid " type="submit" id="saveForm" class="btn btn-primary">Save</button>
+                            </div>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

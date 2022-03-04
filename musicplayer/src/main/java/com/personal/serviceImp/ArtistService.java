@@ -131,6 +131,7 @@ public class ArtistService implements IArtistService{
 		Artist savedArtist =  artistRepo.save(artist);
 		if(savedArtist != null) {
 			res.setStatus(true);
+			res.setMessage("Tạo mới thành công");
 			return res;
 		}
 		
@@ -201,6 +202,15 @@ public class ArtistService implements IArtistService{
 	@Override
 	public List<ArtistDto> getTop10ByModifiedDateDesc() {
 		return artistRepo.findTop10ByOrderByModifiedDateDesc().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+	}
+
+	@Override
+	public ResponseDto getListArtistOrderByName() {
+		ResponseDto res = new ResponseDto();
+		List<ArtistDto> list =  artistRepo.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
 	}
 
 }

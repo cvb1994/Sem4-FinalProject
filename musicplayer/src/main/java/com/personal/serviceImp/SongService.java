@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.personal.common.FileExtensionEnum;
 import com.personal.common.FileTypeEnum;
 import com.personal.common.RoleEnum;
 import com.personal.common.SystemParamEnum;
@@ -28,6 +30,7 @@ import com.personal.entity.Song;
 import com.personal.entity.SystemParam;
 import com.personal.entity.User;
 import com.personal.mapper.SongMapper;
+import com.personal.musicplayer.specification.SongSpecification;
 import com.personal.repository.AlbumRepository;
 import com.personal.repository.ArtistRepository;
 import com.personal.repository.GenreRepository;
@@ -43,6 +46,8 @@ import com.personal.utils.Utilities;
 public class SongService implements ISongService{
 	@Autowired
 	private SongRepository songRepo;
+	@Autowired
+	private SongSpecification songSpec;
 	@Autowired
 	private AlbumRepository	albumRepo;
 	@Autowired
@@ -74,7 +79,35 @@ public class SongService implements ISongService{
 	@Override
 	public ResponseDto gets(SongDto criteria, Authentication auth) {
 		ResponseDto res = new ResponseDto();
-		Page<Song> page = songRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
+		
+		Specification<Song> specification = null; 
+		if(criteria.getArtistIds() != null) {
+			for(int id : criteria.getArtistIds()) {
+				Specification<Song> artistSpec = songSpec.filterArtist(id);
+				if(specification == null) {
+					specification = artistSpec;
+				} else {
+					specification = specification.and(artistSpec);
+				}
+			}
+		}
+		if(criteria.getGenreIds() != null) {
+			for(int id : criteria.getGenreIds()) {
+				Specification<Song> genreSpec = songSpec.filterGenre(id);
+				if(specification == null) {
+					specification = genreSpec;
+				} else {
+					specification = specification.and(genreSpec);
+				}
+			}
+		}
+		if(specification == null) {
+			specification = songSpec.filter(criteria);
+		} else {
+			specification = specification.and(songSpec.filter(criteria));
+		}
+		
+		Page<Song> page = songRepo.findAll(specification, PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 		
 		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
@@ -204,7 +237,7 @@ public class SongService implements ISongService{
 			song.setImage(album.getAvatar());
 		} else {
 			String extension = util.getFileExtension(model.getFile());
-			if(extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg") || extension.equalsIgnoreCase("png")) {
+			if(FileExtensionEnum.IMAGE.name.equals(extension)) {
 				String name = util.nameIdentifier(model.getTitle(), extension);
 				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.SONG_IMAGE.name, name);
 				if(imageUrl == null) {
@@ -226,7 +259,7 @@ public class SongService implements ISongService{
 			return res;
 		}
 		String extension = util.getFileExtension(model.getMp3());
-		if(extension.equalsIgnoreCase("mp3")) {
+		if(FileExtensionEnum.AUDIO.name.equals(extension)) {
 			String name = util.nameIdentifier(model.getTitle(), extension);
 			String audioUrl = uploadCloudStorage.uploadObject(model.getMp3(), name);
 			if(audioUrl == null) {

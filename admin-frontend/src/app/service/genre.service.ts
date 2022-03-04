@@ -41,16 +41,18 @@ export class GenreService {
     return this.http.post<any>(url, form);
   }
 
-  public updateGenre(form:any){
+  public updateGenre(form:any): Observable<any>{
     const url = `${this.baseurl}/api/genre`;
-    this.http.put<any>(url, form).subscribe(
-      (res) => console.log(res),
-      (err) => console.log(err)
-    );
+    return this.http.put<any>(url, form);
   }
 
   public deleteGenre(genreId : number): Observable<any>{
     const url = `${this.baseurl}/api/genre/${genreId}`;
     return this.http.delete(url, this.httpOptions);
+  }
+
+  public getGenresOrderByName(): Observable<any>{
+    const url = `${this.baseurl}/api/genre/getAll`;
+    return this.http.get(url, this.httpOptions);
   }
 }

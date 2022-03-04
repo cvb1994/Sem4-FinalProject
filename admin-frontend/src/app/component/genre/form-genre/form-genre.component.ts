@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/fo
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from "ngx-spinner";
 import { GenreService } from 'src/app/service/genre.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-form-genre',
@@ -74,12 +75,30 @@ export class FormGenreComponent implements OnInit {
           this._router.navigateByUrl('list-genre')
           this.genreSer.genreChanged.next(true);
           this.genreSer.message.next(data.message);
+        } else {
+          this.spinner.hide();
+          this.simpleAlert(data.message);
         }
       });
       
     } else {
+      this.spinner.show();
       formData.append('createdDate', this.editGenre.createdDate);
-      this.genreSer.updateGenre(formData);
+      this.genreSer.updateGenre(formData).subscribe((data) =>{
+        if(data.status == true){
+          this.spinner.hide();
+          this._router.navigateByUrl('list-genre')
+          this.genreSer.genreChanged.next(true);
+          this.genreSer.message.next(data.message);
+        } else {
+          this.spinner.hide();
+          this.simpleAlert(data.message);
+        }
+      });
     }
+  }
+
+  simpleAlert(message:string){
+    Swal.fire(message);
   }
 }

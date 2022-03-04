@@ -218,4 +218,13 @@ public class GenreService implements IGenreService{
 		res.setStatus(false);
 		return res;
 	}
+
+	@Override
+	public ResponseDto getAllOrderByName() {
+		ResponseDto res = new ResponseDto();
+		List<GenreDto> list = genreRepo.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(genreMapper::entityToDto).collect(Collectors.toList());
+		res.setStatus(true);
+		res.setContent(list);
+		return res;
+	}
 }

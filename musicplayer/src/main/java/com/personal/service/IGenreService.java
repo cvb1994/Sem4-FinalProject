@@ -11,4 +11,5 @@ public interface IGenreService {
 	public ResponseDto create(GenreDto model);
 	public ResponseDto update(GenreDto model);
 	public ResponseDto delete(int genreId);
+	public ResponseDto getAllOrderByName();
 }

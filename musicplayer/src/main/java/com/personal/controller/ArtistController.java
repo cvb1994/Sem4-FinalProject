@@ -65,4 +65,9 @@ public class ArtistController {
 	public ResponseEntity<?> delete(@PathVariable int artistId){
 		return ResponseEntity.ok(artistSer.delete(artistId));
 	}
+	
+	@GetMapping(value = "/getAll")
+	public ResponseEntity<?> getAllArtist(){
+		return ResponseEntity.ok(artistSer.getListArtistOrderByName());
+	}
 }

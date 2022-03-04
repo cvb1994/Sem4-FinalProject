@@ -1,0 +1,124 @@
+<div class="page-breadcrumb bg-white">
+    <form class="form-group" [formGroup]="songFormSearch" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title">Search</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Song Name</label>
+                            <input type="text" formControlName="title" class="form-control" placeholder="Insert name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="composer" class="form-label">Composer</label>
+                                <input type="text" formControlName="composer" class="form-control" placeholder="Insert composer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="artist" class="form-label">Artist</label>
+                            <select formControlName="artistIds" class="form-select">
+                                <option *ngFor="let item of listArtist" value="{{item.name}}">{{item.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="genre" class="form-label">Genre</label>
+                            <select formControlName="genreIds" class="form-select">
+                                <option *ngFor="let item of listGenre" value="{{item.name}}">{{item.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-right">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <h3 class="box-title">Song List</h3>
+                <a class="btn btn-primary" [routerLink]="['/form-song']">Add New</a>
+                <div class="table-responsive">
+                    <table class="table text-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0 text-center">#</th>
+                                <th class="border-top-0 text-center">Avatar</th>
+                                <th class="border-top-0 text-center">Title</th>
+                                <th class="border-top-0 text-center">Composer</th>
+                                <th class="border-top-0 text-center">Album</th>
+                                <th class="border-top-0 text-center">Total Listen</th>
+                                <th class="border-top-0 text-center">Vip</th>
+                                <th class="border-top-0 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngFor="let song of listSong; let i = index">
+                            <tr>
+                                <td class="text-center">{{(currentPage*5)+i+1}}</td>
+                                <td class="text-center">
+                                    <img [src]="song.image" alt="" class="img-fluid" style="height: 100px;">
+                                </td>
+                                <td class="text-center">{{song.title}}</td>
+                                <td class="text-center">{{song.composer}}</td>
+                                <td class="text-center">{{song.album?.name}}</td>
+                                <td class="text-center">{{song.listenCount}}</td>
+                                <td class="text-center">{{song.vipOnly}}</td>
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                          Action
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-song/',song.id]">Edit</a></li>
+                                          <li><a class="dropdown-item item-dropdown" (click)="onDelete(song.id)">Delete</a></li>
+                                        </ul>
+                                      </div>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
+                        <ul class="pagination ">
+                          <li class="page-item ">
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Previous</button>
+                          </li>
+                          <li class="page-item active">
+                            <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
+                          </li>
+                          <li class="page-item">
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Next</button>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

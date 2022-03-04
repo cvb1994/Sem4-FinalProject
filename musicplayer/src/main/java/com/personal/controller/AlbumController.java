@@ -58,11 +58,18 @@ public class AlbumController {
 	
 	@PutMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<?> update(@ModelAttribute AlbumDto model) throws IOException{
-		return ResponseEntity.ok(albumSer.create(model));
+		return ResponseEntity.ok(albumSer.update(model));
 	}
 	
 	@DeleteMapping(value = "/{albumId}")
 	public ResponseEntity<?> delete(@PathVariable int albumId){
 		return ResponseEntity.ok(albumSer.delete(albumId));
 	}
+	
+	@GetMapping(value = "/getAll")
+	public ResponseEntity<?> getAllOrderByName(){
+		return ResponseEntity.ok(albumSer.getAllOrderByName());
+	}
+	
+	
 }

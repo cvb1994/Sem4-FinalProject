@@ -16,4 +16,5 @@ public interface IAlbumService {
 	public ResponseDto delete(int albumId);
 	public List<AlbumDto> getTop5ByModifiedDateDesc();
 	public List<AlbumDto> getTop10ByModifiedDateDesc();
+	public ResponseDto getAllOrderByName();
 }

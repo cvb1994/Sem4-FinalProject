@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from "ngx-spinner";
 import { ArtistService } from 'src/app/service/artist.service';
 import { UtilitiesService } from 'src/app/service/utilities.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-form-artist',
@@ -48,7 +49,9 @@ export class FormArtistComponent implements OnInit {
           this.artistForm.get("id")?.setValue(data.content.id);
           this.artistForm.get("name")?.setValue(data.content.name);
           this.artistForm.get("gender")?.setValue(data.content.gender);
-          this.artistForm.get("birthday")?.setValue(data.content.birthday);
+          if(data.content.birthday != null){
+            this.artistForm.get("birthday")?.setValue(data.content.birthday);
+          }
           this.artistForm.get("description")?.setValue(data.content.description);
           this.artistForm.get("nationality")?.setValue(data.content.nationality);
           this.myImg.nativeElement.src = data.content.avatar;
@@ -86,10 +89,14 @@ export class FormArtistComponent implements OnInit {
       this.spinner.show();
       this.artistSer.postArtist(formData).subscribe((data) =>{
         if(data.status == true){
+          console.log(data);
           this.spinner.hide();
-          this._router.navigateByUrl('list-artist')
           this.artistSer.artistChanged.next(true);
           this.artistSer.message.next(data.message);
+          this._router.navigateByUrl('list-artist');
+        } else {
+          this.spinner.hide();
+          this.simpleAlert(data.message);
         }
       });
     } else {
@@ -97,13 +104,21 @@ export class FormArtistComponent implements OnInit {
       this.spinner.show();
       this.artistSer.updateArtist(formData).subscribe((data) => {
         if(data.status == true){
+          console.log(data);
           this.spinner.hide();
-          this._router.navigateByUrl('list-artist')
+          this._router.navigateByUrl('list-artist');
           this.artistSer.artistChanged.next(true);
           this.artistSer.message.next(data.message);
+        } else {
+          this.spinner.hide();
+          this.simpleAlert(data.message);
         }
       })
     }
+  }
+
+  simpleAlert(message:string){
+    Swal.fire(message);
   }
 
 

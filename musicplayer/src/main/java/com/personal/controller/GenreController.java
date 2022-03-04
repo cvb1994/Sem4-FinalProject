@@ -64,4 +64,9 @@ public class GenreController {
 		return ResponseEntity.ok(genreSer.delete(genreId));
 	}
 	
+	@GetMapping(value = "/getAll")
+	public ResponseEntity<?> getAllGenre(){
+		return ResponseEntity.ok(genreSer.getAllOrderByName());
+	}
+	
 }

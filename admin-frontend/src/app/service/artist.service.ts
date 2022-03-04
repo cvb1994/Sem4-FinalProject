@@ -40,4 +40,11 @@ export class ArtistService {
     const url = `${this.baseurl}/api/artist/${artistId}`;
     return this.http.delete(url);
   }
+
+  public getArtistsOrderByName(): Observable<any>{
+    const url = `${this.baseurl}/api/artist/getAll`;
+    return this.http.get<any>(url);
+  }
+
+
 }

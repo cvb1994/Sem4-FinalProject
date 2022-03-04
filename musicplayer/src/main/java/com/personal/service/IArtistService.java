@@ -14,4 +14,5 @@ public interface IArtistService {
 	public ResponseDto update(ArtistDto model);
 	public ResponseDto delete(int artistId);
 	public List<ArtistDto> getTop10ByModifiedDateDesc();
+	public ResponseDto getListArtistOrderByName();
 }

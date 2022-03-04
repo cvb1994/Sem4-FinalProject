@@ -1,37 +1,46 @@
 import { Component, OnInit } from '@angular/core';
+import { SongService } from 'src/app/service/song.service';
 import { ArtistService } from 'src/app/service/artist.service';
-import { UtilitiesService } from 'src/app/service/utilities.service';
+import { GenreService } from 'src/app/service/genre.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2'
 
 @Component({
-  selector: 'app-list-artist',
-  templateUrl: './list-artist.component.html',
-  styleUrls: ['./list-artist.component.css']
+  selector: 'app-list-song',
+  templateUrl: './list-song.component.html',
+  styleUrls: ['./list-song.component.css']
 })
-export class ListArtistComponent implements OnInit {
-  public listArtist : any;
+export class ListSongComponent implements OnInit {
+  public listSong : any;
   public currentPage : any = 0;
   previousPageDisable : any = false;
   nextPageDisable : any = false;
-  listCountries : any;
+  listArtist:any;
+  listGenre:any;
 
-  artistFormSearch = new FormGroup({
-    name: new FormControl(''),
-    gender: new FormControl(''),
-    nationality: new FormControl('')
+  songFormSearch = new FormGroup({
+    title: new FormControl(''),
+    composer: new FormControl(''),
+    artistIds: new FormControl(''),
+    genreIds: new FormControl(''),
   });
 
   constructor(
-    private artistSer: ArtistService,
-    private utilSer : UtilitiesService
+    private songSer : SongService,
+    private artistSer : ArtistService,
+    private genreSer : GenreService
   ) { }
 
   ngOnInit(): void {
     var formData = new FormData();
     this.loadListData(formData);
     this.refreshDataOnChange();
-    this.listCountries = this.utilSer.getListCountries();
+    this.artistSer.getArtistsOrderByName().subscribe((data) =>{
+      this.listArtist = data.content;
+    })
+    this.genreSer.getGenresOrderByName().subscribe((data) =>{
+      this.listGenre = data.content;
+    })
     this.artistSer.message.subscribe((message:string) =>{
       if(message != "" || message != null){
         this.simpleAlert(message);
@@ -40,7 +49,7 @@ export class ListArtistComponent implements OnInit {
   }
 
   public refreshDataOnChange(){
-    this.artistSer.artistChanged.subscribe((data:boolean) =>{
+    this.songSer.songChanged.subscribe((data:boolean) =>{
       if(data){
         var formData = new FormData();
         this.loadListData(formData);
@@ -49,8 +58,9 @@ export class ListArtistComponent implements OnInit {
   }
 
   public loadListData(form:any){
-    this.artistSer.getArtists(form).subscribe((data) =>{
-      this.listArtist = data.content.content;
+    this.songSer.getSongs(form).subscribe((data) =>{
+      this.listSong = data.content.content;
+      console.log(this.listSong);
       this.currentPage = data.content.page;
       if(data.content.first == true && data.content.last == true){
         this.previousPageDisable = true;
@@ -74,9 +84,10 @@ export class ListArtistComponent implements OnInit {
 
   onSubmit() {
     const searchForm = new FormData();
-    searchForm.append('name', this.artistFormSearch.get("name")?.value);
-    searchForm.append('gender', this.artistFormSearch.get("gender")?.value);
-    searchForm.append('nationality', this.artistFormSearch.get("nationality")?.value);
+    searchForm.append('title', this.songFormSearch.get("title")?.value);
+    searchForm.append('composer', this.songFormSearch.get("composer")?.value);
+    searchForm.append('artistIds', this.songFormSearch.get("artistIds")?.value);
+    searchForm.append('genreIds', this.songFormSearch.get("genreIds")?.value);
     this.loadListData(searchForm);
   }
 
@@ -96,8 +107,8 @@ export class ListArtistComponent implements OnInit {
     this.loadListData(form);
   }
 
-  onDelete(artistId: number){
-    this.alertConfirmationDelete(artistId);
+  onDelete(songId: number){
+    this.alertConfirmationDelete(songId);
   }
 
   alertConfirmationDelete(artistId : number){
@@ -110,7 +121,7 @@ export class ListArtistComponent implements OnInit {
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.value) {
-        this.artistSer.deleteArtist(artistId).subscribe((data) =>{
+        this.songSer.deleteSong(artistId).subscribe((data) =>{
           if(data.status == true){
             Swal.fire(
               'Success!',

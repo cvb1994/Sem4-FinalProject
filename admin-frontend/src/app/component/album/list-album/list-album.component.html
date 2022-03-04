@@ -1,0 +1,105 @@
+<div class="page-breadcrumb bg-white">
+    <form class="form-group" [formGroup]="albumFormSearch" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title">Search</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Album Name</label>
+                            <input type="text" formControlName="name" class="form-control" placeholder="Insert name">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nationality" class="form-label">Artist</label>
+                            <select formControlName="artistId" class="form-select">
+                                <option *ngFor="let item of listArtist" value="{{item.id}}">{{item.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-right">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <h3 class="box-title">Album List</h3>
+                <a class="btn btn-primary" [routerLink]="['/form-album']">Add New</a>
+                <div class="table-responsive">
+                    <table class="table text-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0 text-center">#</th>
+                                <th class="border-top-0 text-center">Avatar</th>
+                                <th class="border-top-0 text-center">Name</th>
+                                <th class="border-top-0 text-center">Artist</th>
+                                <th class="border-top-0 text-center">Release Date</th>
+                                <th class="border-top-0 text-center">Total Time</th>
+                                <th class="border-top-0 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngFor="let album of listAlbum; let i = index">
+                            <tr>
+                                <td class="text-center">{{(currentPage*5)+i+1}}</td>
+                                <td class="text-center">
+                                    <img [src]="album.avatar" alt="" class="img-fluid" style="height: 100px;">
+                                </td>
+                                <td class="text-center">{{album.name}}</td>
+                                <td class="text-center">{{album.artist.name}}</td>
+                                <td class="text-center">{{album.releaseDate}}</td>
+                                <td class="text-center">{{album.totalTime}}</td>
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                          Action
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-album/',album.id]">Edit</a></li>
+                                          <li><a class="dropdown-item item-dropdown" (click)="onDelete(album.id)">Delete</a></li>
+                                        </ul>
+                                      </div>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
+                        <ul class="pagination ">
+                          <li class="page-item ">
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Previous</button>
+                          </li>
+                          <li class="page-item active">
+                            <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
+                          </li>
+                          <li class="page-item">
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Next</button>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
