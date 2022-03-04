@@ -4,15 +4,7 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.personal.config.AppProperties;
 import com.personal.dto.AlbumDto;
@@ -70,6 +62,21 @@ public class AlbumController {
 	public ResponseEntity<?> getAllOrderByName(){
 		return ResponseEntity.ok(albumSer.getAllOrderByName());
 	}
-	
-	
+
+	@GetMapping(value = "/byArtistId/{artistId}")
+	public ResponseEntity<?> getAlbumByArtistId(@PathVariable int artistId, @RequestParam(name ="page" ,required = false) Integer page, @RequestParam(name = "size",required = false) Integer size){
+		AlbumDto criteria = new AlbumDto();
+		criteria.setArtistId(artistId);
+		if(page == null) {
+			criteria.setPage(appPropertis.getDefaultPage());
+		}else{
+			criteria.setPage(page);
+		}
+		if(size == null) {
+			criteria.setSize(appPropertis.getDefaultPageSize());
+		}else{
+			criteria.setSize(size);
+		}
+		return ResponseEntity.ok(albumSer.finByArtistId(criteria));
+	}
 }

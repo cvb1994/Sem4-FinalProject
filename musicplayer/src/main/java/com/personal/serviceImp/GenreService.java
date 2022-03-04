@@ -227,4 +227,9 @@ public class GenreService implements IGenreService{
 		res.setContent(list);
 		return res;
 	}
+
+	@Override
+	public Long countGenre() {
+		return genreRepo.count();
+	}
 }

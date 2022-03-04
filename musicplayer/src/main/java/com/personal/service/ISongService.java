@@ -1,5 +1,6 @@
 package com.personal.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
 import com.personal.dto.ResponseDto;
@@ -18,5 +19,10 @@ public interface ISongService {
 	public void increase(int songId);
 	
 	public ResponseDto getTopSongByGenre(String genreName);
-	List<SongDto> ListTrending();
+	List<SongDto> ListTrending(Authentication authentication);
+	public ResponseDto findSongByAlbumId(SongDto criteria, Authentication authentication);
+	public ResponseDto findSongByArtistId(SongDto criteria, Authentication authentication);
+	public ResponseDto findSongByGenreId(SongDto criteria, Authentication authentication);
+	public Long countSong();
+	public void resetListTrending();
 }

@@ -213,4 +213,9 @@ public class ArtistService implements IArtistService{
 		return res;
 	}
 
+	@Override
+	public Long countArtist() {
+		return artistRepo.count();
+	}
+
 }
