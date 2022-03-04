@@ -16,6 +16,7 @@ import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
   templateUrl: './form-song.component.html',
   styleUrls: ['./form-song.component.css']
 })
+
 export class FormSongComponent implements OnInit {
   public songId:any;
   public editSong:any;
@@ -27,6 +28,8 @@ export class FormSongComponent implements OnInit {
   public audioLoaded:boolean = false;
   public audioPlaying:boolean = false;
   public listAlbum:any;
+  private localStorage: Storage = localStorage;
+
 
   artistSelectCtrl = new FormControl();
   filterListArtist: Observable<any>;
@@ -142,11 +145,17 @@ export class FormSongComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getInitData();
+  }
+
+
+  getInitData(){
     this._Activatedroute.paramMap.subscribe(params => {
       this.songId = params.get('songId');
       if(this.songId != null){
         this.songSer.getSongById(this.songId).subscribe((data) =>{
           this.editSong = data.content;
+          console.log(data.content);
           this.songForm.get("id")?.setValue(data.content.id);
           this.songForm.get("title")?.setValue(data.content.title);
           this.songForm.get("composer")?.setValue(data.content.composer);
@@ -164,10 +173,19 @@ export class FormSongComponent implements OnInit {
           data.content.genres.forEach((g: any) => {
             this.listGenreSelect.push(g);
           });
+          this.artistSer.getArtistsOrderByName().subscribe((data) =>{
+            this.listArtist = data.content;
+            this.listArtistSelect.forEach((a:any)=>{
+              this.listArtist = this.listArtist.filter(function(el: { id: number; }){
+                return el.id != a.id;
+              });
+            });
+            console.log(this.listArtist);
+          });
+
         });
       }
     });
-    this.getList();
   }
 
   getList(){
@@ -286,3 +304,4 @@ export class FormSongComponent implements OnInit {
   }
 
 }
+
