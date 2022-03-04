@@ -236,4 +236,33 @@ public class AlbumService implements IAlbumService {
 		return res;
 	}
 
+	@Override
+	public ResponseDto finByArtistId(AlbumDto criteria) {
+		ResponseDto res = new ResponseDto();
+		Page<Album> page = albumRepo.findByArtistId(criteria.getArtistId(), PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
+		List<AlbumDto> list = page.getContent().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		PageDto pageDto = new PageDto();
+		pageDto.setContent(list);
+		pageDto.setNumber(page.getNumber());
+		pageDto.setNumberOfElements(page.getNumberOfElements());
+		pageDto.setPage(page.getNumber());
+		pageDto.setSize(page.getSize());
+		pageDto.setTotalPages(page.getTotalPages());
+		if(page.getNumber() == 0) {
+			pageDto.setFirst(true);
+			pageDto.setLast(false);
+		} else if(page.getNumber() == page.getTotalPages()) {
+			pageDto.setFirst(false);
+			pageDto.setLast(true);
+		}
+		res.setStatus(true);
+		res.setContent(pageDto);
+		return res;
+	}
+
+	@Override
+	public Long coutAlbum() {
+		return albumRepo.count();
+	}
+
 }

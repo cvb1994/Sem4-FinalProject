@@ -6,21 +6,13 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 import com.personal.config.AppProperties;
 import com.personal.dto.SongDto;
@@ -155,7 +147,55 @@ public class SongController {
 	        ex.printStackTrace();
 	     }
 	     return 0L;
-	  }
-	
+	}
+
+	@GetMapping(value = "/byAlbumId/{albumId}")
+	public ResponseEntity<?> getSongsByAlbumId(@PathVariable int albumId, @RequestParam(name ="page" ,required = false) Integer page, @RequestParam(name = "size",required = false) Integer size, Authentication auth){
+		SongDto criteria = new SongDto();
+		criteria.setAlbumId(albumId);
+		if(page == null) {
+			criteria.setPage(appPropertis.getDefaultPage());
+		}else{
+			criteria.setPage(page);
+		}
+		if(size == null) {
+			criteria.setSize(appPropertis.getDefaultPageSize());
+		}else{
+			criteria.setSize(size);
+		}
+		return ResponseEntity.ok(songSer.findSongByAlbumId(criteria, auth));
+	}
+	@GetMapping(value = "/byArtistId/{artistId}")
+	public ResponseEntity<?> getSongsByArtistId(@PathVariable int artistId, @RequestParam(name ="page" ,required = false) Integer page, @RequestParam(name = "size",required = false) Integer size, Authentication auth){
+		SongDto criteria = new SongDto();
+		criteria.setArtistIds(Arrays.asList(artistId));
+		if(page == null) {
+			criteria.setPage(appPropertis.getDefaultPage());
+		}else{
+			criteria.setPage(page);
+		}
+		if(size == null) {
+			criteria.setSize(appPropertis.getDefaultPageSize());
+		}else{
+			criteria.setSize(size);
+		}
+		return ResponseEntity.ok(songSer.findSongByArtistId(criteria, auth));
+	}
+	@GetMapping(value = "/byGenreId/{genreId}")
+	public ResponseEntity<?> getSongsByGenreId(@PathVariable int genreId, @RequestParam(name ="page" ,required = false) Integer page, @RequestParam(name = "size",required = false) Integer size, Authentication auth){
+		SongDto criteria = new SongDto();
+		criteria.setGenreIds(Arrays.asList(genreId));
+		if(page == null) {
+			criteria.setPage(appPropertis.getDefaultPage());
+		}else{
+			criteria.setPage(page);
+		}
+		if(size == null) {
+			criteria.setSize(appPropertis.getDefaultPageSize());
+		}else{
+			criteria.setSize(size);
+		}
+		return ResponseEntity.ok(songSer.findSongByGenreId(criteria, auth));
+	}
 	
 }

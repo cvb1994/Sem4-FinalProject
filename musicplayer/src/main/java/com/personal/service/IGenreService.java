@@ -12,4 +12,5 @@ public interface IGenreService {
 	public ResponseDto update(GenreDto model);
 	public ResponseDto delete(int genreId);
 	public ResponseDto getAllOrderByName();
+	public Long countGenre();
 }

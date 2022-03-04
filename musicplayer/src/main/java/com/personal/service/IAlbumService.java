@@ -17,4 +17,6 @@ public interface IAlbumService {
 	public List<AlbumDto> getTop5ByModifiedDateDesc();
 	public List<AlbumDto> getTop10ByModifiedDateDesc();
 	public ResponseDto getAllOrderByName();
+	public ResponseDto finByArtistId(AlbumDto criteria);
+	public Long coutAlbum();
 }

@@ -14,6 +14,8 @@ import com.personal.entity.Song;
 
 @Mapper(componentModel = "spring")
 public interface AlbumMapper {
+	@Mapping(target = "artist", expression = "java(null)")
+	@Mapping(target = "songs", expression = "java(null)")
 	AlbumDto entityToDto(Album album);
 	Album dtoToEntity(AlbumDto dto);
 	
