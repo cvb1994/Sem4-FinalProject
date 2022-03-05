@@ -25,6 +25,8 @@ export class ListSongComponent implements OnInit {
     genreIds: new FormControl(''),
   });
 
+  toppings = new FormControl();
+
   constructor(
     private songSer : SongService,
     private artistSer : ArtistService,
@@ -40,6 +42,7 @@ export class ListSongComponent implements OnInit {
     })
     this.genreSer.getGenresOrderByName().subscribe((data) =>{
       this.listGenre = data.content;
+      console.log(this.listGenre);
     })
     this.artistSer.message.subscribe((message:string) =>{
       if(message != "" || message != null){

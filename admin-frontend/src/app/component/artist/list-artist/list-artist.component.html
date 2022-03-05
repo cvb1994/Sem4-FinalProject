@@ -8,13 +8,11 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="name" class="form-label">Artist Name</label>
-                            <input type="text" formControlName="name" class="form-control" placeholder="Insert name">
+                            <input type="text" formControlName="name" class="form-control" placeholder="Search Name">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="gender" class="form-label">Gender</label>
                             <select formControlName="gender" class="form-select">
                                 <option value="">Select Gender</option>
                                 <option value="Male">Male</option>
@@ -24,8 +22,8 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="nationality" class="form-label">Nationality</label>
                             <select formControlName="nationality" class="form-select">
+                                <option value="">Select Nationality</option>
                                 <option *ngFor="let item of listCountries" value="{{item.name}}">{{item.name}}</option>
                             </select>
                         </div>
@@ -73,7 +71,7 @@
                             <tr>
                                 <td class="text-center">{{(currentPage*5)+i+1}}</td>
                                 <td class="text-center">
-                                    <img [src]="artist.avatar" alt="" class="img-fluid" style="height: 100px;">
+                                    <img [src]="artist.avatar" alt="" class="img-fluid img-avatar">
                                 </td>
                                 <td class="text-center">{{artist.name}}</td>
                                 <td class="text-center">{{artist.gender}}</td>

@@ -180,27 +180,37 @@ export class FormSongComponent implements OnInit {
                 return el.id != a.id;
               });
             });
-            console.log(this.listArtist);
           });
 
+          this.genreSer.getGenresOrderByName().subscribe((data) =>{
+            this.listGenre = data.content;
+            this.listGenreSelect.forEach((g:any) =>{
+              this.listGenre = this.listGenre.filter(function(el : {id:number;}){
+                return el.id != g.id;
+              })
+            })
+          });
+
+          this.albumSer.getAllOrderByName().subscribe((data)=>{
+            this.listAlbum = data.content;
+          });
+
+        });
+      } else {
+        this.artistSer.getArtistsOrderByName().subscribe((data) =>{
+          this.listArtist = data.content;
+        });
+
+        this.genreSer.getGenresOrderByName().subscribe((data) =>{
+          this.listGenre = data.content;
+        });
+
+        this.albumSer.getAllOrderByName().subscribe((data)=>{
+          this.listAlbum = data.content;
         });
       }
     });
   }
-
-  getList(){
-    this.artistSer.getArtistsOrderByName().subscribe((data) =>{
-      this.listArtist = data.content;
-    });
-    this.genreSer.getGenresOrderByName().subscribe((data) =>{
-      this.listGenre = data.content;
-    });
-    this.albumSer.getAllOrderByName().subscribe((data)=>{
-      this.listAlbum = data.content;
-    });
-  };
-
-
 
   onFileSelect(event:any) {
     if (event.target.files.length > 0) {

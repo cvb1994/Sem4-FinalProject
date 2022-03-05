@@ -8,15 +8,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="name" class="form-label">Song Name</label>
-                            <input type="text" formControlName="title" class="form-control" placeholder="Insert name">
+                            <input type="text" formControlName="title" class="form-control" placeholder="Search Title">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <div class="form-group">
-                                <label for="composer" class="form-label">Composer</label>
-                                <input type="text" formControlName="composer" class="form-control" placeholder="Insert composer">
+                                <input type="text" formControlName="composer" class="form-control" placeholder="Search composer">
                             </div>
                         </div>
                     </div>
@@ -24,16 +22,16 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="artist" class="form-label">Artist</label>
                             <select formControlName="artistIds" class="form-select">
+                                <option value="">Select Artist</option>
                                 <option *ngFor="let item of listArtist" value="{{item.name}}">{{item.name}}</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="genre" class="form-label">Genre</label>
                             <select formControlName="genreIds" class="form-select">
+                                <option value="">Select Genre</option>
                                 <option *ngFor="let item of listGenre" value="{{item.name}}">{{item.name}}</option>
                             </select>
                         </div>
@@ -82,7 +80,7 @@
                             <tr>
                                 <td class="text-center">{{(currentPage*5)+i+1}}</td>
                                 <td class="text-center">
-                                    <img [src]="song.image" alt="" class="img-fluid" style="height: 100px;">
+                                    <img [src]="song.image" alt="" class="img-fluid img-avatar">
                                 </td>
                                 <td class="text-center">{{song.title}}</td>
                                 <td class="text-center">{{song.composer}}</td>
