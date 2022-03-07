@@ -112,6 +112,7 @@ public class PlayListService implements IPlayListService{
 		if(savedPlayList != null) {
 			res.setStatus(true);
 			res.setMessage("Tạo mới thành công");
+			res.setContent(savedPlayList.getId());
 			return res;
 		}
 		res.setMessage("Không thể tạo mới playlist");

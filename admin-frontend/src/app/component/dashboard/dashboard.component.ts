@@ -20,7 +20,6 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.dashboardSer.getDashboard().subscribe((data) => {
       this.listTrending = data.content.listTrending;
-      console.log(data.content);
       this.barChartData.labels = [];
       this.barChartData.datasets[0].data = [];
       this.listTrending.forEach((song:any) => {
@@ -70,11 +69,6 @@ export class DashboardComponent implements OnInit {
     ]
   };
 
-  // events
-  public chartClicked({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
-    console.log(event, active);
-  }
-
   splitStringToArray(title : string):any{
     let listWord = title.split(" ");
     let listArray: any[] = [];
@@ -85,7 +79,6 @@ export class DashboardComponent implements OnInit {
         listArray.push(listWord[i] + " " + listWord[i+1]);
       }
     }
-    console.log(listArray);
     return listArray;
   }
 

@@ -62,6 +62,7 @@ export class ListSongComponent implements OnInit {
   public loadListData(form:any){
     this.songSer.getSongs(form).subscribe((data) =>{
       this.listSong = data.content.content;
+      console.log(data);
       this.currentPage = data.content.page;
       if(data.content.first == true && data.content.last == true){
         this.previousPageDisable = true;

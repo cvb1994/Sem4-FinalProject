@@ -134,7 +134,7 @@
                                         <div class="col-md-10">
                                             <input type="hidden" formControlName="mediaUrl">
                                             <input type="file" (change)="onAudioSelect($event)" class="form-control" id="audioFile" name="audioFile">
-                                            <small *ngIf="mediaUrl?.invalid" class="text-danger">File không hợp lệ</small>
+                                            <small *ngIf="mediaUrl?.invalid && mediaUrl?.touched" class="text-danger">File không hợp lệ</small>
                                         </div>
                                         <div *ngIf="audioLoaded" class="col-md-2 text-center">
                                             <a (click)="onPlayPause()"  type="button" id="previewAudio">

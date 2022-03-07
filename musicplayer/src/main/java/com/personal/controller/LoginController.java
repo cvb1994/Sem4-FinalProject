@@ -46,7 +46,7 @@ public class LoginController {
             SecurityContextHolder.getContext().setAuthentication(authenticate);
             UserPrincipal principal = (UserPrincipal) authenticate.getPrincipal();
             
-            String jwt = tokenProvider.generateToken(principal);
+            String jwt = tokenProvider.generateToken(principal, UserTypeEnum.ADMIN.name);
             ResponseDto res = adminSer.getById(principal.getId());
             AdminDto adminDto = (AdminDto) res.getContent();
             adminDto.setJwt(jwt);
@@ -72,7 +72,7 @@ public class LoginController {
             SecurityContextHolder.getContext().setAuthentication(authenticate);
             UserPrincipal principal = (UserPrincipal) authenticate.getPrincipal();
             
-            String jwt = tokenProvider.generateToken(principal);
+            String jwt = tokenProvider.generateToken(principal, UserTypeEnum.USER.name);
             ResponseDto res = userSer.getById(principal.getId());
             UserDto userDto = (UserDto) res.getContent();
             userDto.setJwtToken(jwt);
