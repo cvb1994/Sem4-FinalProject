@@ -1,0 +1,78 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<div class="page-breadcrumb bg-white">
+    <div class="row align-items-center">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h4  id="page-title" *ngIf="paramId == null" class="page-title">Thêm mới</h4>
+            <h4  id="page-title" *ngIf="paramId != null" class="page-title">Chỉnh sửa</h4>
+        </div>
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+            <div class="d-md-flex">
+                <!-- <ol class="breadcrumb ms-auto">
+                    <li><a href="#" class="fw-normal">Dashboard</a></li>
+                </ol>
+                <a href="https://www.wrappixel.com/templates/ampleadmin/" target="_blank"
+                    class="btn btn-danger  d-none d-md-block pull-right ms-3 hidden-xs hidden-sm waves-effect waves-light text-white">Upgrade
+                    to Pro</a> -->
+            </div>
+        </div>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form class="form-group" [formGroup]="paramForm" (ngSubmit)="onSubmit()">
+                        <input type="hidden" formControlName="id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name" class="form-label">Mức giá</label>
+                                    <input
+                                        type="number" formControlName="price" class="form-control" required 
+                                        id="price" name="price" placeholder="Nhập mức giá">
+                                    <small id="issue-subject" *ngIf="price?.invalid && price?.touched" class="text-danger">Vui lòng nhập mức giá</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="gender" class="form-label">Giảm giá</label>
+                                    <input
+                                        type="number" formControlName="discount" class="form-control"
+                                        id="discount" name="discount" placeholder="Nhập mức giảm giá">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="timeExpire" class="form-label">Thời gian hiệu lực</label>
+                                    <input type="number" formControlName="timeExpire" class="form-control" required placeholder="Nhập thời gian hiệu lực">
+                                    <small id="issue-subject" *ngIf="timeExpire?.invalid && timeExpire?.touched" class="text-danger">Vui lòng nhập thời gian</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="unit" class="form-label">Đơn vị tính</label>
+                                    <select formControlName="unit" class="form-select" required>
+                                        <option value="Day">Ngày</option>
+                                        <option value="Month">Tháng</option>
+                                        <option value="Year">Năm</option>
+                                    </select>
+                                    <small id="issue-subject" *ngIf="unit?.invalid && unit?.touched" class="text-danger">Vui lòng chọn đơn vị thời gian</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button style="margin-top: 10px;" [disabled]="paramForm.invalid " type="submit" id="saveForm" class="btn btn-primary">Save</button>
+                            </div>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

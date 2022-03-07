@@ -70,8 +70,12 @@ public class UserService implements IUserService{
 		List<UserDto> list = page.getContent().stream().map(userMapper::entityToDto).collect(Collectors.toList());
 		LocalDate current = LocalDate.now();
 		list.stream().forEach(u -> {
-			if(current.isBefore(u.getVipExpireDate())) {
-				u.setIsVip(true);
+			if(u.getVipExpireDate() != null) {
+				if(current.isBefore(u.getVipExpireDate())) {
+					u.setIsVip(true);
+				} else {
+					u.setIsVip(false);
+				}
 			} else {
 				u.setIsVip(false);
 			}

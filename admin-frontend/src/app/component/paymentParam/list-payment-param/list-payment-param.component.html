@@ -1,0 +1,71 @@
+<div class="page-breadcrumb bg-white">
+    
+    <!-- /.col-lg-12 -->
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <h3 class="box-title">Payment Param List</h3>
+                <a class="btn btn-primary" [routerLink]="['/form-payment-param']">Add New</a>
+                <div class="table-responsive">
+                    <table class="table text-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0 text-center">#</th>
+                                <th class="border-top-0 text-center">Price</th>
+                                <th class="border-top-0 text-center">Discount</th>
+                                <th class="border-top-0 text-center">Time Expire</th>
+                                <th class="border-top-0 text-center">Unit</th>
+                                <th class="border-top-0 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngFor="let param of listParam; let i = index">
+                            <tr>
+                                <td class="text-center">{{(currentPage*5)+i+1}}</td>
+                                <td class="text-center">{{param.price}}</td>
+                                <td class="text-center">{{param.discount}}%</td>
+                                <td class="text-center">{{param.timeExpire}}</td>
+                                <td class="text-center">{{param.unit}}</td>
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                          <a type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-bars"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-payment-param/',param.id]">Edit</a></li>
+                                          <li><a class="dropdown-item item-dropdown" (click)="onDelete(param.id)">Delete</a></li>
+                                        </ul>
+                                      </div>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
+                        <ul class="pagination ">
+                          <li class="page-item ">
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Previous</button>
+                          </li>
+                          <li class="page-item active">
+                            <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
+                          </li>
+                          <li class="page-item">
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Next</button>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

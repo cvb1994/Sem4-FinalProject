@@ -1,6 +1,7 @@
 package com.personal.serviceImp;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -31,6 +32,7 @@ import com.personal.entity.Payment;
 import com.personal.entity.PaymentParam;
 import com.personal.entity.User;
 import com.personal.mapper.PaymentMapper;
+import com.personal.musicplayer.specification.PaymentSpecification;
 import com.personal.repository.PaymentParamRepository;
 import com.personal.repository.PaymentRepository;
 import com.personal.repository.UserRepository;
@@ -44,6 +46,8 @@ public class PaymentService implements IPaymentService {
 	private VNPayUtils vnPayUtils;
 	@Autowired
 	private PaymentRepository paymentRepo;
+	@Autowired
+	private PaymentSpecification paymentSpec;
 	@Autowired
 	private PaymentParamRepository paymentParamRepo;
 	@Autowired
@@ -78,7 +82,14 @@ public class PaymentService implements IPaymentService {
 		payment.setUser(user);
 		paymentRepo.save(payment);
 
-        int amount = paymentParam.getPrice() * 100;
+		BigDecimal a = new BigDecimal(100);
+		BigDecimal b = new BigDecimal(paymentParam.getDiscount());
+		
+		double percentAfterDiscount = (a.subtract(b).doubleValue())/100;
+				
+		int priceAfterDiscount = (int) (paymentParam.getPrice() * percentAfterDiscount);
+		
+        int amount = priceAfterDiscount * 100;
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
@@ -213,7 +224,7 @@ public class PaymentService implements IPaymentService {
 	public ResponseDto gets(PaymentDto criteria) {
 		ResponseDto res = new ResponseDto();
 		
-		Page<Payment> page = paymentRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
+		Page<Payment> page = paymentRepo.findAll(paymentSpec.filter(criteria), PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<PaymentDto> list = page.getContent().stream().map(paymentMapper::entityToDto).collect(Collectors.toList());
 		
 		PageDto pageDto = new PageDto();

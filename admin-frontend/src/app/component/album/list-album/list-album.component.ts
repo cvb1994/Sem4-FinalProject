@@ -23,15 +23,16 @@ export class ListAlbumComponent implements OnInit {
   
   constructor(
     private albumSer:AlbumService,
-    private artistSer : AlbumService
+    private artistSer : ArtistService
     ) { }
 
   ngOnInit(): void {
     var formData = new FormData();
     this.loadListData(formData);
     this.refreshDataOnChange();
-    this.artistSer.getAllOrderByName().subscribe((data) =>{
+    this.artistSer.getArtistsOrderByName().subscribe((data) =>{
       this.listArtist = data.content;
+      console.log(this.listArtist);
     })
 
     this.albumSer.message.subscribe((data:string) =>{
@@ -105,8 +106,7 @@ export class ListAlbumComponent implements OnInit {
 
   alertConfirmationDelete(artistId : number){
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Your Action cannot be rollback.',
+      title: 'Bạn có chắc muốn xóa?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes',
@@ -116,7 +116,7 @@ export class ListAlbumComponent implements OnInit {
         this.albumSer.deleteAlbum(artistId).subscribe((data) =>{
           if(data.status == true){
             Swal.fire(
-              'Success!',
+              'Thành công!',
               data.message,
               'success'
             )
@@ -125,8 +125,8 @@ export class ListAlbumComponent implements OnInit {
         })
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire(
-          'Cancelled',
-          'Performed action record present in cloud and databstore.)',
+          'Hủy bỏ',
+          'Hành động đã hủy',
           'error'
         )
       }

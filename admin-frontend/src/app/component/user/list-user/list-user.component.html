@@ -1,0 +1,99 @@
+<div class="page-breadcrumb bg-white">
+    <form class="form-group" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title">Search</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <mat-form-field class="example-form-field" appearance="fill">
+                                <mat-label>Search User</mat-label>
+                                <input matInput type="text" [formControl]="search">
+                              </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-right">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <h3 class="box-title">User List</h3>
+                <div class="table-responsive">
+                    <table class="table text-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0 text-center">#</th>
+                                <th class="border-top-0 text-center">Username</th>
+                                <th class="border-top-0 text-center">Full Name</th>
+                                <th class="border-top-0 text-center">Gender</th>
+                                <th class="border-top-0 text-center">Email</th>
+                                <th class="border-top-0 text-center">Phone</th>
+                                <th class="border-top-0 text-center">Birthday</th>
+                                <th class="border-top-0 text-center">VipAvailable</th>
+                                <th class="border-top-0 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngFor="let user of listUser; let i = index">
+                            <tr>
+                                <td class="text-center">{{(currentPage*5)+i+1}}</td>
+                                <td class="text-center">{{user.username}}</td>
+                                <td class="text-center">{{user.firstName}} {{user.lastName}}</td>
+                                <td class="text-center">{{user.gender}}</td>
+                                <td class="text-center">{{user.email}}</td>
+                                <td class="text-center">{{user.phone}}</td>
+                                <td class="text-center">{{user.birthday}}</td>
+                                <td class="text-center">{{user.isVip}}</td>
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <a type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-bars"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                            <li><a class="dropdown-item item-dropdown" [routerLink]="['/list-payment/',user.id]">Payment</a></li>
+                                            <li><a class="dropdown-item item-dropdown" (click)="onDelete(user.id)">Delete</a></li>
+                                        </ul>
+                                      </div>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
+                        <ul class="pagination ">
+                          <li class="page-item ">
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Previous</button>
+                          </li>
+                          <li class="page-item active">
+                            <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
+                          </li>
+                          <li class="page-item">
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Next</button>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

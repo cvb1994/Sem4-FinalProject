@@ -42,9 +42,8 @@ export class ListSongComponent implements OnInit {
     })
     this.genreSer.getGenresOrderByName().subscribe((data) =>{
       this.listGenre = data.content;
-      console.log(this.listGenre);
     })
-    this.artistSer.message.subscribe((message:string) =>{
+    this.songSer.message.subscribe((message:string) =>{
       if(message != "" || message != null){
         this.simpleAlert(message);
       }
@@ -63,7 +62,6 @@ export class ListSongComponent implements OnInit {
   public loadListData(form:any){
     this.songSer.getSongs(form).subscribe((data) =>{
       this.listSong = data.content.content;
-      console.log(this.listSong);
       this.currentPage = data.content.page;
       if(data.content.first == true && data.content.last == true){
         this.previousPageDisable = true;
@@ -116,8 +114,7 @@ export class ListSongComponent implements OnInit {
 
   alertConfirmationDelete(artistId : number){
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Your Action cannot be rollback.',
+      title: 'Bạn có chắc muốn xóa?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes',
@@ -127,7 +124,7 @@ export class ListSongComponent implements OnInit {
         this.songSer.deleteSong(artistId).subscribe((data) =>{
           if(data.status == true){
             Swal.fire(
-              'Success!',
+              'Thành công!',
               data.message,
               'success'
             )
@@ -136,8 +133,8 @@ export class ListSongComponent implements OnInit {
         })
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire(
-          'Cancelled',
-          'Performed action record present in cloud and databstore.)',
+          'Hủy bỏ',
+          'Đã hủy hành động',
           'error'
         )
       }

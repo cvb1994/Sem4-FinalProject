@@ -3,3 +3,7 @@
     max-height: 100px;
     object-fit: cover;
 }
+
+.select-check{
+    width: 100%;
+}

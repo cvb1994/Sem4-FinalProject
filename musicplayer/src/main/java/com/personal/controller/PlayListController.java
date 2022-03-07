@@ -27,7 +27,7 @@ public class PlayListController {
 	@Autowired
 	PlayListService playListSer;
 	
-	@GetMapping(value = "/{userId}")
+	@GetMapping(value = "/list/{userId}")
 	public ResponseEntity<?> getAllByUser(@PathVariable int userId){
 		return ResponseEntity.ok(playListSer.findByUser(userId));
 	}

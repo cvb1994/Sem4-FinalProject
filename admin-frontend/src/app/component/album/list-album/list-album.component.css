@@ -3,3 +3,7 @@
     max-height: 100px;
     object-fit: cover;
 }
+
+.example-form-field{
+    width: 100%;
+}

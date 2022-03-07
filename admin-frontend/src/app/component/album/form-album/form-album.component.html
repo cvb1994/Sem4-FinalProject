@@ -2,8 +2,8 @@
 <div class="page-breadcrumb bg-white">
     <div class="row align-items-center">
         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-            <h4  id="page-title" *ngIf="albumId == null" class="page-title">Add New</h4>
-            <h4  id="page-title" *ngIf="albumId != null" class="page-title">Edit Album</h4>
+            <h4  id="page-title" *ngIf="albumId == null" class="page-title">Thêm mới</h4>
+            <h4  id="page-title" *ngIf="albumId != null" class="page-title">Chỉnh sửa</h4>
         </div>
         <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
             <div class="d-md-flex">
@@ -28,43 +28,43 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name" class="form-label">Name</label>
+                                    <label for="name" class="form-label">Album</label>
                                     <input
                                         type="text" formControlName="name" class="form-control" required 
-                                        id="name" name="name" placeholder="Insert name">
-                                    <small id="issue-subject" *ngIf="name?.invalid && name?.touched" class="text-danger">Name is required</small>
+                                        id="name" name="name" placeholder="Nhập tên album">
+                                    <small id="issue-subject" *ngIf="name?.invalid && name?.touched" class="text-danger">Vui lòng nhập tên album</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="gender" class="form-label">Artist</label>
+                                    <label for="gender" class="form-label">Nghệ sĩ</label>
                                     <select class="form-select" formControlName="artistId">
-                                        <option value="">Select Artist</option>
+                                        <option value="">Lựa chọn nghệ sĩ</option>
                                         <option *ngFor="let item of listArtist" value="{{item.id}}">{{item.name}}</option>
                                     </select>
-                                    <small id="issue-subject" *ngIf="artistId?.invalid && artistId?.touched" class="text-danger">Artist is required</small>
+                                    <small id="issue-subject" *ngIf="artistId?.invalid && artistId?.touched" class="text-danger">Vui lòng chọn nghệ sĩ</small>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="date" class="form-label">Release Date </label>
+                                    <label for="date" class="form-label">Ngày ra mắt</label>
                                     <input type="date" formControlName="releaseDate" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="totalTime" class="form-label">Total time</label>
+                                    <label for="totalTime" class="form-label">Tổng thời gian</label>
                                     <input type="text" formControlName="totalTime" class="form-control">
-                                    <small id="issue-subject" *ngIf="totalTime?.invalid" class="text-danger">Input Format: 1h 1m 1s</small>
+                                    <small id="issue-subject" *ngIf="totalTime?.invalid" class="text-danger">Vui lòng nhập theo định dạng: 1h 1m 1s</small>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="avatar" class="form-label">Avatar</label>
+                                    <label for="avatar" class="form-label">Ảnh đại diện</label>
                                     <input type="file" (change)="onFileSelect($event)" class="form-control" id="avatar" name="avatar">
                                 </div>
                             </div>
@@ -76,7 +76,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <button style="margin-top: 10px;" [disabled]="albumForm.invalid " type="submit" id="saveForm" class="btn btn-primary">Save</button>
+                                <button style="margin-top: 10px;" [disabled]="albumForm.invalid " type="submit" id="saveForm" class="btn btn-primary">Lưu</button>
                             </div>
                             
                         </div>

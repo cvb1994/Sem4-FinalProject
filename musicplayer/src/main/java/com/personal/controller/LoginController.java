@@ -55,7 +55,10 @@ public class LoginController {
 
             return ResponseEntity.ok(res);
         } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username hoặc Password không đúng");
+        	ResponseDto res = new ResponseDto();
+        	res.setStatus(false);
+        	res.setMessage("Username hoặc Password không đúng");
+            return ResponseEntity.ok(res);
         }
     }
     
@@ -78,7 +81,10 @@ public class LoginController {
 
             return ResponseEntity.ok(res);
         } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username hoặc Password không đúng");
+        	ResponseDto res = new ResponseDto();
+        	res.setStatus(false);
+        	res.setMessage("Username hoặc Password không đúng");
+            return ResponseEntity.ok(res);
         }
     }
     

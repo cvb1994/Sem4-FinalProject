@@ -2,8 +2,8 @@
 <div class="page-breadcrumb bg-white">
     <div class="row align-items-center">
         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-            <h4  id="page-title" *ngIf="artistId == null" class="page-title">Add New</h4>
-            <h4  id="page-title" *ngIf="artistId != null" class="page-title">Edit Artist</h4>
+            <h4  id="page-title" *ngIf="artistId == null" class="page-title">Thêm mới</h4>
+            <h4  id="page-title" *ngIf="artistId != null" class="page-title">Chỉnh sửa</h4>
         </div>
         <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
             <div class="d-md-flex">
@@ -28,20 +28,20 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name" class="form-label">Name</label>
+                                    <label for="name" class="form-label">Tên nghệ sĩ</label>
                                     <input
                                         type="text" formControlName="name" class="form-control" required 
-                                        id="name" name="name" placeholder="Insert name">
-                                    <small id="issue-subject" *ngIf="name?.invalid && name?.touched" class="text-danger">Name is required</small>
+                                        id="name" name="name" placeholder="Nhập tên nghệ sĩ">
+                                    <small id="issue-subject" *ngIf="name?.invalid && name?.touched" class="text-danger">Vui lòng nhập tên nghệ sĩ</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="gender" class="form-label">Gender</label>
+                                    <label for="gender" class="form-label">Giới tính</label>
                                     <select class="form-select" formControlName="gender">
-                                        <option value="">Select Gender</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
+                                        <option value="">Lựa chọn</option>
+                                        <option value="Male">Nam</option>
+                                        <option value="Female">Nữ</option>
                                     </select>
                                 </div>
                             </div>
@@ -49,15 +49,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="birthday" class="form-label">Birthday</label>
-                                    <input type="date" formControlName="birthday" class="form-control" placeholder="Insert name">
+                                    <label for="birthday" class="form-label">Ngày sinh</label>
+                                    <input type="date" formControlName="birthday" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="nationality" class="form-label">Nationality</label>
+                                    <label for="nationality" class="form-label">Quốc tịch</label>
                                     <select class="form-select" formControlName="nationality">
-                                        <option value="">Select Country</option>
+                                        <option value="">Lựa chọn quốc tịch</option>
                                         <option *ngFor="let list of listCountries" value="{{list.name}}">{{list.name}}</option>
                                     </select>
                                 </div>
@@ -66,15 +66,15 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea rows="4" formControlName="description" class="form-control" placeholder="Insert description"></textarea>
+                                    <label for="description" class="form-label">Giới thiệu</label>
+                                    <textarea rows="4" formControlName="description" class="form-control" placeholder="Giới thiệu nghệ sĩ"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="avatar" class="form-label">Avatar</label>
+                                    <label for="avatar" class="form-label">Ảnh đại diện</label>
                                     <input type="file" (change)="onFileSelect($event)" class="form-control" id="avatar" name="avatar">
                                 </div>
                             </div>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <button style="margin-top: 10px;" [disabled]="artistForm.invalid " type="submit" id="saveForm" class="btn btn-primary">Save</button>
+                                <button style="margin-top: 10px;" [disabled]="artistForm.invalid " type="submit" id="saveForm" class="btn btn-primary">Lưu</button>
                             </div>
                             
                         </div>

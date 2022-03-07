@@ -9,6 +9,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import { NgChartsModule } from 'ng2-charts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,6 +23,12 @@ import { ListAlbumComponent } from './component/album/list-album/list-album.comp
 import { FormAlbumComponent } from './component/album/form-album/form-album.component';
 import { ListSongComponent } from './component/song/list-song/list-song.component';
 import { FormSongComponent } from './component/song/form-song/form-song.component';
+import { ListUserComponent } from './component/user/list-user/list-user.component';
+import { ListPaymentComponent } from './component/payment/list-payment/list-payment.component';
+import { ListPaymentParamComponent } from './component/paymentParam/list-payment-param/list-payment-param.component';
+import { FormPaymentParamComponent } from './component/paymentParam/form-payment-param/form-payment-param.component';
+import { ListSystemParamComponent } from './component/systemParam/list-system-param/list-system-param.component';
+import { FormSystemParamComponent } from './component/systemParam/form-system-param/form-system-param.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +41,13 @@ import { FormSongComponent } from './component/song/form-song/form-song.componen
     ListAlbumComponent,
     FormAlbumComponent,
     ListSongComponent,
-    FormSongComponent
+    FormSongComponent,
+    ListUserComponent,
+    ListPaymentComponent,
+    ListPaymentParamComponent,
+    FormPaymentParamComponent,
+    ListSystemParamComponent,
+    FormSystemParamComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +60,9 @@ import { FormSongComponent } from './component/song/form-song/form-song.componen
     MatFormFieldModule,
     MatIconModule,
     MatAutocompleteModule,
-    MatSelectModule
+    MatSelectModule,
+    MatInputModule,
+    NgChartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

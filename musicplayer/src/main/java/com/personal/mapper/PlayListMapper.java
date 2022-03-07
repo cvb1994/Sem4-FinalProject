@@ -15,7 +15,7 @@ public interface PlayListMapper {
 	PlayListDto entityToDto(PlayList playlist);
 	PlayList dtoToEntity(PlayListDto dto);
 	
-	@Mapping(target = "artists", expression = "java(null)")
+//	@Mapping(target = "artists", expression = "java(null)")
 	@Mapping(target = "album", expression = "java(null)")
 	@Mapping(target = "genres", expression = "java(null)")
 	SongDto songToSongDto(Song song);
