@@ -18,6 +18,7 @@ public class PaymentDto extends BaseDto{
 	private String transactionCode;
 	private String txnCode;
 	private int price;
+	private int actualPrice;
 	private double discount;
 	private String paymentMethod;
 	private Boolean transCompleted;

@@ -19,4 +19,5 @@ public interface IAlbumService {
 	public ResponseDto getAllOrderByName();
 	public ResponseDto finByArtistId(AlbumDto criteria);
 	public Long coutAlbum();
+	public int countAlbumNewInMonth();
 }

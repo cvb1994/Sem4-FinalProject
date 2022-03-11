@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -11,6 +11,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import { NgChartsModule } from 'ng2-charts';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -29,6 +30,9 @@ import { ListPaymentParamComponent } from './component/paymentParam/list-payment
 import { FormPaymentParamComponent } from './component/paymentParam/form-payment-param/form-payment-param.component';
 import { ListSystemParamComponent } from './component/systemParam/list-system-param/list-system-param.component';
 import { FormSystemParamComponent } from './component/systemParam/form-system-param/form-system-param.component';
+import { JwtInterceptor } from './helper/jwt.interceptor';
+import { ListCountComponent } from './component/listenCount/list-count/list-count.component';
+import { DetailCountComponent } from './component/listenCount/detail-count/detail-count.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +51,9 @@ import { FormSystemParamComponent } from './component/systemParam/form-system-pa
     ListPaymentParamComponent,
     FormPaymentParamComponent,
     ListSystemParamComponent,
-    FormSystemParamComponent
+    FormSystemParamComponent,
+    ListCountComponent,
+    DetailCountComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,8 +69,11 @@ import { FormSystemParamComponent } from './component/systemParam/form-system-pa
     MatSelectModule,
     MatInputModule,
     NgChartsModule,
+    MatDatepickerModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

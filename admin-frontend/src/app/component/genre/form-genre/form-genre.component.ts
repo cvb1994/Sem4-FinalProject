@@ -18,6 +18,9 @@ export class FormGenreComponent implements OnInit {
   @ViewChild('previewImg')
   public myImg!: ElementRef;
 
+  @ViewChild('preview')
+  public bigImg!: ElementRef;
+
   genreForm = new FormGroup({
     id: new FormControl('0'),
     name: new FormControl('', Validators.required),
@@ -42,6 +45,7 @@ export class FormGenreComponent implements OnInit {
           this.genreForm.get("id")?.setValue(data.content.id);
           this.genreForm.get("name")?.setValue(data.content.name);
           this.myImg.nativeElement.src = data.content.avatar;
+          this.bigImg.nativeElement.src = data.content.avatar;
           this.divStyle = 200;
           console.log(this.editGenre);
         });
@@ -54,6 +58,7 @@ export class FormGenreComponent implements OnInit {
       const file = event.target.files[0];
       this.genreForm.get('avatar')?.setValue(file);
       this.myImg.nativeElement.src = URL.createObjectURL(file);
+      this.bigImg.nativeElement.src = URL.createObjectURL(file);
       this.divStyle = 200;
     }
   }

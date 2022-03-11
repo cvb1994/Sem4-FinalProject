@@ -29,6 +29,7 @@ export class FormSongComponent implements OnInit {
   public audioLoaded:boolean = false;
   public audioPlaying:boolean = false;
   public listAlbum:any;
+  public duration:any;
 
   artistSelectCtrl = new FormControl();
   get artistSelect(){return this.artistSelectCtrl};
@@ -42,7 +43,8 @@ export class FormSongComponent implements OnInit {
   @ViewChild('genreSelectInput')
   genreSelectInput!: ElementRef<HTMLInputElement>;
 
-  audio = new Audio();
+  @ViewChild('audioPreview')
+  public myAudio!: ElementRef;
 
   @ViewChild('previewImg')
   public myImg!: ElementRef;
@@ -180,8 +182,7 @@ export class FormSongComponent implements OnInit {
           this.songForm.get("artistIds")?.setValue("valid");
           this.songForm.get("genreIds")?.setValue("valid");
           this.songForm.get("mediaUrl")?.setValue("valid");
-          this.audio.src = data.content.mediaUrl;
-          this.audio.load();
+          this.myAudio.nativeElement.src = data.content.mediaUrl;
           this.audioLoaded = true;
           this.myImg.nativeElement.src = data.content.image;
           this.bigImg.nativeElement.src = data.content.image;
@@ -243,7 +244,6 @@ export class FormSongComponent implements OnInit {
       } else {
         this.songForm.get("image")?.setErrors({'invalid':true});
       }
-      
     }
   }
 
@@ -253,9 +253,7 @@ export class FormSongComponent implements OnInit {
       let extension = mp3.name.split('.').pop();
       if(extension === 'mp3'){
         this.songForm.get('mediaUrl')?.setValue(mp3);
-        this.audio.src = URL.createObjectURL(mp3);
-        this.audio.load();
-        this.audioLoaded = true;
+        this.myAudio.nativeElement.src = URL.createObjectURL(mp3);
       } else {
         this.songForm.get("mediaUrl")?.setErrors({'invalid':true});
       }
@@ -263,13 +261,10 @@ export class FormSongComponent implements OnInit {
     }
   }
 
-  onPlayPause(){
-    this.audioPlaying = !this.audioPlaying;
-    if(this.audioPlaying == true){
-      this.audio.play();
-    } else {
-      this.audio.pause();
-    }
+  setDuration(load_event:any): void {
+    this.duration = Math.round(load_event.currentTarget.duration);
+    console.log(load_event.currentTarget.duration);
+    this.songForm.get("timePlay")?.setValue(durationConvert(load_event.currentTarget.duration));
   }
 
   onSubmit() {
@@ -367,6 +362,10 @@ export class FormSongComponent implements OnInit {
   }
 }
 
-
-
+function durationConvert(duration: number):string {
+  let a = Math.round(duration);
+  let minute = Math.floor(a/60);
+  let second = (a - (minute*60));
+  return minute+":"+ second;
+}
 

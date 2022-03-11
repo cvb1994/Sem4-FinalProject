@@ -15,6 +15,8 @@ import { ListPaymentParamComponent } from './component/paymentParam/list-payment
 import { FormPaymentParamComponent } from './component/paymentParam/form-payment-param/form-payment-param.component';
 import { ListSystemParamComponent } from './component/systemParam/list-system-param/list-system-param.component';
 import { FormSystemParamComponent } from './component/systemParam/form-system-param/form-system-param.component';
+import { ListCountComponent } from './component/listenCount/list-count/list-count.component';
+import { DetailCountComponent } from './component/listenCount/detail-count/detail-count.component';
 
 const routes: Routes = [
   {path: '', component: DashboardComponent},
@@ -39,6 +41,8 @@ const routes: Routes = [
   {path: 'list-system-param', component: ListSystemParamComponent},
   {path: 'form-system-param', component: FormSystemParamComponent},
   {path: 'form-system-param/:paramId', component: FormSystemParamComponent},
+  {path: 'list-count', component: ListCountComponent},
+  {path: 'detail-count/:countId', component: DetailCountComponent}
 
 ];
 

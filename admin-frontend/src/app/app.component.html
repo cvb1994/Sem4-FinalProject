@@ -124,6 +124,13 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-count']" routerLinkActive="active"
+                                aria-expanded="false">
+                                <i class="fa fa-columns" aria-hidden="true"></i>
+                                <span class="hide-menu">Thống kê Trending</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
                             <a class="sidebar-link waves-effect waves-dark sidebar-link" href="404.html" routerLinkActive="active"
                                 aria-expanded="false">
                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
@@ -178,4 +185,5 @@
         </div>
     </div>
 </div>
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
 

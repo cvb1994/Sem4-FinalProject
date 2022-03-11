@@ -70,10 +70,19 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="text-center">
-                                    <img id="preview" #previewImg [ngStyle]="{'height.px': divStyle}"> 
+                                    <img  id="preview" data-bs-toggle="modal" data-bs-target="#exampleModal" #previewImg [ngStyle]="{'height.px': divStyle}"> 
                                 </div>
                             </div>
                         </div>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" style="max-width: 50%;">
+                              <div class="modal-content">
+                                <div class="modal-body">
+                                    <img #preview style="width: 100%; height: 100%;"> 
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <button style="margin-top: 10px;" [disabled]="albumForm.invalid " type="submit" id="saveForm" class="btn btn-primary">Lưu</button>

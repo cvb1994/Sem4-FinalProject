@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild  } from '@angular/core';
-import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import { ChartConfiguration, ChartData, ChartEvent, ChartType, Ticks } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 import { DashboardService } from 'src/app/service/dashboard.service';
@@ -13,24 +13,37 @@ export class DashboardComponent implements OnInit {
   public listTrending : any;
   public totalSong: any;
   public totalAlbum: any;
-  public totalArtist: any;
+  public totalUser: any;
+  public newAlbum:any;
+  public newUser:any;
+  public newPayment:any;
+  public defaultMonthProfit = 6;
+  public listProfit:any;
+  public current = new Date();
 
   constructor(private dashboardSer: DashboardService) { }
 
   ngOnInit(): void {
     this.dashboardSer.getDashboard().subscribe((data) => {
       this.listTrending = data.content.listTrending;
-      this.barChartData.labels = [];
-      this.barChartData.datasets[0].data = [];
-      this.listTrending.forEach((song:any) => {
-
-          this.barChartData.labels?.push(this.splitStringToArray(song.title));
-          this.barChartData.datasets[0].data.push(song.listenCountReset);
-      });
-      this.chart?.update();
+      console.log(this.listTrending);
+      
       this.totalSong = data.content.totalSong;
       this.totalAlbum = data.content.totalAlbum;
-      this.totalArtist = data.content.totalArtist;
+      this.totalUser = data.content.totalUser;
+      this.newAlbum = data.content.newAlbumInMonth;
+      this.newUser = data.content.newUserInMonth;
+      this.newPayment = data.content.newPaymentInMonth;
+    });
+    this.dashboardSer.getProfitRePort(this.defaultMonthProfit).subscribe((data) =>{
+      this.listProfit = data.content;
+      this.barChartData.labels = [];
+      this.barChartData.datasets[0].data = [];
+      this.listProfit.forEach((item:any) => {
+          this.barChartData.labels?.push(item.month+"-"+item.year);
+          this.barChartData.datasets[0].data.push(item.profit);
+      });
+      this.chart?.update();
     })
   }
 
@@ -42,7 +55,10 @@ export class DashboardComponent implements OnInit {
     scales: {
       x: {},
       y: {
-        min: 10
+        min: 0,
+        ticks:{
+          stepSize: 100000
+        }
       }
     },
     plugins: {
@@ -65,7 +81,7 @@ export class DashboardComponent implements OnInit {
   public barChartData: ChartData<'bar'> = {
     labels: [  ],
     datasets: [
-      { data: [  ], label: 'Lượt nghe Trending' }
+      { data: [  ], label: 'Doanh số' }
     ]
   };
 

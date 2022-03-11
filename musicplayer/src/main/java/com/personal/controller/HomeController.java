@@ -5,11 +5,18 @@ import com.personal.service.IAlbumService;
 import com.personal.service.IArtistService;
 import com.personal.service.IGenreService;
 import com.personal.service.ISongService;
+import com.personal.service.IUserService;
+import com.personal.serviceImp.ListenCountService;
+import com.personal.serviceImp.PaymentService;
+import com.personal.serviceImp.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,8 +36,13 @@ public class HomeController {
 
     @Autowired
     private IGenreService iGenreService;
-
-
+    
+    @Autowired
+    private PaymentService paymentSer;
+    
+    @Autowired
+    private UserService userSer;
+    
     @GetMapping("home")
     public ResponseDto getDataHomePage(Authentication auth){
         ResponseDto res = new ResponseDto();
@@ -49,11 +61,27 @@ public class HomeController {
         List<SongDto> listTrending = iSongService.ListTrending(auth);
         Long totalSong = iSongService.countSong();
         Long totalAlbum = iAlbumService.coutAlbum();
-        Long totalArtist = iArtistService.countArtist();
-        Long totalGenre = iGenreService.countGenre();
-        DashboardDto data = new DashboardDto(listTrending,totalArtist,totalAlbum,totalGenre,totalSong);
+        Long totalUser = userSer.countUser();
+        
+        int newSong = iSongService.countSongNewInMonth();
+        int newAlbum = iAlbumService.countAlbumNewInMonth();
+        int newUser = userSer.countUserNewInMonth();
+        int newPayment = paymentSer.countPaymentNewInMonth();
+        DashboardDto data = new DashboardDto();
+        data.setListTrending(listTrending);
+        data.setTotalAlbum(totalAlbum);
+        data.setTotalSong(totalSong);
+        data.setTotalUser(totalUser);
+        data.setNewAlbumInMonth(newAlbum);
+        data.setNewSongInMonth(newSong);
+        data.setNewUserInMonth(newUser);
+        data.setNewPaymentInMonth(newPayment);
         res.setContent(data);
         return res;
     }
-
+    
+    @GetMapping("/admin/profit-report")
+    public ResponseEntity<?> getProfitReport(@RequestParam("monthAmount") int monthAmount) {
+    	return ResponseEntity.ok(paymentSer.profitInMonths(monthAmount));
+    }
 }

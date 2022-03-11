@@ -66,7 +66,7 @@ export class FormPaymentParamComponent implements OnInit {
           this.spinner.hide();
           this.paramSer.paymentParamChanged.next(true);
           this.paramSer.message.next(data.message);
-          this._router.navigateByUrl('list-payemnt-param');
+          this._router.navigateByUrl('list-payment-param');
         } else {
           this.spinner.hide();
           this.simpleAlert(data.message);
@@ -79,7 +79,7 @@ export class FormPaymentParamComponent implements OnInit {
         if(data.status == true){
           console.log(data);
           this.spinner.hide();
-          this._router.navigateByUrl('list-payemnt-param');
+          this._router.navigateByUrl('list-payment-param');
           this.paramSer.paymentParamChanged.next(true);
           this.paramSer.message.next(data.message);
         } else {

@@ -1,0 +1,89 @@
+<div class="page-breadcrumb bg-white">
+    <form class="form-group" [formGroup]="formSearch" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title">Tìm kiếm</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <mat-form-field appearance="fill" class="example-form-field">
+                                <mat-label>Month and Year</mat-label>
+                                <input matInput [matDatepicker]="dp" formControlName="date">
+                                <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                                <mat-datepicker #dp
+                                                startView="multi-year"
+                                                (yearSelected)="chosenYearHandler($event)"
+                                                (monthSelected)="chosenMonthHandler($event, dp)"
+                                                panelClass="example-month-picker">
+                                </mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-right">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-secondary">Tìm kiếm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <h3 class="box-title">Danh sách thống kê Top 10</h3>
+                <div class="table-responsive">
+                    <table class="table text-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0 text-center">STT</th>
+                                <th class="border-top-0 text-center">Tháng</th>
+                                <th class="border-top-0 text-center">Năm</th>
+                                <th class="border-top-0 text-center">Danh sách bài hát</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngFor="let item of listCount; let i = index">
+                            <tr>
+                                <td class="text-center">{{(currentPage*5)+i+1}}</td>
+                                <td class="text-center">{{item.month}}</td>
+                                <td class="text-center">{{item.year}}</td>
+                                <td class="text-center">
+                                    <a [routerLink]="['/detail-count/',item.id]"><i class="fa fa-bars"></i></a>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
+                        <ul class="pagination ">
+                          <li class="page-item ">
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Trang trước</button>
+                          </li>
+                          <li class="page-item active">
+                            <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
+                          </li>
+                          <li class="page-item">
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Trang tiếp</button>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

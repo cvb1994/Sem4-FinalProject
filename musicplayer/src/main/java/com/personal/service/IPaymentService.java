@@ -16,4 +16,6 @@ public interface IPaymentService {
 	public ResponseDto getById(int id);
 	public String sendQuery(PaymentDto model, HttpServletRequest req) throws UnsupportedEncodingException;
 	public String returnPayment(@RequestParam Map<String,String> allParams);
+	public int countPaymentNewInMonth();
+	public ResponseDto profitInMonths(int month);
 }

@@ -1,5 +1,6 @@
 package com.personal.serviceImp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.personal.common.FileTypeEnum;
+import com.personal.common.FolderTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.ArtistDto;
 import com.personal.dto.PageDto;
@@ -22,6 +24,7 @@ import com.personal.musicplayer.specification.ArtistSpecification;
 import com.personal.repository.ArtistRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.service.IArtistService;
+import com.personal.utils.CloudStorageUtils;
 import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
@@ -39,6 +42,8 @@ public class ArtistService implements IArtistService{
 	private Utilities util;
 	@Autowired
 	private UploadToDrive uploadDrive;
+	@Autowired
+	private CloudStorageUtils uploadCloudStorage;
 
 	@Override
 	public ResponseDto getAll() {
@@ -114,7 +119,8 @@ public class ArtistService implements IArtistService{
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getName(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ARTIST_IMAGE.name, name);
+//				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ARTIST_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.ARTIST_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -156,7 +162,7 @@ public class ArtistService implements IArtistService{
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getName(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ARTIST_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.ARTIST_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -216,6 +222,14 @@ public class ArtistService implements IArtistService{
 	@Override
 	public Long countArtist() {
 		return artistRepo.count();
+	}
+
+	@Override
+	public int countArtistNewInMonth() {
+		LocalDateTime current = LocalDateTime.now();
+		LocalDateTime start = current.withDayOfMonth(1);
+		LocalDateTime end = current.withDayOfMonth(current.getDayOfMonth());
+		return artistRepo.countByCreatedDateBetween(start, end);
 	}
 
 }

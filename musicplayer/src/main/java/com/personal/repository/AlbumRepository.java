@@ -1,5 +1,6 @@
 package com.personal.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ public interface AlbumRepository extends JpaRepository<Album, Integer>, JpaSpeci
 	List<Album> findTop5ByOrderByModifiedDateDesc();
 	List<Album> findTop10ByOrderByModifiedDateDesc();
 	Page<Album> findByArtistId(int artistId, Pageable pageable);
+	int countByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 //	List<Album> findAllByArtist_id(int artistId);
 //	
 //	List<Album> findTop4ByOrderByCreatedDateDesc();

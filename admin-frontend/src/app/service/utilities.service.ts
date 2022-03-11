@@ -1,11 +1,23 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilitiesService {
+  private sessionStorage: Storage = sessionStorage;
+  public message: Subject<string>;
 
-  constructor() { }
+  constructor() {
+    this.message = new Subject<string>();
+   }
+
+  public redirectToLogin(){
+    this.sessionStorage.removeItem('jwt');
+    this.sessionStorage.removeItem('username');
+    this.message.next("Không thể kết nối Server");
+    window.location.reload();
+  }
 
   public getListCountries(){
     return this.listCountries;

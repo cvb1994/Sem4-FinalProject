@@ -44,7 +44,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Thời gian chơi</label>
-                                    <input type="text" formControlName="timePlay" class="form-control textInput">
+                                    <input type="text" id="duration" readonly formControlName="timePlay" class="form-control textInput">
                                     <small *ngIf="timePlay?.invalid" class="text-danger">Vui lòng nhập theo định dạng: mm:ss</small>
                                 </div>
                             </div>
@@ -127,25 +127,22 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <div class="form-group">
                                     <label class="form-label">File nhạc</label>
                                     <div class="row">
-                                        <div class="col-md-10">
+                                        <div class="col-md-5">
                                             <input type="hidden" formControlName="mediaUrl">
                                             <input type="file" (change)="onAudioSelect($event)" class="form-control" id="audioFile" name="audioFile">
                                             <small *ngIf="mediaUrl?.invalid && mediaUrl?.touched" class="text-danger">File không hợp lệ</small>
                                         </div>
-                                        <div *ngIf="audioLoaded" class="col-md-2 text-center">
-                                            <a (click)="onPlayPause()"  type="button" id="previewAudio">
-                                                <i *ngIf="!audioPlaying" class="fa fa-play fa-2x"></i>
-                                                <i *ngIf="audioPlaying" class="fa fa-pause fa-2x"></i>
-                                            </a>
+                                        <div class="col-md-5">
+                                            <audio class="audio-control" #audioPreview controls preload="metadata" (canplaythrough)="setDuration($event)"></audio>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4 text-center">
                                 <div class="form-group">
                                     <label class="form-label">Bài hát VIP</label>
                                 </div>

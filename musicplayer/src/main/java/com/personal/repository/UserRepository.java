@@ -1,5 +1,6 @@
 package com.personal.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,5 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUsernameAndIdNot(String name, int id);
 	Optional<User> findByEmailAndIdNot(String email, int id);
+	int countByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 }

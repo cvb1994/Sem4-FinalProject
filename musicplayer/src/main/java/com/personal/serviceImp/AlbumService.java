@@ -1,5 +1,6 @@
 package com.personal.serviceImp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.personal.common.FileTypeEnum;
+import com.personal.common.FolderTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.AlbumDto;
 import com.personal.dto.PageDto;
@@ -24,6 +26,7 @@ import com.personal.repository.AlbumRepository;
 import com.personal.repository.ArtistRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.service.IAlbumService;
+import com.personal.utils.CloudStorageUtils;
 import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
@@ -43,6 +46,8 @@ public class AlbumService implements IAlbumService {
 	private Utilities util;
 	@Autowired
 	private UploadToDrive uploadDrive;
+	@Autowired
+	private CloudStorageUtils uploadCloudStorage;
 
 	@Override
 	public ResponseDto getAll() {
@@ -120,7 +125,8 @@ public class AlbumService implements IAlbumService {
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getName(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ALBUM_IMAGE.name, name);
+//				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ALBUM_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.ALBUM_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -166,7 +172,7 @@ public class AlbumService implements IAlbumService {
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getName(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.ALBUM_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.ALBUM_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -263,6 +269,14 @@ public class AlbumService implements IAlbumService {
 	@Override
 	public Long coutAlbum() {
 		return albumRepo.count();
+	}
+
+	@Override
+	public int countAlbumNewInMonth() {
+		LocalDateTime current = LocalDateTime.now();
+		LocalDateTime start = current.withDayOfMonth(1);
+		LocalDateTime end = current.withDayOfMonth(current.getDayOfMonth());
+		return albumRepo.countByCreatedDateBetween(start, end);
 	}
 
 }

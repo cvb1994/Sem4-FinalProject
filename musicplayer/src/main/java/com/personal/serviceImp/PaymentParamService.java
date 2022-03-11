@@ -1,5 +1,6 @@
 package com.personal.serviceImp;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,6 +63,13 @@ public class PaymentParamService implements IPaymentParam {
 			res.setStatus(false);
 			return res;
 		}
+		
+		//tinh gia tri thuc te
+        BigDecimal a = new BigDecimal(100);
+		BigDecimal b = new BigDecimal(model.getDiscount());
+		double percentAfterDiscount = (a.subtract(b).doubleValue())/100;
+		int priceAfterDiscount = (int) (model.getPrice() * percentAfterDiscount);
+		param.setActualPrice(priceAfterDiscount);
 		
 		PaymentParam savedParam = paymentParamRepo.save(param);
 		if(savedParam != null) {

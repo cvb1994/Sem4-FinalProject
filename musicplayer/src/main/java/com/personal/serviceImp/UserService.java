@@ -16,13 +16,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.personal.common.EmailTypeEnum;
-import com.personal.common.FileTypeEnum;
+import com.personal.common.FolderTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.PageDto;
 import com.personal.dto.ResetPasswordDto;
 import com.personal.dto.ResponseDto;
 import com.personal.dto.UserDto;
-import com.personal.entity.Payment;
 import com.personal.entity.SystemParam;
 import com.personal.entity.User;
 import com.personal.event.SendMailPublisher;
@@ -31,6 +30,7 @@ import com.personal.repository.PaymentRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.repository.UserRepository;
 import com.personal.service.IUserService;
+import com.personal.utils.CloudStorageUtils;
 import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
@@ -52,7 +52,8 @@ public class UserService implements IUserService{
 	PasswordEncoder passEncoder;
 	@Autowired
 	SendMailPublisher eventPublisher;
-	
+	@Autowired
+	private CloudStorageUtils uploadCloudStorage;
 
 	@Override
 	public ResponseDto getAll() {
@@ -189,7 +190,8 @@ public class UserService implements IUserService{
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getUsername(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.USER_IMAGE.name, name);
+//				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.USER_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.USER_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -250,7 +252,7 @@ public class UserService implements IUserService{
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getUsername(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.USER_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.USER_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -355,6 +357,19 @@ public class UserService implements IUserService{
 		res.setStatus(true);
 		res.setMessage("Mật khẩu đã được cập nhật");
 		return res;
+	}
+
+	@Override
+	public int countUserNewInMonth() {
+		LocalDateTime current = LocalDateTime.now();
+		LocalDateTime start = current.withDayOfMonth(1);
+		LocalDateTime end = current.withDayOfMonth(current.getDayOfMonth());
+		return userRepo.countByCreatedDateBetween(start, end);
+	}
+
+	@Override
+	public Long countUser() {
+		return userRepo.count();
 	}
 
 }

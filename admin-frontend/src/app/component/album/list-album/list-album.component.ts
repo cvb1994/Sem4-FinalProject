@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlbumService } from 'src/app/service/album.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ArtistService } from 'src/app/service/artist.service';
+import { UtilitiesService } from 'src/app/service/utilities.service';
 import Swal from 'sweetalert2'
 
 @Component({
@@ -22,6 +23,7 @@ export class ListAlbumComponent implements OnInit {
   });
   
   constructor(
+    private utilSer : UtilitiesService,
     private albumSer:AlbumService,
     private artistSer : ArtistService
     ) { }
@@ -52,21 +54,26 @@ export class ListAlbumComponent implements OnInit {
   }
 
   public loadListData(form:any){
-    this.albumSer.getAlbums(form).subscribe((data) =>{
-      this.listAlbum = data.content.content;
-      this.currentPage = data.content.page;
-      if(data.content.first == true && data.content.last == true){
-        this.previousPageDisable = true;
-        this.nextPageDisable = true;
-      } else if(data.content.first == false && data.content.last == false){
-        this.previousPageDisable = false;
-        this.nextPageDisable = false;
-      } else if(data.content.first == true){
-        this.previousPageDisable = true;
-        this.nextPageDisable = false;
-      } else if(data.content.last == true){
-        this.previousPageDisable = false;
-        this.nextPageDisable = true;
+    this.albumSer.getAlbums(form).subscribe({
+      next: (data) =>{
+        this.listAlbum = data.content.content;
+        this.currentPage = data.content.page;
+        if(data.content.first == true && data.content.last == true){
+          this.previousPageDisable = true;
+          this.nextPageDisable = true;
+        } else if(data.content.first == false && data.content.last == false){
+          this.previousPageDisable = false;
+          this.nextPageDisable = false;
+        } else if(data.content.first == true){
+          this.previousPageDisable = true;
+          this.nextPageDisable = false;
+        } else if(data.content.last == true){
+          this.previousPageDisable = false;
+          this.nextPageDisable = true;
+        }
+      },
+      error: (err) => {
+        this.utilSer.redirectToLogin();
       }
     });
   }

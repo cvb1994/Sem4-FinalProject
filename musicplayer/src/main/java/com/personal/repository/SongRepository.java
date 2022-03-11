@@ -1,5 +1,6 @@
 package com.personal.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,8 @@ public interface SongRepository extends JpaRepository<Song, Integer>, JpaSpecifi
 	@Transactional
 	@Query("update Song s set s.listenCountReset = 0 ")
 	void resetListTrending();
+	
+	int countByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 
 //	
 //	List<Song> findAllByAlbum_id(int albumId);
