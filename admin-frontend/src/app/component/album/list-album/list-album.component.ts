@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlbumService } from 'src/app/service/album.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ArtistService } from 'src/app/service/artist.service';
+import { UtilitiesService } from 'src/app/service/utilities.service';
 import Swal from 'sweetalert2'
 
 @Component({
@@ -22,16 +23,18 @@ export class ListAlbumComponent implements OnInit {
   });
   
   constructor(
+    private utilSer : UtilitiesService,
     private albumSer:AlbumService,
-    private artistSer : AlbumService
+    private artistSer : ArtistService
     ) { }
 
   ngOnInit(): void {
     var formData = new FormData();
     this.loadListData(formData);
     this.refreshDataOnChange();
-    this.artistSer.getAllOrderByName().subscribe((data) =>{
+    this.artistSer.getArtistsOrderByName().subscribe((data) =>{
       this.listArtist = data.content;
+      console.log(this.listArtist);
     })
 
     this.albumSer.message.subscribe((data:string) =>{
@@ -51,21 +54,26 @@ export class ListAlbumComponent implements OnInit {
   }
 
   public loadListData(form:any){
-    this.albumSer.getAlbums(form).subscribe((data) =>{
-      this.listAlbum = data.content.content;
-      this.currentPage = data.content.page;
-      if(data.content.first == true && data.content.last == true){
-        this.previousPageDisable = true;
-        this.nextPageDisable = true;
-      } else if(data.content.first == false && data.content.last == false){
-        this.previousPageDisable = false;
-        this.nextPageDisable = false;
-      } else if(data.content.first == true){
-        this.previousPageDisable = true;
-        this.nextPageDisable = false;
-      } else if(data.content.last == true){
-        this.previousPageDisable = false;
-        this.nextPageDisable = true;
+    this.albumSer.getAlbums(form).subscribe({
+      next: (data) =>{
+        this.listAlbum = data.content.content;
+        this.currentPage = data.content.page;
+        if(data.content.first == true && data.content.last == true){
+          this.previousPageDisable = true;
+          this.nextPageDisable = true;
+        } else if(data.content.first == false && data.content.last == false){
+          this.previousPageDisable = false;
+          this.nextPageDisable = false;
+        } else if(data.content.first == true){
+          this.previousPageDisable = true;
+          this.nextPageDisable = false;
+        } else if(data.content.last == true){
+          this.previousPageDisable = false;
+          this.nextPageDisable = true;
+        }
+      },
+      error: (err) => {
+        this.utilSer.redirectToLogin();
       }
     });
   }
@@ -105,8 +113,7 @@ export class ListAlbumComponent implements OnInit {
 
   alertConfirmationDelete(artistId : number){
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Your Action cannot be rollback.',
+      title: 'Bạn có chắc muốn xóa?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes',
@@ -116,7 +123,7 @@ export class ListAlbumComponent implements OnInit {
         this.albumSer.deleteAlbum(artistId).subscribe((data) =>{
           if(data.status == true){
             Swal.fire(
-              'Success!',
+              'Thành công!',
               data.message,
               'success'
             )
@@ -125,8 +132,8 @@ export class ListAlbumComponent implements OnInit {
         })
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire(
-          'Cancelled',
-          'Performed action record present in cloud and databstore.)',
+          'Hủy bỏ',
+          'Hành động đã hủy',
           'error'
         )
       }

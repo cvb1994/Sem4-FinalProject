@@ -35,27 +35,15 @@
                             <img src="assets/plugins/images/logo-text.png" alt="homepage" />
                         </span>
                     </a>
-                    <!-- ============================================================== -->
-                    <!-- End Logo -->
-                    <!-- ============================================================== -->
-                    <!-- ============================================================== -->
-                    <!-- toggle and nav items -->
-                    <!-- ============================================================== -->
+                    
                     <a class="nav-toggler waves-effect waves-light text-dark d-block d-md-none"
                         href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
                 </div>
-                <!-- ============================================================== -->
-                <!-- End Logo -->
-                <!-- ============================================================== -->
+                
                 <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
-                   
-                    <!-- ============================================================== -->
-                    <!-- Right side toggle and nav items -->
-                    <!-- ============================================================== -->
+                 
                     <ul class="navbar-nav ms-auto d-flex align-items-center">
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
+                        
                         <li>
                             <a class="profile-pic dropstart" href="#">
                                 <span class="text-white font-medium dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -66,19 +54,12 @@
                                 </ul>
                             </a>
                         </li>
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
+                        
                     </ul>
                 </div>
             </nav>
         </header>
-        <!-- ============================================================== -->
-        <!-- End Topbar header -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
+        
         <aside class="left-sidebar" data-sidebarbg="skin6">
             <!-- Sidebar scroll-->
             <div class="scroll-sidebar">
@@ -94,42 +75,63 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-genre']"
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-genre']" routerLinkActive="active"
                                 aria-expanded="false">
                                 <i class="fa fa-user" aria-hidden="true"></i>
                                 <span class="hide-menu">Genre</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-artist']"
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-artist']" routerLinkActive="active"
                                 aria-expanded="false">
                                 <i class="fa fa-table" aria-hidden="true"></i>
                                 <span class="hide-menu">Artist</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-album']"
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-album']" routerLinkActive="active"
                                 aria-expanded="false">
                                 <i class="fa fa-font" aria-hidden="true"></i>
                                 <span class="hide-menu">Album</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-song']"
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-song']" routerLinkActive="active"
                                 aria-expanded="false">
                                 <i class="fa fa-globe" aria-hidden="true"></i>
                                 <span class="hide-menu">Song</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="blank.html"
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-user']" routerLinkActive="active"
                                 aria-expanded="false">
                                 <i class="fa fa-columns" aria-hidden="true"></i>
-                                <span class="hide-menu">Blank Page</span>
+                                <span class="hide-menu">User</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="404.html"
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-payment-param']" routerLinkActive="active"
+                                aria-expanded="false">
+                                <i class="fa fa-columns" aria-hidden="true"></i>
+                                <span class="hide-menu">Tham số thanh toán</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-system-param']" routerLinkActive="active"
+                                aria-expanded="false">
+                                <i class="fa fa-columns" aria-hidden="true"></i>
+                                <span class="hide-menu">Tham số hệ thống</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" [routerLink]="['/list-count']" routerLinkActive="active"
+                                aria-expanded="false">
+                                <i class="fa fa-columns" aria-hidden="true"></i>
+                                <span class="hide-menu">Thống kê Trending</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="404.html" routerLinkActive="active"
                                 aria-expanded="false">
                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
                                 <span class="hide-menu">Error 404</span>
@@ -142,12 +144,7 @@
             </div>
             <!-- End Sidebar scroll-->
         </aside>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
+        
         <div class="page-wrapper">
             
           <!-- body content -->
@@ -155,12 +152,10 @@
             
             <!-- footer -->
             <!-- ============================================================== -->
-            <footer class="footer text-center"> 2021 © Ample Admin brought to you by <a
+            <!-- <footer class="footer text-center"> 2021 © Ample Admin brought to you by <a
                     href="https://www.wrappixel.com/">wrappixel.com</a>
-            </footer>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
+            </footer> -->
+            
         </div>
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
@@ -190,4 +185,5 @@
         </div>
     </div>
 </div>
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
 

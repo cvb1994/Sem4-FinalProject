@@ -1,0 +1,60 @@
+<div class="page-breadcrumb bg-white">
+    <!-- /.col-lg-12 -->
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <h3 class="box-title">Payment List</h3>
+                <h4>User: {{listPayment[0].user.username}}</h4>
+                <div class="table-responsive">
+                    <table class="table text-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0 text-center">#</th>
+                                <th class="border-top-0 text-center">Price</th>
+                                <th class="border-top-0 text-center">Discount</th>
+                                <th class="border-top-0 text-center">Payment Method</th>
+                                <th class="border-top-0 text-center">Transaction Code</th>
+                                <th class="border-top-0 text-center">Expire Date</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngFor="let payment of listPayment; let i = index">
+                            <tr>
+                                <td class="text-center">{{(currentPage*5)+i+1}}</td>
+                                <td class="text-center">{{payment.price}}</td>
+                                <td class="text-center">{{payment.discount}}</td>
+                                <td class="text-center">{{payment.paymentMethod}}</td>
+                                <td class="text-center">{{payment.transactionCode}}</td>
+                                <td class="text-center">{{payment.expireDate}}</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
+                        <ul class="pagination ">
+                          <li class="page-item ">
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Previous</button>
+                          </li>
+                          <li class="page-item active">
+                            <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
+                          </li>
+                          <li class="page-item">
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Next</button>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

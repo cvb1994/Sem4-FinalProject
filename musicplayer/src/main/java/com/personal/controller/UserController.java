@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.personal.config.AppProperties;
 import com.personal.dto.ResetPasswordDto;
 import com.personal.dto.UserDto;
 import com.personal.serviceImp.UserService;
@@ -25,6 +26,8 @@ import com.personal.serviceImp.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private AppProperties appPropertis;
 	
 	
 	@PostMapping()
@@ -60,5 +63,16 @@ public class UserController {
 	@PostMapping(value = "/password/reset")
 	public ResponseEntity<?> resetPassword(@ModelAttribute ResetPasswordDto model){
 		return ResponseEntity.ok(userService.resetPassword(model));
+	}
+	
+	@PostMapping(value = "/list")
+	public ResponseEntity<?> getPage(@ModelAttribute UserDto model){
+		if(model.getPage() == 0) {
+			model.setPage(appPropertis.getDefaultPage());
+		}
+		if(model.getSize() == 0) {
+			model.setSize(appPropertis.getDefaultPageSize());
+		}
+		return ResponseEntity.ok(userService.gets(model));
 	}
 }

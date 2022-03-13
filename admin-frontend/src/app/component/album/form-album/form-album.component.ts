@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from "ngx-spinner";
 import { AlbumService } from 'src/app/service/album.service';
 import { ArtistService } from 'src/app/service/artist.service';
+import { UtilitiesService } from 'src/app/service/utilities.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -20,6 +21,9 @@ export class FormAlbumComponent implements OnInit {
   @ViewChild('previewImg')
   public myImg!: ElementRef;
 
+  @ViewChild('preview')
+  public bigImg!: ElementRef;
+
   albumForm = new FormGroup({
     id: new FormControl('0'),
     name: new FormControl('', Validators.required),
@@ -34,6 +38,7 @@ export class FormAlbumComponent implements OnInit {
   get totalTime(){return this.albumForm.get('totalTime')};
 
   constructor(
+    private utilSer : UtilitiesService,
     private artistSer : ArtistService,
     private albumSer : AlbumService,
     private _Activatedroute:ActivatedRoute,
@@ -45,20 +50,25 @@ export class FormAlbumComponent implements OnInit {
     this._Activatedroute.paramMap.subscribe(params => {
       this.albumId = params.get('albumId');
       if(this.albumId != null){
-        this.albumSer.getAlbumById(this.albumId).subscribe((data) =>{
-          console.log(data.content);
-          this.editAlbum = data.content;
-          this.albumForm.get("id")?.setValue(data.content.id);
-          this.albumForm.get("name")?.setValue(data.content.name);
-          this.albumForm.get("artistId")?.setValue(data.content.artist.id);
-          if(data.content.releaseDate != null){
-            this.albumForm.get("releaseDate")?.setValue(data.content.releaseDate);
+        this.albumSer.getAlbumById(this.albumId).subscribe({
+          next: (data) =>{
+            this.editAlbum = data.content;
+            this.albumForm.get("id")?.setValue(data.content.id);
+            this.albumForm.get("name")?.setValue(data.content.name);
+            this.albumForm.get("artistId")?.setValue(data.content.artist.id);
+            if(data.content.releaseDate != null){
+              this.albumForm.get("releaseDate")?.setValue(data.content.releaseDate);
+            }
+            if(data.content.totalTime != null){
+              this.albumForm.get("totalTime")?.setValue(data.content.totalTime);
+            }
+            this.myImg.nativeElement.src = data.content.avatar;
+            this.bigImg.nativeElement.src = data.content.avatar;
+            this.divStyle = 200;
+          },
+          error: (err) =>{
+            this.utilSer.redirectToLogin();
           }
-          if(data.content.totalTime != null){
-            this.albumForm.get("totalTime")?.setValue(data.content.totalTime);
-          }
-          this.myImg.nativeElement.src = data.content.avatar;
-          this.divStyle = 200;
         });
       }
     });
@@ -72,6 +82,7 @@ export class FormAlbumComponent implements OnInit {
       const file = event.target.files[0];
       this.albumForm.get('avatar')?.setValue(file);
       this.myImg.nativeElement.src = URL.createObjectURL(file);
+      this.bigImg.nativeElement.src = URL.createObjectURL(file);
       this.divStyle = 200;
     }
   }
@@ -124,6 +135,4 @@ export class FormAlbumComponent implements OnInit {
   simpleAlert(message:string){
     Swal.fire(message);
   }
-
-  
 }

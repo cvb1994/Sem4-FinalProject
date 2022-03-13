@@ -46,7 +46,7 @@ public class LoginController {
             SecurityContextHolder.getContext().setAuthentication(authenticate);
             UserPrincipal principal = (UserPrincipal) authenticate.getPrincipal();
             
-            String jwt = tokenProvider.generateToken(principal);
+            String jwt = tokenProvider.generateToken(principal, UserTypeEnum.ADMIN.name);
             ResponseDto res = adminSer.getById(principal.getId());
             AdminDto adminDto = (AdminDto) res.getContent();
             adminDto.setJwt(jwt);
@@ -55,7 +55,10 @@ public class LoginController {
 
             return ResponseEntity.ok(res);
         } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username hoặc Password không đúng");
+        	ResponseDto res = new ResponseDto();
+        	res.setStatus(false);
+        	res.setMessage("Username hoặc Password không đúng");
+            return ResponseEntity.ok(res);
         }
     }
     
@@ -69,7 +72,7 @@ public class LoginController {
             SecurityContextHolder.getContext().setAuthentication(authenticate);
             UserPrincipal principal = (UserPrincipal) authenticate.getPrincipal();
             
-            String jwt = tokenProvider.generateToken(principal);
+            String jwt = tokenProvider.generateToken(principal, UserTypeEnum.USER.name);
             ResponseDto res = userSer.getById(principal.getId());
             UserDto userDto = (UserDto) res.getContent();
             userDto.setJwtToken(jwt);
@@ -78,7 +81,10 @@ public class LoginController {
 
             return ResponseEntity.ok(res);
         } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username hoặc Password không đúng");
+        	ResponseDto res = new ResponseDto();
+        	res.setStatus(false);
+        	res.setMessage("Username hoặc Password không đúng");
+            return ResponseEntity.ok(res);
         }
     }
     

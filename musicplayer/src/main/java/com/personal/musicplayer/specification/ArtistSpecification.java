@@ -22,7 +22,7 @@ public class ArtistSpecification {
             }
 			
 			if(StringUtils.isNoneBlank(criteria.getGender())) {
-            	predicates.add(cb.like(cb.upper(root.get("gender")), "%" + criteria.getGender().toUpperCase() + "%"));
+            	predicates.add(cb.like(cb.upper(root.get("gender")), criteria.getGender().toUpperCase()));
             }
 			
 			if(StringUtils.isNoneBlank(criteria.getNationality())) {

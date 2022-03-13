@@ -98,7 +98,7 @@ public class PlayListService implements IPlayListService{
 		}
 		
 		List<Song> list = new ArrayList<>();
-		if(model.getListSongIds().size() > 0) {
+		if(model.getListSongIds() != null && model.getListSongIds().size() > 0) {
 			for(Integer i : model.getListSongIds()) {
 				Optional<Song> optSong = songRepo.findById(i);
 				if(optSong.isPresent()) {
@@ -112,6 +112,7 @@ public class PlayListService implements IPlayListService{
 		if(savedPlayList != null) {
 			res.setStatus(true);
 			res.setMessage("Tạo mới thành công");
+			res.setContent(savedPlayList.getId());
 			return res;
 		}
 		res.setMessage("Không thể tạo mới playlist");

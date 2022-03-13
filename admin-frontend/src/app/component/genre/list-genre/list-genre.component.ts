@@ -69,8 +69,7 @@ export class ListGenreComponent implements OnInit {
 
   alertConfirmationDelete(genreId : number){
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Your Action cannot be rollback.',
+      title: 'Bạn có chắc muốn xóa',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes',
@@ -80,7 +79,7 @@ export class ListGenreComponent implements OnInit {
         this.genreSer.deleteGenre(genreId).subscribe((data) =>{
           if(data.status == true){
             Swal.fire(
-              'Success!',
+              'Thành công!',
               data.message,
               'success'
             )
@@ -89,8 +88,8 @@ export class ListGenreComponent implements OnInit {
         })
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire(
-          'Cancelled',
-          'Performed action record present in cloud and databstore.)',
+          'Hủy',
+          'Đã hủy hành động',
           'error'
         )
       }

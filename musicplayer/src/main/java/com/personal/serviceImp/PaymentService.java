@@ -1,9 +1,11 @@
 package com.personal.serviceImp;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -26,11 +28,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.personal.dto.PageDto;
 import com.personal.dto.PaymentDto;
+import com.personal.dto.ProfitReportDto;
 import com.personal.dto.ResponseDto;
 import com.personal.entity.Payment;
 import com.personal.entity.PaymentParam;
 import com.personal.entity.User;
 import com.personal.mapper.PaymentMapper;
+import com.personal.musicplayer.specification.PaymentSpecification;
 import com.personal.repository.PaymentParamRepository;
 import com.personal.repository.PaymentRepository;
 import com.personal.repository.UserRepository;
@@ -44,6 +48,8 @@ public class PaymentService implements IPaymentService {
 	private VNPayUtils vnPayUtils;
 	@Autowired
 	private PaymentRepository paymentRepo;
+	@Autowired
+	private PaymentSpecification paymentSpec;
 	@Autowired
 	private PaymentParamRepository paymentParamRepo;
 	@Autowired
@@ -71,6 +77,7 @@ public class PaymentService implements IPaymentService {
         Payment payment = new Payment();
 		payment.setDiscount(paymentParam.getDiscount());
 		payment.setPrice(paymentParam.getPrice());
+		payment.setActualPrice(paymentParam.getActualPrice());
 		payment.setExpireDate(utils.getDateExpire(paymentParam.getTimeExpire(), paymentParam.getUnit()));
 		payment.setPaymendMethod(model.getPaymentMethod());
 		payment.setTxnCode(vnp_TxnRef);
@@ -78,7 +85,7 @@ public class PaymentService implements IPaymentService {
 		payment.setUser(user);
 		paymentRepo.save(payment);
 
-        int amount = paymentParam.getPrice() * 100;
+        int amount = paymentParam.getActualPrice() * 100;
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
@@ -213,7 +220,7 @@ public class PaymentService implements IPaymentService {
 	public ResponseDto gets(PaymentDto criteria) {
 		ResponseDto res = new ResponseDto();
 		
-		Page<Payment> page = paymentRepo.findAll(PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
+		Page<Payment> page = paymentRepo.findAll(paymentSpec.filter(criteria), PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<PaymentDto> list = page.getContent().stream().map(paymentMapper::entityToDto).collect(Collectors.toList());
 		
 		PageDto pageDto = new PageDto();
@@ -240,6 +247,53 @@ public class PaymentService implements IPaymentService {
 		PaymentDto payment = paymentRepo.findById(id).map(paymentMapper::entityToDto).orElse(null);
 		res.setStatus(true);
 		res.setContent(payment);
+		return res;
+	}
+
+	@Override
+	public int countPaymentNewInMonth() {
+		LocalDateTime current = LocalDateTime.now();
+		LocalDateTime start = current.withDayOfMonth(1);
+		LocalDateTime end = current.withDayOfMonth(current.getDayOfMonth());
+		return paymentRepo.countByCreatedDateBetweenAndTransCompletedTrue(start, end);
+	}
+
+	@Override
+	public ResponseDto profitInMonths(int month) {
+		LocalDateTime current = LocalDateTime.now();
+		LocalDateTime start = current.minusMonths(month);
+		List<ProfitReportDto> listProfit = new ArrayList<>();
+		for(int i = 0; i < month; i++) {
+			LocalDateTime time = current.minusMonths(i);
+			ProfitReportDto dto = new ProfitReportDto();
+			dto.setMonth(time.getMonthValue());
+			dto.setYear(time.getYear());
+			listProfit.add(dto);
+		}
+		
+		List<Payment> list = paymentRepo.findByCreatedDateBetweenAndTransCompletedTrue(start, current);
+		list.forEach(p -> {
+			int flag = 0;
+			for(int i = 0; i<listProfit.size();i++) {
+				if(listProfit.get(i).getMonth() == p.getCreatedDate().getMonthValue()) {
+					ProfitReportDto dto = listProfit.get(i);
+					dto.setProfit(dto.getProfit()+p.getActualPrice());
+					flag = 1;
+					break;
+				}
+			}
+			if(flag == 0) {
+				ProfitReportDto dto = new ProfitReportDto();
+				dto.setMonth(p.getCreatedDate().getMonthValue());
+				dto.setYear(p.getCreatedDate().getYear());
+				dto.setProfit(p.getActualPrice());
+				listProfit.add(dto);
+			}
+		});
+		
+		ResponseDto res = new ResponseDto();
+		res.setStatus(true);
+		res.setContent(listProfit);
 		return res;
 	}
 

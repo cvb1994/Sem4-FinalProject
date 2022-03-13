@@ -1,6 +1,5 @@
 package com.personal.service;
 
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
 import com.personal.dto.ResponseDto;
@@ -25,4 +24,5 @@ public interface ISongService {
 	public ResponseDto findSongByGenreId(SongDto criteria, Authentication authentication);
 	public Long countSong();
 	public void resetListTrending();
+	public int countSongNewInMonth();
 }

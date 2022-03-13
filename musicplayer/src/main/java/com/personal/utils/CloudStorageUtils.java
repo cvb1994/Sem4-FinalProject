@@ -53,7 +53,7 @@ public class CloudStorageUtils {
 		return bucket;
 	}
 	
-	public String uploadObject(MultipartFile fileUpload, String fileName) {
+	public String uploadObject(MultipartFile fileUpload, String fileName, String fileType) {
 //		Resource sourceFile = new ClassPathResource("finalproject-338303-035a753549c0.json");
 //		Credentials credentials = null;
 //		try {
@@ -67,7 +67,20 @@ public class CloudStorageUtils {
 //		Storage storage = StorageOptions.newBuilder().setCredentials(credentials)
 //				  .setProjectId("finalproject-338303").build().getService();
 		Storage storage = StorageOptions.getDefaultInstance().getService();
-		Bucket bucket = findBucket(FolderTypeEnum.AUDIO_FOLDER.name);
+		Bucket bucket = null;
+		if(FolderTypeEnum.AUDIO_FOLDER.name.equals(fileType)) {
+			bucket = findBucket(FolderTypeEnum.AUDIO_FOLDER.name);
+		} else if(FolderTypeEnum.ARTIST_IMAGE_FOLDER.name.equals(fileType)) {
+			bucket = findBucket(FolderTypeEnum.ARTIST_IMAGE_FOLDER.name);
+		} else if(FolderTypeEnum.ALBUM_IMAGE_FOLDER.name.equals(fileType)) {
+			bucket = findBucket(FolderTypeEnum.ALBUM_IMAGE_FOLDER.name);
+		} else if(FolderTypeEnum.GENRE_IMAGE_FOLDER.name.equals(fileType)) {
+			bucket = findBucket(FolderTypeEnum.GENRE_IMAGE_FOLDER.name);
+		} else if(FolderTypeEnum.SONG_IMAGE_FOLDER.name.equals(fileType)) {
+			bucket = findBucket(FolderTypeEnum.SONG_IMAGE_FOLDER.name);
+		} else if(FolderTypeEnum.USER_IMAGE_FOLDER.name.equals(fileType)) {
+			bucket = findBucket(FolderTypeEnum.USER_IMAGE_FOLDER.name);
+		}
 		
 	    BlobId blobId = BlobId.of(bucket.getName(), fileName);
 	    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();

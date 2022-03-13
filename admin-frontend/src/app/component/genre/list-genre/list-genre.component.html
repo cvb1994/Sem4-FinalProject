@@ -2,19 +2,22 @@
     <form class="form-group" [formGroup]="genreForm" (ngSubmit)="onSubmit()">
         <div class="card">
             <div class="card-header">
-                <h6 class="card-title">Search</h6>
+                <h6 class="card-title">Tìm kiếm</h6>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <input type="text" formControlName="name" class="form-control" id="name" name="name" placeholder="Search Name">
+                            <mat-form-field class="example-form-field" appearance="fill">
+                                <mat-label>Tìm theo tên</mat-label>
+                                <input matInput type="text" formControlName="name">
+                              </mat-form-field>
                         </div>
                     </div>
                 </div>
                 <div class="row text-right">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-secondary">Search</button>
+                        <button type="submit" class="btn btn-secondary">Tìm kiếm</button>
                     </div>
                 </div>
             </div>
@@ -35,16 +38,16 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
-                <h3 class="box-title">Genre List</h3>
-                <a class="btn btn-primary" [routerLink]="['/form-genre']">Add New</a>
+                <h3 class="box-title">Danh sách thể loại</h3>
+                <a class="btn btn-primary" [routerLink]="['/form-genre']">Thêm mới</a>
                 <div class="table-responsive">
                     <table class="table text-nowrap">
                         <thead>
                             <tr>
+                                <th class="border-top-0 text-center">STT</th>
+                                <th class="border-top-0 text-center">Ảnh đại diện</th>
+                                <th class="border-top-0 text-center">Thể loại</th>
                                 <th class="border-top-0 text-center">#</th>
-                                <th class="border-top-0 text-center">Avatar</th>
-                                <th class="border-top-0 text-center">Name</th>
-                                <th class="border-top-0 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody *ngFor="let genre of listGenre; let i = index">
@@ -56,12 +59,12 @@
                                 <td class="text-center">{{genre.name}}</td>
                                 <td class="text-center">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                          Action
-                                        </button>
+                                        <a type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-bars"></i>
+                                        </a>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-genre/',genre.id]">Edit</a></li>
-                                          <li><a class="dropdown-item item-dropdown" (click)="onDelete(genre.id)">Delete</a></li>
+                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-genre/',genre.id]">Chỉnh sửa</a></li>
+                                          <li><a class="dropdown-item item-dropdown" href="javascript:void(0)" (click)="onDelete(genre.id)">Xóa</a></li>
                                         </ul>
                                       </div>
                                 </td>
@@ -72,13 +75,13 @@
                     <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
                         <ul class="pagination ">
                           <li class="page-item ">
-                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Previous</button>
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Trang trước</button>
                           </li>
                           <li class="page-item active">
                             <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
                           </li>
                           <li class="page-item">
-                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Next</button>
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Trang tiếp</button>
                           </li>
                         </ul>
                     </div>

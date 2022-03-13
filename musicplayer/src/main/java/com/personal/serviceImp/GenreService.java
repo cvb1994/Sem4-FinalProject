@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.personal.common.FileTypeEnum;
+import com.personal.common.FolderTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.GenreDto;
 import com.personal.dto.PageDto;
@@ -22,6 +23,7 @@ import com.personal.musicplayer.specification.GenreSpecification;
 import com.personal.repository.GenreRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.service.IGenreService;
+import com.personal.utils.CloudStorageUtils;
 import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
@@ -39,6 +41,8 @@ public class GenreService implements IGenreService{
 	Utilities util;
 	@Autowired
 	private UploadToDrive uploadDrive;
+	@Autowired
+	private CloudStorageUtils uploadCloudStorage;
 
 	@Override
 	public ResponseDto getAll() {
@@ -122,7 +126,8 @@ public class GenreService implements IGenreService{
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getName(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.GENRE_IMAGE.name, name);
+//				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.GENRE_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.GENRE_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -174,7 +179,7 @@ public class GenreService implements IGenreService{
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getName(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.GENRE_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.GENRE_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);

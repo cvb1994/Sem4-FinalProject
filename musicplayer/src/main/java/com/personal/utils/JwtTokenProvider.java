@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+import com.personal.common.UserTypeEnum;
 import com.personal.entity.UserPrincipal;
 
 import io.jsonwebtoken.Claims;
@@ -22,17 +23,29 @@ public class JwtTokenProvider {
 	private final String JWT_SECRET = "bach";
 	private final long JWT_EXPIRATION = 604800000L;
 	
-	public String generateToken(UserPrincipal userDetails) {
+	public String generateToken(UserPrincipal userDetails, String type) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
         // Tạo chuỗi json web token từ id của user.
-        return Jwts.builder()
-//                   .setSubject(Long.toString(userDetails.getUser().getId()))
-                   .setSubject(format("%s,%s", userDetails.getId(), userDetails.getUsername()))
-                   .setIssuedAt(now)
-                   .setExpiration(expiryDate)
-                   .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
-                   .compact();
+        String jwtToken = null;
+        if(UserTypeEnum.ADMIN.name.equalsIgnoreCase(type)) {
+        	jwtToken =  Jwts.builder()
+//                  .setSubject(Long.toString(userDetails.getUser().getId()))
+                  .setSubject(format("%s,%s", userDetails.getId(), userDetails.getUsername().concat(":").concat(UserTypeEnum.ADMIN.name)))
+                  .setIssuedAt(now)
+                  .setExpiration(expiryDate)
+                  .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                  .compact();
+        } else if(UserTypeEnum.USER.name.equalsIgnoreCase(type)) {
+        	jwtToken =  Jwts.builder()
+//                  .setSubject(Long.toString(userDetails.getUser().getId()))
+                  .setSubject(format("%s,%s", userDetails.getId(), userDetails.getUsername().concat(":").concat(UserTypeEnum.USER.name)))
+                  .setIssuedAt(now)
+                  .setExpiration(expiryDate)
+                  .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                  .compact();
+        }
+        return jwtToken;
     }
 	
 	public Long getUserIdFromJWT(String token) {

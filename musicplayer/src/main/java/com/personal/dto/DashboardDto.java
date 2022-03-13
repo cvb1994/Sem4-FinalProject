@@ -15,4 +15,10 @@ public class DashboardDto {
     private Long totalAlbum;
     private Long totalGenre;
     private Long totalSong;
+    private Long totalUser;
+   
+    private int newUserInMonth;
+    private int newAlbumInMonth;
+    private int newSongInMonth;
+    private int newPaymentInMonth;
 }

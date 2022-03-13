@@ -1,6 +1,7 @@
 package com.personal.serviceImp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.personal.common.FileExtensionEnum;
 import com.personal.common.FileTypeEnum;
+import com.personal.common.FolderTypeEnum;
 import com.personal.common.RoleEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.PageDto;
@@ -239,7 +241,8 @@ public class SongService implements ISongService{
 			String extension = util.getFileExtension(model.getFile());
 			if(FileExtensionEnum.IMAGE.name.equals(extension)) {
 				String name = util.nameIdentifier(model.getTitle(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.SONG_IMAGE.name, name);
+//				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.SONG_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.SONG_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -261,7 +264,7 @@ public class SongService implements ISongService{
 		String extension = util.getFileExtension(model.getMp3());
 		if(FileExtensionEnum.AUDIO.name.equals(extension)) {
 			String name = util.nameIdentifier(model.getTitle(), extension);
-			String audioUrl = uploadCloudStorage.uploadObject(model.getMp3(), name);
+			String audioUrl = uploadCloudStorage.uploadObject(model.getMp3(), name, FolderTypeEnum.AUDIO_FOLDER.name);
 			if(audioUrl == null) {
 				res.setMessage("Lỗi trong quá trình upload file");
 				res.setStatus(false);
@@ -338,7 +341,7 @@ public class SongService implements ISongService{
 			String extension = util.getFileExtension(model.getFile());
 			if(extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg") || extension.equalsIgnoreCase("png")) {
 				String name = util.nameIdentifier(model.getTitle(), extension);
-				String imageUrl = uploadDrive.uploadImageFile(model.getFile(),FileTypeEnum.SONG_IMAGE.name, name);
+				String imageUrl = uploadCloudStorage.uploadObject(model.getFile(), name, FolderTypeEnum.SONG_IMAGE_FOLDER.name);
 				if(imageUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -358,7 +361,7 @@ public class SongService implements ISongService{
 			String extension = util.getFileExtension(model.getMp3());
 			if(extension.equalsIgnoreCase("mp3")) {
 				String name = util.nameIdentifier(model.getTitle(), extension);
-				String audioUrl = uploadCloudStorage.uploadObject(model.getMp3(), name);
+				String audioUrl = uploadCloudStorage.uploadObject(model.getMp3(), name, FolderTypeEnum.AUDIO_FOLDER.name);
 				if(audioUrl == null) {
 					res.setMessage("Lỗi trong quá trình upload file");
 					res.setStatus(false);
@@ -579,4 +582,11 @@ public class SongService implements ISongService{
 		songRepo.resetListTrending();
 	}
 
+	@Override
+	public int countSongNewInMonth() {
+		LocalDateTime current = LocalDateTime.now();
+		LocalDateTime start = current.withDayOfMonth(1);
+		LocalDateTime end = current.withDayOfMonth(current.getDayOfMonth());
+		return songRepo.countByCreatedDateBetween(start, end);
+	}
 }

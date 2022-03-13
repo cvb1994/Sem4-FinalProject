@@ -28,7 +28,7 @@ public class ListenCount extends BaseEntity{
 	@Column(name = "year")
 	private int year;
 	
-	@Column(name = "content")
+	@Column(name = "content", columnDefinition = "TEXT")
   	private String content;
 	
 }

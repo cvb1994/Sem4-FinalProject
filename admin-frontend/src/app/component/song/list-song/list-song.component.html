@@ -2,44 +2,56 @@
     <form class="form-group" [formGroup]="songFormSearch" (ngSubmit)="onSubmit()">
         <div class="card">
             <div class="card-header">
-                <h6 class="card-title">Search</h6>
+                <h6 class="card-title">Tìm kiếm</h6>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <input type="text" formControlName="title" class="form-control" placeholder="Search Title">
+                            <mat-form-field class="example-form-field" appearance="fill">
+                                <mat-label>Tìm theo tên</mat-label>
+                                <input matInput type="text" formControlName="title">
+                              </mat-form-field>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <div class="form-group">
-                                <input type="text" formControlName="composer" class="form-control" placeholder="Search composer">
+                                <mat-form-field class="example-form-field" appearance="fill">
+                                    <mat-label>Tìm theo tác giả</mat-label>
+                                    <input matInput type="text" formControlName="composer">
+                                  </mat-form-field>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <select formControlName="artistIds" class="form-select">
-                                <option value="">Select Artist</option>
-                                <option *ngFor="let item of listArtist" value="{{item.name}}">{{item.name}}</option>
-                            </select>
+                            <div class="form-group">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Tìm theo nghệ sĩ</mat-label>
+                                    <mat-select formControlName="artistIds" multiple>
+                                      <mat-option *ngFor="let artist of listArtist" [value]="artist.id">{{artist.name}}</mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <select formControlName="genreIds" class="form-select">
-                                <option value="">Select Genre</option>
-                                <option *ngFor="let item of listGenre" value="{{item.name}}">{{item.name}}</option>
-                            </select>
+                            <div class="form-group">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Tìm theo thể loại</mat-label>
+                                    <mat-select formControlName="genreIds" multiple>
+                                      <mat-option *ngFor="let genre of listGenre" [value]="genre.id">{{genre.name}}</mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row text-right">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-secondary">Search</button>
+                        <button type="submit" class="btn btn-secondary">Tìm kiếm</button>
                     </div>
                 </div>
             </div>
@@ -60,20 +72,20 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
-                <h3 class="box-title">Song List</h3>
+                <h3 class="box-title">Danh sách bài hát</h3>
                 <a class="btn btn-primary" [routerLink]="['/form-song']">Add New</a>
                 <div class="table-responsive">
-                    <table class="table text-nowrap">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th class="border-top-0 text-center">#</th>
-                                <th class="border-top-0 text-center">Avatar</th>
-                                <th class="border-top-0 text-center">Title</th>
-                                <th class="border-top-0 text-center">Composer</th>
-                                <th class="border-top-0 text-center">Album</th>
-                                <th class="border-top-0 text-center">Total Listen</th>
-                                <th class="border-top-0 text-center">Vip</th>
-                                <th class="border-top-0 text-center">Action</th>
+                                <th style="width: 5%" class="border-top-0 text-center">STT</th>
+                                <th style="width: 10%" class="border-top-0 text-center">Ảnh</th>
+                                <th style="width: 25%" class="border-top-0 text-center">Bài hát</th>
+                                <th style="width: 20%" class="border-top-0 text-center">Tác giả</th>
+                                <th style="width: 15%" class="border-top-0 text-center">Album</th>
+                                <th style="width: 10%" class="border-top-0 text-center">Lượt nghe</th>
+                                <th style="width: 10%" class="border-top-0 text-center">Vip</th>
+                                <th style="width: 5%" class="border-top-0 text-center">#</th>
                             </tr>
                         </thead>
                         <tbody *ngFor="let song of listSong; let i = index">
@@ -86,15 +98,20 @@
                                 <td class="text-center">{{song.composer}}</td>
                                 <td class="text-center">{{song.album?.name}}</td>
                                 <td class="text-center">{{song.listenCount}}</td>
-                                <td class="text-center">{{song.vipOnly}}</td>
+                                <td class="text-center" *ngIf="song.vipOnly == true">
+                                    <i class="fa fa-check"></i>
+                                </td>
+                                <td class="text-center" *ngIf="song.vipOnly == false">
+                                    
+                                </td>
                                 <td class="text-center">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                          Action
-                                        </button>
+                                        <a type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-bars"></i>
+                                        </a>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-song/',song.id]">Edit</a></li>
-                                          <li><a class="dropdown-item item-dropdown" (click)="onDelete(song.id)">Delete</a></li>
+                                          <li><a class="dropdown-item item-dropdown" [routerLink]="['/form-song/',song.id]">Chỉnh sửa</a></li>
+                                          <li><a class="dropdown-item item-dropdown" href="javascript:void(0)" (click)="onDelete(song.id)">Xóa</a></li>
                                         </ul>
                                       </div>
                                 </td>
@@ -105,13 +122,13 @@
                     <div aria-label="..." id="paginationPage" style="padding-left: 40%;">
                         <ul class="pagination ">
                           <li class="page-item ">
-                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Previous</button>
+                            <button class="page-link" [disabled]="previousPageDisable" (click)="previusPage()">Trang trước</button>
                           </li>
                           <li class="page-item active">
                             <a class="page-link" href="#" id="currentPage">{{currentPage+1}}</a>
                           </li>
                           <li class="page-item">
-                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Next</button>
+                            <button class="page-link" (click)="nextPage()" [disabled]="nextPageDisable">Tráng sau</button>
                           </li>
                         </ul>
                     </div>

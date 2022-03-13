@@ -22,6 +22,9 @@ public class PaymentParam extends BaseEntity{
 	@Column(name = "price", nullable = false)
 	private int price;
 	
+	@Column(name = "actualPrice", nullable = false)
+	private int actualPrice;
+	
 	@Column(name = "time_expire", nullable = false)
 	private int timeExpire;
 	

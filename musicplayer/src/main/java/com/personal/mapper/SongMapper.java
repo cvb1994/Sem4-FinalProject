@@ -7,6 +7,7 @@ import com.personal.dto.AlbumDto;
 import com.personal.dto.ArtistDto;
 import com.personal.dto.GenreDto;
 import com.personal.dto.SongDto;
+import com.personal.dto.SongSimplyDto;
 import com.personal.entity.Album;
 import com.personal.entity.Artist;
 import com.personal.entity.Genre;
@@ -29,4 +30,6 @@ public interface SongMapper {
 	@Mapping(target = "artist", expression = "java(null)")
 	@Mapping(target = "songs", expression = "java(null)")
 	AlbumDto albumToAlbumDto(Album album);
+	
+	SongSimplyDto entityToSimplyDto(Song song);
 }

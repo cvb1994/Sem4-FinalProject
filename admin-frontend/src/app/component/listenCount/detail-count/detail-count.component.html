@@ -1,0 +1,41 @@
+<div class="page-breadcrumb bg-white">
+    <!-- /.col-lg-12 -->
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <h3 class="box-title">Danh sách thống kê Top 10</h3>
+                <div class="table-responsive">
+                    <table class="table text-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0 text-center">STT</th>
+                                <th class="border-top-0 text-center">Bài hát</th>
+                                <th class="border-top-0 text-center">Lượt nghe</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngFor="let item of listSong; let i = index">
+                            <tr>
+                                <td class="text-center">{{i+1}}</td>
+                                <td class="text-center">{{item.title}}</td>
+                                <td class="text-center">{{item.listenCountReset}}</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

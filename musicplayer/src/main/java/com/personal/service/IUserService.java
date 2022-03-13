@@ -14,4 +14,6 @@ public interface IUserService {
 	public ResponseDto delete(int userId);
 	public ResponseDto getLinkResetPassword(String email);
 	public ResponseDto resetPassword(ResetPasswordDto model);
+	public Long countUser();
+	public int countUserNewInMonth();
 }

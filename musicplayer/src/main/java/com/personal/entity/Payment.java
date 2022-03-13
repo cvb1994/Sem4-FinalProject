@@ -32,6 +32,9 @@ public class Payment extends BaseEntity {
 	@Column(name = "price", nullable = false)
 	private int price;
 	
+	@Column(name = "actualPrice", nullable = false)
+	private int actualPrice;
+	
 	@Column(name = "discount", nullable = true)
 	private double discount;
 	

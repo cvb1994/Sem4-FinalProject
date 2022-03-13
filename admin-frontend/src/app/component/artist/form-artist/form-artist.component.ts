@@ -20,6 +20,9 @@ export class FormArtistComponent implements OnInit {
   @ViewChild('previewImg')
   public myImg!: ElementRef;
 
+  @ViewChild('preview')
+  public bigImg!: ElementRef;
+
   artistForm = new FormGroup({
     id: new FormControl('0'),
     name: new FormControl('', Validators.required),
@@ -55,6 +58,7 @@ export class FormArtistComponent implements OnInit {
           this.artistForm.get("description")?.setValue(data.content.description);
           this.artistForm.get("nationality")?.setValue(data.content.nationality);
           this.myImg.nativeElement.src = data.content.avatar;
+          this.bigImg.nativeElement.src = data.content.avatar;
           this.divStyle = 200;
         });
       }
@@ -68,6 +72,7 @@ export class FormArtistComponent implements OnInit {
       const file = event.target.files[0];
       this.artistForm.get('avatar')?.setValue(file);
       this.myImg.nativeElement.src = URL.createObjectURL(file);
+      this.bigImg.nativeElement.src = URL.createObjectURL(file);
       this.divStyle = 200;
     }
   }

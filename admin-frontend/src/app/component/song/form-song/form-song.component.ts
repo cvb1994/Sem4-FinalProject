@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
+import { FormGroup, FormControl, Validators, ValidatorFn} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from "ngx-spinner";
 import Swal from 'sweetalert2';
@@ -10,6 +10,7 @@ import { AlbumService } from 'src/app/service/album.service';
 import { Observable } from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-form-song',
@@ -28,38 +29,46 @@ export class FormSongComponent implements OnInit {
   public audioLoaded:boolean = false;
   public audioPlaying:boolean = false;
   public listAlbum:any;
-  private localStorage: Storage = localStorage;
-
+  public duration:any;
 
   artistSelectCtrl = new FormControl();
+  get artistSelect(){return this.artistSelectCtrl};
   filterListArtist: Observable<any>;
   @ViewChild('artistSelectInput')
   artistSelectInput!: ElementRef<HTMLInputElement>;
 
   genreSelectCtrl = new FormControl();
+  get genreSelect(){return this.genreSelectCtrl};
   filterListgenre: Observable<any>;
   @ViewChild('genreSelectInput')
   genreSelectInput!: ElementRef<HTMLInputElement>;
 
-  audio = new Audio();
+  @ViewChild('audioPreview')
+  public myAudio!: ElementRef;
 
   @ViewChild('previewImg')
   public myImg!: ElementRef;
+
+  @ViewChild('preview')
+  public bigImg!: ElementRef;
 
   songForm = new FormGroup({
     id: new FormControl('0'),
     title: new FormControl('', Validators.required),
     composer: new FormControl(''),
-    timePlay: new FormControl(''),
+    timePlay: new FormControl('',Validators.pattern('^([0-9])+:+([0-9])+$')),
     vipOnly: new FormControl('false'),
-    artistIds: new FormControl(''),
-    genreIds: new FormControl(''),
+    artistIds: new FormControl('', Validators.required),
+    genreIds: new FormControl('', Validators.required),
     albumId: new FormControl('0'),
     image: new FormControl(''),
-    mediaUrl: new FormControl(''),
+    mediaUrl: new FormControl('', Validators.required),
   });
 
-  get title(){return this.songForm.get('title')}
+  get title(){return this.songForm.get('title')};
+  get timePlay(){return this.songForm.get('timePlay')};
+  get mediaUrl(){return this.songForm.get('mediaUrl')};
+  get image(){return this.songForm.get('image')};
 
   constructor(
     private albumSer : AlbumService,
@@ -87,6 +96,9 @@ export class FormSongComponent implements OnInit {
       this.listArtist.push(artist);
       this.listArtist.sort((a:any,b:any) =>(a.name > b.name) ? 1 :((b.name > a.name) ? -1 : 0));
     }
+    if(this.listArtistSelect.length == 0){
+      this.songForm.get("artistIds")?.setValue("");
+    }
   }
 
   selectedArtist(event: MatAutocompleteSelectedEvent): void {
@@ -97,6 +109,7 @@ export class FormSongComponent implements OnInit {
     }
     this.artistSelectInput.nativeElement.value = '';
     this.artistSelectCtrl.setValue(null);
+    this.songForm.get("artistIds")?.setValue("valid");
   }
 
   private _filterArtist(value: any): string[] {
@@ -119,6 +132,9 @@ export class FormSongComponent implements OnInit {
       this.listGenre.push(genre);
       this.listGenre.sort((a:any,b:any) =>(a.name > b.name) ? 1 :((b.name > a.name) ? -1 : 0));
     }
+    if(this.listGenreSelect.length === 0){
+      this.songForm.get("genreIds")?.setValue("");
+    }
   }
 
   selectedGenre(event: MatAutocompleteSelectedEvent): void {
@@ -129,6 +145,7 @@ export class FormSongComponent implements OnInit {
     }
     this.genreSelectInput.nativeElement.value = '';
     this.genreSelectCtrl.setValue(null);
+    this.songForm.get("genreIds")?.setValue("valid");
   }
 
   private _filterGenre(value: any): string[] {
@@ -162,10 +179,13 @@ export class FormSongComponent implements OnInit {
           this.songForm.get("timePlay")?.setValue(data.content.timePlay);
           this.songForm.get("albumId")?.setValue(data.content.album?.id);
           this.songForm.get("vipOnly")?.setValue(data.content.vipOnly);
-          this.audio.src = data.content.mediaUrl;
-          this.audio.load();
+          this.songForm.get("artistIds")?.setValue("valid");
+          this.songForm.get("genreIds")?.setValue("valid");
+          this.songForm.get("mediaUrl")?.setValue("valid");
+          this.myAudio.nativeElement.src = data.content.mediaUrl;
           this.audioLoaded = true;
           this.myImg.nativeElement.src = data.content.image;
+          this.bigImg.nativeElement.src = data.content.image;
           this.divStyle = 200;
           data.content.artists.forEach((a: any) => {
             this.listArtistSelect.push(a);
@@ -215,81 +235,92 @@ export class FormSongComponent implements OnInit {
   onFileSelect(event:any) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-      this.songForm.get('image')?.setValue(file);
-      this.myImg.nativeElement.src = URL.createObjectURL(file);
-      this.divStyle = 200;
+      let extension = file.name.split('.').pop();
+      if(extension === 'jpg' || extension === 'png'){
+        this.songForm.get('image')?.setValue(file);
+        this.myImg.nativeElement.src = URL.createObjectURL(file);
+        this.bigImg.nativeElement.src = URL.createObjectURL(file);
+        this.divStyle = 200;
+      } else {
+        this.songForm.get("image")?.setErrors({'invalid':true});
+      }
     }
   }
 
   onAudioSelect(event:any){
     if (event.target.files.length > 0) {
       const mp3 = event.target.files[0];
-      this.songForm.get('mediaUrl')?.setValue(mp3);
-      this.audio.src = URL.createObjectURL(mp3);
-      this.audio.load();
-      this.audioLoaded = true;
+      let extension = mp3.name.split('.').pop();
+      if(extension === 'mp3'){
+        this.songForm.get('mediaUrl')?.setValue(mp3);
+        this.myAudio.nativeElement.src = URL.createObjectURL(mp3);
+      } else {
+        this.songForm.get("mediaUrl")?.setErrors({'invalid':true});
+      }
+      
     }
   }
 
-  onPlayPause(){
-    this.audioPlaying = !this.audioPlaying;
-    if(this.audioPlaying == true){
-      this.audio.play();
-    } else {
-      this.audio.pause();
-    }
+  setDuration(load_event:any): void {
+    this.duration = Math.round(load_event.currentTarget.duration);
+    console.log(load_event.currentTarget.duration);
+    this.songForm.get("timePlay")?.setValue(durationConvert(load_event.currentTarget.duration));
   }
 
   onSubmit() {
-    const formData = new FormData();
-    formData.append('id', this.songForm.get("id")?.value);
-    formData.append('title', this.songForm.get("title")?.value);
-    formData.append('composer', this.songForm.get("composer")?.value);
-    formData.append('timePlay', this.songForm.get("timePlay")?.value);
-    formData.append('vipOnly', this.songForm.get("vipOnly")?.value);
-    if(this.listArtistSelect.length > 0){
-      formData.append('artistIds', this.listArtistId());
-    }
-    if(this.listGenreSelect.length > 0){
-      formData.append('genreIds', this.listGenreId());
-    }
-    formData.append('albumId', this.songForm.get("albumId")?.value);
-    var file:any = this.songForm.get("image");
-    if(file.value != ""){
-      formData.append('file', this.songForm.get("image")?.value);
-    }
-    var mp3:any = this.songForm.get("mediaUrl");
-    if(mp3.value != ""){
-      formData.append('mp3', this.songForm.get("mediaUrl")?.value);
-    }
-    var id:any = this.songForm.get("id")?.value;
-    if(id == 0){
-      this.spinner.show();
-      this.songSer.postSong(formData).subscribe((data) =>{
-        if(data.status == true){
-          this.spinner.hide();
-          this.songSer.songChanged.next(true);
-          this.songSer.message.next(data.message);
-          this._router.navigateByUrl('list-song');
-        } else {
-          this.spinner.hide();
-          this.simpleAlert(data.message);
-        }
-      });
-    } else {
-      formData.append('createdDate', this.editSong.createdDate);
-      this.spinner.show();
-      this.songSer.updateSong(formData).subscribe((data) => {
-        if(data.status == true){
-          this.spinner.hide();
-          this._router.navigateByUrl('list-song');
-          this.songSer.songChanged.next(true);
-          this.songSer.message.next(data.message);
-        } else {
-          this.spinner.hide();
-          this.simpleAlert(data.message);
-        }
-      })
+    if(this.artistValidatation() && this.genreValidatation()){
+      const formData = new FormData();
+      formData.append('id', this.songForm.get("id")?.value);
+      formData.append('title', this.songForm.get("title")?.value);
+      formData.append('composer', this.songForm.get("composer")?.value);
+      formData.append('timePlay', this.songForm.get("timePlay")?.value);
+      formData.append('vipOnly', this.songForm.get("vipOnly")?.value);
+      if(this.listArtistSelect.length > 0){
+        formData.append('artistIds', this.listArtistId());
+      }
+      if(this.listGenreSelect.length > 0){
+        formData.append('genreIds', this.listGenreId());
+      }
+      formData.append('albumId', this.songForm.get("albumId")?.value);
+      var file:any = this.songForm.get("image");
+      if(file.value != ""){
+        formData.append('file', this.songForm.get("image")?.value);
+      }
+      var mp3:any = this.songForm.get("mediaUrl");
+      if(mp3.value != "" && mp3.value != "valid"){
+        formData.append('mp3', this.songForm.get("mediaUrl")?.value);
+      }
+      var id:any = this.songForm.get("id")?.value;
+      if(id == 0){
+        this.spinner.show();
+        this.songSer.postSong(formData).subscribe((data) =>{
+          if(data.status == true){
+            this.spinner.hide();
+            this.songSer.songChanged.next(true);
+            this.songSer.message.next(data.message);
+            this._router.navigateByUrl('list-song');
+          } else {
+            this.spinner.hide();
+            this.simpleAlert(data.message);
+          }
+        });
+      } else {
+        formData.append('createdDate', this.editSong.createdDate);
+        this.spinner.show();
+        this.songSer.updateSong(formData).subscribe((data) => {
+          if(data.status == true){
+            this.spinner.hide();
+            this._router.navigateByUrl('list-song');
+            console.log(data.message);
+            console.log("da vao day roifn");
+            this.songSer.songChanged.next(true);
+            this.songSer.message.next(data.message);
+          } else {
+            this.spinner.hide();
+            this.simpleAlert(data.message);
+          }
+        })
+      }
     }
   }
 
@@ -313,5 +344,28 @@ export class FormSongComponent implements OnInit {
     return listId;
   }
 
+  artistValidatation():boolean{
+    if(this.listArtistSelect.length <= 0){
+      console.log("da vao");
+      this.artistSelectCtrl.setErrors({'invalid':true})
+      return false;
+    }
+    return true;
+  }
+
+  genreValidatation():boolean{
+    if(this.listGenreSelect.length <= 0){
+      this.genreSelectCtrl.setErrors({'invalid':true})
+      return false;
+    }
+    return true;
+  }
+}
+
+function durationConvert(duration: number):string {
+  let a = Math.round(duration);
+  let minute = Math.floor(a/60);
+  let second = (a - (minute*60));
+  return minute+":"+ second;
 }
 

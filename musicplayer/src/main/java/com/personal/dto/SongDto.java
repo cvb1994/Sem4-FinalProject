@@ -23,6 +23,7 @@ public class SongDto extends BaseDto{
 	private AlbumDto album;
 	private List<GenreDto> genres;
 	private Boolean vipOnly;
+	private int listenCountReset;
 	
 	private List<Integer> artistIds;			//required
 	private int albumId;						
