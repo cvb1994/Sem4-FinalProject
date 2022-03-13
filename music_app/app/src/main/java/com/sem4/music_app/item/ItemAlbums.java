@@ -1,8 +1,9 @@
 package com.sem4.music_app.item;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ItemAlbums {
+public class ItemAlbums implements Serializable {
     private Integer id;
     private String name;
     private String avatar;

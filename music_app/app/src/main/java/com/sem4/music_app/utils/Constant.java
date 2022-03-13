@@ -16,6 +16,7 @@ public class Constant implements Serializable {
 
     public static String SERVER_URL = "https://music-ner3yu5pda-as.a.run.app/";
     public static String DOWNLOAD_ENC_KEY = "mp3download";
+    public static boolean autoLogin = true;
 
     public static final String METHOD_LOGIN = "user/login";
     public static final String METHOD_REGISTER = "user_register";
@@ -96,7 +97,7 @@ public class Constant implements Serializable {
     public static Boolean isNewAdded = true;
     public static String addedFrom = "";
     public static ArrayList<ItemSong> arrayList_play = new ArrayList<>();
-    public static ArrayList<ItemSong> arrayListOfflineSongs = new ArrayList<>();
+    public static ArrayList<ItemSong> arrayListOfflineSongs = new ArrayList<ItemSong>();
     public static ArrayList<ItemAlbums> arrayListOfflineAlbums = new ArrayList<>();
     public static ArrayList<ItemArtist> arrayListOfflineArtist = new ArrayList<>();
 

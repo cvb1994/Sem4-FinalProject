@@ -17,6 +17,7 @@ import com.sem4.music_app.R;
 import com.sem4.music_app.item.ItemUser;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
+import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.utils.Constant;
 import com.sem4.music_app.utils.Methods;
 import com.sem4.music_app.utils.SharedPref;
@@ -70,6 +71,10 @@ public class LoginActivity extends BaseActivity {
             etUsername.setText(sharedPref.getUsername());
             etPassword.setText(sharedPref.getPassword());
             cbRememberMe.setChecked(true);
+            if(Constant.autoLogin){
+                loadLogin();
+            }
+            Constant.autoLogin = false;
         }
 
         btSkip.setOnClickListener(new View.OnClickListener() {
@@ -159,14 +164,14 @@ public class LoginActivity extends BaseActivity {
         if (methods.isNetworkAvailable()) {
             progressDialog.show();
             apiManager.userLogin(etUsername.getText().toString(), etPassword.getText().toString())
-                    .enqueue(new Callback<String>() {
+                    .enqueue(new Callback<BaseResponse<ItemUser>>() {
                         @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
+                        public void onResponse(Call<BaseResponse<ItemUser>> call, Response<BaseResponse<ItemUser>> response) {
                             progressDialog.dismiss();
-                            if (TextUtils.isEmpty(response.body())) {
-                                Toast.makeText(LoginActivity.this, getString(R.string.wrong_username_or_password), Toast.LENGTH_SHORT).show();
+                            if (!response.body().isStatus()) {
+                                Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                Constant.itemUser = new ItemUser(etUsername.getText().toString());
+                                Constant.itemUser = response.body().getContent();
                                 if (cbRememberMe.isChecked()) {
                                     sharedPref.setLoginDetails(Constant.itemUser, cbRememberMe.isChecked(), etPassword.getText().toString());
                                 } else {
@@ -184,7 +189,7 @@ public class LoginActivity extends BaseActivity {
                         }
 
                         @Override
-                        public void onFailure(Call<String> call, Throwable t) {
+                        public void onFailure(Call<BaseResponse<ItemUser>> call, Throwable t) {
                             progressDialog.dismiss();
                             Toast.makeText(LoginActivity.this, getString(R.string.err_server), Toast.LENGTH_LONG).show();
                         }

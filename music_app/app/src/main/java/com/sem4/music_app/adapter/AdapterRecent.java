@@ -1,15 +1,12 @@
 package com.sem4.music_app.adapter;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
@@ -20,7 +17,6 @@ import com.sem4.music_app.R;
 import com.sem4.music_app.interfaces.ClickListenerPlaylist;
 import com.sem4.music_app.item.ItemSong;
 import com.sem4.music_app.utils.Constant;
-import com.sem4.music_app.utils.GlobalBus;
 import com.sem4.music_app.utils.Methods;
 import com.squareup.picasso.Picasso;
 
@@ -66,26 +62,26 @@ public class AdapterRecent extends RecyclerView.Adapter<AdapterRecent.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
 
-        holder.tv_title.setText(arrayList.get(position).getTitle());
-        holder.tv_cat.setText(arrayList.get(position).getArtists().get(0).getName());
-        Picasso.get()
-                .load(arrayList.get(position).getImage())
-                .placeholder(R.drawable.placeholder_song)
-                .into(holder.iv_song);
-
-        holder.iv_more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openOptionPopUp(holder.iv_more, holder.getAdapterPosition());
-            }
-        });
-
-        holder.iv_song.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListenerPlayList.onClick(holder.getAdapterPosition());
-            }
-        });
+//        holder.tv_title.setText(arrayList.get(position).getTitle());
+//        holder.tv_cat.setText(arrayList.get(position).getArtists().get(0).getName());
+//        Picasso.get()
+//                .load(arrayList.get(position).getImage())
+//                .placeholder(R.drawable.placeholder_song)
+//                .into(holder.iv_song);
+//
+//        holder.iv_more.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openOptionPopUp(holder.iv_more, holder.getAdapterPosition());
+//            }
+//        });
+//
+//        holder.iv_song.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                clickListenerPlayList.onClick(holder.getAdapterPosition());
+//            }
+//        });
     }
 
     @Override
@@ -101,13 +97,6 @@ public class AdapterRecent extends RecyclerView.Adapter<AdapterRecent.MyViewHold
     private void openOptionPopUp(ImageView imageView, final int pos) {
         PopupMenu popup = new PopupMenu(context, imageView);
         popup.getMenuInflater().inflate(R.menu.popup_song, popup.getMenu());
-
-        if (!Constant.isOnline) {
-            popup.getMenu().findItem(R.id.popup_add_queue).setVisible(false);
-        }
-        if(!Constant.isSongDownload) {
-            popup.getMenu().findItem(R.id.popup_download).setVisible(false);
-        }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
 //                switch (item.getItemId()) {

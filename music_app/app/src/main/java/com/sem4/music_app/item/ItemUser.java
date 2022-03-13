@@ -15,6 +15,15 @@ public class ItemUser implements Serializable {
     private String lastName;
     private String gender;
     private String avatar;
+    private String jwtToken;
+
+    public String getJwtToken() {
+        return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
+    }
 
     public ItemUser() {
     }

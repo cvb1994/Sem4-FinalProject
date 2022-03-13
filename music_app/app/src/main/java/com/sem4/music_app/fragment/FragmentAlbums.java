@@ -24,7 +24,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sem4.music_app.R;
+import com.sem4.music_app.activity.SongByCategoryActivity;
 import com.sem4.music_app.adapter.AdapterAlbums;
+import com.sem4.music_app.interfaces.OnClickListener;
 import com.sem4.music_app.item.ItemAlbums;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
@@ -32,6 +34,7 @@ import com.sem4.music_app.response.BasePaginate;
 import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.utils.EndlessRecyclerViewScrollListener;
 import com.sem4.music_app.utils.Methods;
+import com.sem4.music_app.utils.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,17 +63,16 @@ public class FragmentAlbums extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_albums, container, false);
         apiManager = Common.getAPI();
-        methods = new Methods(getActivity());
-//        methods = new Methods(getActivity(), new InterAdListener() {
-//            @Override
-//            public void onClick(int position, String type) {
-//                Intent intent = new Intent(getActivity(), SongByCatActivity.class);
-//                intent.putExtra("type", getString(R.string.albums));
-//                intent.putExtra("id", adapterAlbums.getItem(position).getId());
-//                intent.putExtra("name", adapterAlbums.getItem(position).getName());
-//                startActivity(intent);
-//            }
-//        });
+        methods = new Methods(getActivity(), new OnClickListener() {
+            @Override
+            public void onClick(int position, String type) {
+                Intent intent = new Intent(getActivity(), SongByCategoryActivity.class);
+                intent.putExtra("type", getString(R.string.albums));
+                intent.putExtra("id", String.valueOf(adapterAlbums.getItem(position).getId()));
+                intent.putExtra("name", adapterAlbums.getItem(position).getName());
+                startActivity(intent);
+            }
+        });
 
         arrayList = new ArrayList<>();
 
@@ -89,6 +91,13 @@ public class FragmentAlbums extends Fragment {
         rv.setLayoutManager(glm_banner);
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setHasFixedSize(true);
+
+        rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                methods.onClick(position, "");
+            }
+        }));
 
         rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
             @Override

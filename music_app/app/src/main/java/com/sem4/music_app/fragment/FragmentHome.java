@@ -12,20 +12,17 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sem4.music_app.R;
-import com.sem4.music_app.activity.DrawerActivity;
 import com.sem4.music_app.activity.MainActivity;
 import com.sem4.music_app.activity.SongByCategoryActivity;
 import com.sem4.music_app.adapter.AdapterAlbumsHome;
@@ -136,14 +133,15 @@ public class FragmentHome extends Fragment {
                     intent.putExtra("id", arrayList_albums.get(position).getId());
                     intent.putExtra("name", arrayList_albums.get(position).getName());
                     startActivity(intent);
-                } else if (type.equals(getString(R.string.banner))) {
-                    Intent intent = new Intent(getActivity(), SongByCategoryActivity.class);
-                    intent.putExtra("type", getString(R.string.banner));
-                    intent.putExtra("id", arrayList_banner.get(position).getId());
-                    intent.putExtra("name", arrayList_banner.get(position).getName());
-//                    intent.putExtra("songs", arrayList_banner.get(position).getArrayListSongs());
-                    startActivity(intent);
                 }
+//                else if (type.equals(getString(R.string.banner))) {
+//                    Intent intent = new Intent(getActivity(), SongByCategoryActivity.class);
+//                    intent.putExtra("type", getString(R.string.banner));
+//                    intent.putExtra("id", arrayList_banner.get(position).getId());
+//                    intent.putExtra("name", arrayList_banner.get(position).getName());
+////                    intent.putExtra("songs", arrayList_banner.get(position).getArrayListSongs());
+//                    startActivity(intent);
+//                }
             }
         });
         dbHelper = new DBHelper(getActivity());
@@ -350,12 +348,11 @@ public class FragmentHome extends Fragment {
                             errr_msg = getString(R.string.err_server);
                         }
                     });
-            progressBar.setVisibility(View.GONE);
         } else {
             errr_msg = getString(R.string.err_internet_not_conn);
             frameLayout.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
         }
+        progressBar.setVisibility(View.GONE);
     }
 
     private void loadEmpty() {

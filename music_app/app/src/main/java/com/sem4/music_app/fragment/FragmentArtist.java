@@ -33,6 +33,7 @@ import com.sem4.music_app.response.BasePaginate;
 import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.utils.EndlessRecyclerViewScrollListener;
 import com.sem4.music_app.utils.Methods;
+import com.sem4.music_app.utils.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,23 +62,22 @@ public class FragmentArtist extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_categories, container, false);
         apiManager = Common.getAPI();
-        methods = new Methods(getActivity());
-//        methods = new Methods(getActivity(), new OnClickListener() {
-//            @Override
-//            public void onClick(int position, String type) {
-//                FragmentAlbumsByArtist f_alb = new FragmentAlbumsByArtist();
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("item", arrayList.get(position));
-//                f_alb.setArguments(bundle);
-//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                ft.hide(getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getBackStackEntryCount()));
-//                ft.add(R.id.fragment, f_alb, getString(R.string.albums));
-//                ft.addToBackStack(getString(R.string.albums));
-//                ft.commit();
-//                ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.albums));
-//            }
-//        });
+        methods = new Methods(getActivity(), new OnClickListener() {
+            @Override
+            public void onClick(int position, String type) {
+                FragmentAlbumsByArtist f_alb = new FragmentAlbumsByArtist();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("item", arrayList.get(position));
+                f_alb.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.hide(getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getBackStackEntryCount()));
+                ft.add(R.id.fragment, f_alb, getString(R.string.albums));
+                ft.addToBackStack(getString(R.string.albums));
+                ft.commit();
+                ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.albums));
+            }
+        });
 
         arrayList = new ArrayList<>();
 
@@ -96,6 +96,13 @@ public class FragmentArtist extends Fragment {
         rv.setLayoutManager(glm_banner);
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setHasFixedSize(true);
+
+        rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                methods.onClick(position, "");
+            }
+        }));
 
         rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
             @Override

@@ -30,17 +30,6 @@
             android:textColor="@color/text_duration"
             android:textSize="14sp" />
 
-        <RatingBar
-            android:id="@+id/rb_music"
-            style="@style/RatingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:max="5"
-            android:numStars="5"
-            android:theme="@style/RatingBar" />
-
         <TextView
             android:id="@+id/tv_music_song_count"
             android:layout_width="wrap_content"
@@ -103,9 +92,9 @@
             android:layout_marginStart="7dp"
             android:background="@drawable/ripple"
             android:clickable="true"
+            android:focusable="true"
             android:padding="7dp"
-            android:src="@mipmap/ic_shuffle"
-            android:focusable="true" />
+            android:src="@mipmap/ic_shuffle" />
 
         <ImageView
             android:id="@+id/iv_music_previous"
@@ -169,11 +158,11 @@
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginEnd="7dp"
-            android:padding="7dp"
-            android:src="@mipmap/ic_repeat"
+            android:background="@drawable/ripple"
             android:clickable="true"
             android:focusable="true"
-            android:background="@drawable/ripple" />
+            android:padding="7dp"
+            android:src="@mipmap/ic_repeat" />
 
     </RelativeLayout>
 

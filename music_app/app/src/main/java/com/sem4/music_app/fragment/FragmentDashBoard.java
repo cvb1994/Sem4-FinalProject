@@ -34,9 +34,9 @@ public class FragmentDashBoard extends Fragment {
         spaceNavigationView = rootView.findViewById(R.id.space);
         spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
         spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.home), R.mipmap.ic_home_bottom));
-        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.recent), R.mipmap.ic_recent));
         spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.chart), R.drawable.ic_chart));
-        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.latest), R.mipmap.ic_latest));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.artist), R.mipmap.ic_artist));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getString(R.string.albums), R.mipmap.albums));
 
         FragmentHome f1 = new FragmentHome();
         loadFrag(f1, getString(R.string.home));
@@ -59,14 +59,14 @@ public class FragmentDashBoard extends Fragment {
 //                        FragmentRecentSongs frecent = new FragmentRecentSongs();
 //                        loadFrag(frecent, getString(R.string.recently_played));
 //                        break;
-//                    case 2:
-//                        FragmentCategories fcat = new FragmentCategories();
-//                        loadFrag(fcat, getString(R.string.categories));
-//                        break;
-//                    case 3:
-//                        FragmentLatest flatest = new FragmentLatest();
-//                        loadFrag(flatest, getString(R.string.latest));
-//                        break;
+                    case 2:
+                        FragmentArtist fart = new FragmentArtist();
+                        loadFrag(fart, getString(R.string.artist));
+                        break;
+                    case 3:
+                        FragmentAlbums falb = new FragmentAlbums();
+                        loadFrag(falb, getString(R.string.albums));
+                        break;
                 }
             }
 

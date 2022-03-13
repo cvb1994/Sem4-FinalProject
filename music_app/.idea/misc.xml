@@ -35,23 +35,35 @@
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_albums.xml" value="0.22780797101449277" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_albums_home.xml" value="0.20415400202634246" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_cat.xml" value="0.22780797101449277" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_dialog_add_playlist.xml" value="0.20466058763931105" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_dialog_playlist.xml" value="0.20466058763931105" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_dialog_volume.xml" value="0.20466058763931105" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_err_internet.xml" value="0.22780797101449277" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_err_nodata.xml" value="0.22780797101449277" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_err_server.xml" value="0.22780797101449277" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_home_artist.xml" value="0.20415400202634246" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_home_banner.xml" value="0.21422101449275363" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_mini_musicplayer.xml" value="0.20466058763931105" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_music.xml" value="0.2446043165467626" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_music_max_header.xml" value="0.3625" />
-        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_music_min_header.xml" value="0.425" />
-        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_music_options.xml" value="0.3625" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_music_min_header.xml" value="0.33" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_music_options.xml" value="0.33" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_music_player.xml" value="0.3625" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_my_playlist.xml" value="0.20466058763931105" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_noti_small.xml" value="0.21175278622087132" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_notification.xml" value="0.21175278622087132" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_offline_songs.xml" value="0.20466058763931105" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_playlist_dialog.xml" value="0.20466058763931105" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_progressbar.xml" value="0.22780797101449277" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_recent.xml" value="0.20415400202634246" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_recent_songs.xml" value="0.5" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_viewpager.xml" value="0.20466058763931105" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/layout/nav_header_main.xml" value="0.33" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/menu/activity_main_drawer.xml" value="0.3625" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/menu/popup_base_option.xml" value="0.41435897435897434" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/menu/popup_playlist.xml" value="0.41435897435897434" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/menu/popup_song.xml" value="0.2898148148148148" />
+        <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/menu/popup_song_off.xml" value="0.22447916666666667" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/bottomnavigationlib/src/main/res/drawable-v21/white_ripple.xml" value="0.1805" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/bottomnavigationlib/src/main/res/drawable/near_me.xml" value="0.1805" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/bottomnavigationlib/src/main/res/drawable/white_ripple.xml" value="0.1805" />

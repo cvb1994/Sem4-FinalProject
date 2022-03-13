@@ -53,6 +53,8 @@ import com.sem4.music_app.R;
 import com.sem4.music_app.activity.DrawerActivity;
 import com.sem4.music_app.activity.SplashActivity;
 import com.sem4.music_app.item.ItemAlbums;
+import com.sem4.music_app.network.ApiManager;
+import com.sem4.music_app.network.Common;
 import com.sem4.music_app.receiver.MediaButtonIntentReceiver;
 import com.sem4.music_app.utils.Constant;
 import com.sem4.music_app.utils.DBHelper;
@@ -80,7 +82,7 @@ public class PlayerService extends IntentService implements Player.EventListener
     public static final String ACTION_STOP = "action.ACTION_STOP";
     public static final String ACTION_SEEKTO = "action.ACTION_SEEKTO";
 
-    static ExoPlayer exoPlayer = null;
+    public static ExoPlayer exoPlayer = null;
     NotificationManager mNotificationManager;
     NotificationCompat.Builder notification;
     RemoteViews bigViews, smallViews;
@@ -97,6 +99,7 @@ public class PlayerService extends IntentService implements Player.EventListener
     ComponentName componentName;
     AudioManager mAudioManager;
     PowerManager.WakeLock mWakeLock;
+    private ApiManager apiManager = Common.getAPI();
 
     public PlayerService() {
         super(null);
@@ -201,7 +204,7 @@ public class PlayerService extends IntentService implements Player.EventListener
 
         String url;
         try {
-            url = Constant.arrayList_play.get(Constant.playPos).getMediaUrl();
+            url = Constant.arrayList_play.get(Constant.playPos).getUrl();
 
 //            MediaSource videoSource = new ExtractorMediaSource(Uri.parse(url),
 //                    dataSourceFactory, extractorsFactory, null, null);
@@ -227,9 +230,9 @@ public class PlayerService extends IntentService implements Player.EventListener
             exoPlayer.prepare(sampleSource);
             exoPlayer.setPlayWhenReady(true);
 
-//            if (!Constant.isDownloaded) {
-//                dbHelper.addToRecent(Constant.arrayList_play.get(Constant.playPos), Constant.isOnline);
-//            }
+            if (!Constant.isDownloaded) {
+                dbHelper.addToRecent(Constant.arrayList_play.get(Constant.playPos), Constant.isOnline);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -380,7 +383,7 @@ public class PlayerService extends IntentService implements Player.EventListener
 
         String NOTIFICATION_CHANNEL_ID = "onlinemp3_ch_1";
         notification = new NotificationCompat.Builder(this)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo2))
                 .setContentTitle(getString(R.string.app_name))
                 .setPriority(Notification.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
@@ -390,14 +393,6 @@ public class PlayerService extends IntentService implements Player.EventListener
                 .setOnlyAlertOnce(true);
 
         NotificationChannel mChannel;
-        StringBuilder artists = new StringBuilder();
-        for (int i = 0; i < Constant.arrayList_play.get(Constant.playPos).getArtists().size(); i++) {
-            if(i != 0){
-                artists.append(", ").append(Constant.arrayList_play.get(Constant.playPos).getArtists().get(i).getName());
-            }else{
-                artists.append(Constant.arrayList_play.get(Constant.playPos).getArtists().get(i).getName());
-            }
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.app_name);// The user-visible name of the channel.
             mChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
@@ -429,8 +424,7 @@ public class PlayerService extends IntentService implements Player.EventListener
                             pcloseIntent));
 
             notification.setContentTitle(Constant.arrayList_play.get(Constant.playPos).getTitle());
-
-            notification.setContentText(artists.toString());
+            notification.setContentText(Constant.arrayList_play.get(Constant.playPos).getArtist());
         } else {
             bigViews.setOnClickPendingIntent(R.id.imageView_noti_play, pplayIntent);
 
@@ -446,8 +440,8 @@ public class PlayerService extends IntentService implements Player.EventListener
             bigViews.setTextViewText(R.id.textView_noti_name, Constant.arrayList_play.get(Constant.playPos).getTitle());
             smallViews.setTextViewText(R.id.status_bar_track_name, Constant.arrayList_play.get(Constant.playPos).getTitle());
 
-            bigViews.setTextViewText(R.id.textView_noti_artist, artists.toString());
-            smallViews.setTextViewText(R.id.status_bar_artist_name, artists.toString());
+            bigViews.setTextViewText(R.id.textView_noti_artist, Constant.arrayList_play.get(Constant.playPos).getArtist());
+            smallViews.setTextViewText(R.id.status_bar_artist_name, Constant.arrayList_play.get(Constant.playPos).getArtist());
 
             notification.setCustomContentView(smallViews).setCustomBigContentView(bigViews);
         }
@@ -457,50 +451,41 @@ public class PlayerService extends IntentService implements Player.EventListener
     }
 
     private void updateNotiImage() {
-//        new AsyncTask<String, String, String>() {
-//
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//            }
-//
-//            @Override
-//            protected String doInBackground(String... strings) {
-//                try {
-//                    String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-//                    JsonUtils.okhttpPost(Constant.SERVER_URL, methods.getAPIRequest(Constant.METHOD_SINGLE_SONG,0,deviceId, Constant.arrayList_play.get(Constant.playPos).getId(),"","","","","","","","","","","","","", null));
-//                    getBitmapFromURL(Constant.arrayList_play.get(Constant.playPos).getImageSmall());
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                        notification.setLargeIcon(bitmap);
-//                    } else {
-//                        bigViews.setImageViewBitmap(R.id.imageView_noti, bitmap);
-//                        smallViews.setImageViewBitmap(R.id.status_bar_album_art, bitmap);
-//                    }
-//                    mNotificationManager.notify(101, notification.build());
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                return null;
-//            }
-//        }.execute();
+        new AsyncTask<String, String, String>() {
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+            }
+
+            @Override
+            protected String doInBackground(String... strings) {
+                try {
+                    String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                    getBitmapFromURL(Constant.arrayList_play.get(Constant.playPos).getImageBig());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        notification.setLargeIcon(bitmap);
+                    } else {
+                        bigViews.setImageViewBitmap(R.id.imageView_noti, bitmap);
+                        smallViews.setImageViewBitmap(R.id.status_bar_album_art, bitmap);
+                    }
+                    mNotificationManager.notify(101, notification.build());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
     }
 
     private void updateNoti() {
-        StringBuilder artists = new StringBuilder();
-        for (int i = 0; i < Constant.arrayList_play.get(Constant.playPos).getArtists().size(); i++) {
-            if(i != 0){
-                artists.append(", ").append(Constant.arrayList_play.get(Constant.playPos).getArtists().get(i).getName());
-            }else{
-                artists.append(Constant.arrayList_play.get(Constant.playPos).getArtists().get(i).getName());
-            }
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification.setContentTitle(Constant.arrayList_play.get(Constant.playPos).getTitle());
-            notification.setContentText(artists.toString());
+            notification.setContentText(Constant.arrayList_play.get(Constant.playPos).getArtist());
         } else {
             bigViews.setTextViewText(R.id.textView_noti_name, Constant.arrayList_play.get(Constant.playPos).getTitle());
-            bigViews.setTextViewText(R.id.textView_noti_artist, artists.toString());
-            smallViews.setTextViewText(R.id.status_bar_artist_name, artists.toString());
+            bigViews.setTextViewText(R.id.textView_noti_artist, Constant.arrayList_play.get(Constant.playPos).getArtist());
+            smallViews.setTextViewText(R.id.status_bar_artist_name, Constant.arrayList_play.get(Constant.playPos).getArtist());
             smallViews.setTextViewText(R.id.status_bar_track_name, Constant.arrayList_play.get(Constant.playPos).getTitle());
         }
         updateNotiImage();
@@ -508,7 +493,6 @@ public class PlayerService extends IntentService implements Player.EventListener
         changeImageAnimation();
     }
 
-    @SuppressLint("RestrictedApi")
     private void updateNotiPlay(Boolean isPlay) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

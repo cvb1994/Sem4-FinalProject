@@ -24,7 +24,9 @@ import com.sem4.music_app.R;
 import com.sem4.music_app.fragment.FragmentAlbums;
 import com.sem4.music_app.fragment.FragmentArtist;
 import com.sem4.music_app.fragment.FragmentDashBoard;
+import com.sem4.music_app.fragment.FragmentFavorite;
 import com.sem4.music_app.fragment.FragmentGenre;
+import com.sem4.music_app.fragment.FragmentPlaylist;
 import com.sem4.music_app.utils.Constant;
 import com.sem4.music_app.utils.Methods;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -36,7 +38,7 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
     Methods methods;
     FragmentManager fm;
     String selectedFragment = "";
-    MenuItem menu_login, menu_prof, menu_suggest;
+    MenuItem menu_login, menu_prof, menu_favourite, menu_playlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +49,8 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
         Menu menu = navigationView.getMenu();
         menu_login = menu.findItem(R.id.nav_login);
         menu_prof = menu.findItem(R.id.nav_profile);
-//        menu_suggest = menu.findItem(R.id.nav_suggest);
-
-//        changeLoginName();
+        menu_favourite = menu.findItem(R.id.nav_favourite);
+        menu_playlist = menu.findItem(R.id.nav_playlist);
 
         Constant.isAppOpen = true;
         methods = new Methods(this);
@@ -58,25 +59,6 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
         fm = getSupportFragmentManager();
 
         navigationView.setNavigationItemSelectedListener(this);
-
-//        adConsent = new AdConsent(this, new AdConsentListener() {
-//            @Override
-//            public void onConsentUpdate() {
-////                methods.loadInter();
-//            }
-//        });
-
-
-//        if (methods.isNetworkAvailable()) {
-//            loadAboutData();
-//        } else {
-//            adConsent.checkForConsent();
-//            dbHelper.getAbout();
-//
-//            setUpBannerAdonMusic();
-//            startAdTimeCount();
-//        }
-//
         loadDashboardFrag();
     }
 
@@ -100,40 +82,14 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
                 FragmentGenre f_genre = new FragmentGenre();
                 loadFrag(f_genre, getString(R.string.genre), fm);
                 break;
-//            case R.id.nav_allsongs:
-//                FragmentSongs f_all_songs = new FragmentSongs();
-//                loadFrag(f_all_songs, getString(R.string.all_songs), fm);
-//                break;
             case R.id.nav_playlist:
-//                FragmentServerPlaylist f_server_playlist = new FragmentServerPlaylist();
-//                loadFrag(f_server_playlist, getString(R.string.playlist), fm);
+                FragmentPlaylist f_playlist = new FragmentPlaylist();
+                loadFrag(f_playlist, getString(R.string.playlist), fm);
                 break;
-//            case R.id.nav_myplaylist:
-//                FragmentMyPlaylist f_myplay = new FragmentMyPlaylist();
-//                loadFrag(f_myplay, getString(R.string.myplaylist), fm);
-//                break;
-//            case R.id.nav_music_library:
-//                Intent intent_music_lib = new Intent(MainActivity.this, OfflineMusicActivity.class);
-//                startActivity(intent_music_lib);
-//                break;
-//            case R.id.nav_downloads:
-//                if (checkPer()) {
-//                    FragmentDownloads f_download = new FragmentDownloads();
-//                    loadFrag(f_download, getString(R.string.downloads), fm);
-//                }
-//                break;
-//            case R.id.nav_favourite:
-//                FragmentFav f_fav = new FragmentFav();
-//                loadFrag(f_fav, getString(R.string.favourite), fm);
-//                break;
-            case R.id.nav_settings:
-                Intent intent_settings = new Intent(MainActivity.this, SettingActivity.class);
-                startActivity(intent_settings);
+            case R.id.nav_favourite:
+                FragmentFavorite f_fav = new FragmentFavorite();
+                loadFrag(f_fav, getString(R.string.favourite), fm);
                 break;
-//            case R.id.nav_suggest:
-//                Intent intent_sugg = new Intent(MainActivity.this, SuggestionActivity.class);
-//                startActivity(intent_sugg);
-//                break;
             case R.id.nav_profile:
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent);
@@ -203,39 +159,23 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
         alert.show();
     }
 
-    public void loadAboutData() {
-//        LoadAbout loadAbout = new LoadAbout(MainActivity.this, new AboutListener() {
-//            @Override
-//            public void onStart() {
-//            }
-//
-//            @Override
-//            public void onEnd(String success, String verifyStatus, String message) {
-//                if (!verifyStatus.equals("-1")) {
-//                    adConsent.checkForConsent();
-//                    dbHelper.addtoAbout();
-//                } else {
-//                    methods.getVerifyDialog(getString(R.string.error_unauth_access), message);
-//                }
-//            }
-//        });
-//        loadAbout.execute();
-    }
-
     private void changeLoginName() {
         if (menu_login != null) {
             if (Constant.isLoginOn) {
                 if (Constant.isLogged) {
                     menu_prof.setVisible(true);
+                    menu_favourite.setVisible(true);
+                    menu_playlist.setVisible(true);
                     menu_login.setTitle(getResources().getString(R.string.logout));
                     menu_login.setIcon(getResources().getDrawable(R.mipmap.logout));
                 } else {
                     menu_prof.setVisible(false);
+                    menu_favourite.setVisible(false);
+                    menu_playlist.setVisible(false);
                     menu_login.setTitle(getResources().getString(R.string.login));
                     menu_login.setIcon(getResources().getDrawable(R.mipmap.login));
                 }
             } else {
-                menu_suggest.setVisible(false);
                 menu_login.setVisible(false);
                 menu_prof.setVisible(false);
             }

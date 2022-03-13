@@ -32,12 +32,19 @@ import com.sem4.music_app.item.ItemAlbums;
 import com.sem4.music_app.item.ItemArtist;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
+import com.sem4.music_app.response.BasePaginate;
+import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.utils.Constant;
+import com.sem4.music_app.utils.EndlessRecyclerViewScrollListener;
 import com.sem4.music_app.utils.Methods;
+import com.sem4.music_app.utils.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FragmentAlbumsByArtist extends Fragment {
 
@@ -53,7 +60,7 @@ public class FragmentAlbumsByArtist extends Fragment {
     private FrameLayout frameLayout;
     private String errr_msg;
     private GridLayoutManager glm_banner;
-    private int page = 1;
+    private int page = 0;
     private Boolean isOver = false, isScroll = false, isLoading = false;
     private ApiManager apiManager;
 
@@ -68,12 +75,12 @@ public class FragmentAlbumsByArtist extends Fragment {
                 switch (type) {
                     case "":
                         intent.putExtra("type", getString(R.string.albums));
-                        intent.putExtra("id", adapterAlbums.getItem(position).getId());
+                        intent.putExtra("id", String.valueOf(adapterAlbums.getItem(position).getId()));
                         intent.putExtra("name", adapterAlbums.getItem(position).getName());
                         break;
                     case "all":
                         intent.putExtra("type", getString(R.string.artist));
-                        intent.putExtra("id", itemArtist.getId());
+                        intent.putExtra("id", String.valueOf(itemArtist.getId()));
                         intent.putExtra("name", itemArtist.getName());
                         break;
                 }
@@ -105,23 +112,37 @@ public class FragmentAlbumsByArtist extends Fragment {
 
         tv_artist.setText(itemArtist.getName());
 
-//        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
-//            @Override
-//            public void onLoadMore(int p, int totalItemsCount) {
-//                if (!isOver) {
-//                    if (!isLoading) {
-//                        isLoading = true;
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                isScroll = true;
-//                                loadAlbums();
-//                            }
-//                        }, 0);
-//                    }
-//                }
-//            }
-//        });
+        ll_all_songs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                methods.onClick(0, "all");
+            }
+        });
+
+        rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                methods.onClick(position, "");
+            }
+        }));
+
+        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(glm_banner) {
+            @Override
+            public void onLoadMore(int p, int totalItemsCount) {
+                if (!isOver) {
+                    if (!isLoading) {
+                        isLoading = true;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                isScroll = true;
+                                loadAlbums();
+                            }
+                        }, 0);
+                    }
+                }
+            }
+        });
 
         loadAlbums();
 
@@ -168,45 +189,36 @@ public class FragmentAlbumsByArtist extends Fragment {
                 rv.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
             }
-//            apiManager.
-//            LoadAlbums loadAlbums = new LoadAlbums(new AlbumsListener() {
-//                @Override
-//                public void onStart() {
-//
-//                }
-//
-//                @Override
-//                public void onEnd(String success, String verifyStatus, String message, ArrayList<ItemAlbums> arrayListAlbums) {
-//                    if (getActivity() != null) {
-//                        if (success.equals("1")) {
-//                            if (!verifyStatus.equals("-1")) {
-//                                if (arrayListAlbums.size() == 0) {
-//                                    isOver = true;
-//                                    errr_msg = getString(R.string.err_no_albums_found);
-//                                    try {
-//                                        adapterAlbums.hideHeader();
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                    setEmpty();
-//                                } else {
-//                                    page = page + 1;
-//                                    arrayList.addAll(arrayListAlbums);
-//                                    setAdapter();
-//                                }
-//                            } else {
-//                                methods.getVerifyDialog(getString(R.string.error_unauth_access), message);
-//                            }
-//                        } else {
-//                            errr_msg = getString(R.string.err_server);
-//                            setEmpty();
-//                        }
-//                        progressBar.setVisibility(View.GONE);
-//                        isLoading = false;
-//                    }
-//                }
-//            }, methods.getAPIRequest(Constant.METHOD_ALBUMS_BY_ARTIST, page, "", itemArtist.getId(), "", "", "", "", "", "","","","","","","","", null));
-//            loadAlbums.execute(String.valueOf(page));
+            apiManager.listAlbumsByArtist(itemArtist.getId(), page, 15)
+                    .enqueue(new Callback<BaseResponse<BasePaginate<ItemAlbums>>>() {
+                        @Override
+                        public void onResponse(Call<BaseResponse<BasePaginate<ItemAlbums>>> call, Response<BaseResponse<BasePaginate<ItemAlbums>>> response) {
+                            if (response.body().getContent().getContent().size() == 0) {
+                                isOver = true;
+                                errr_msg = getString(R.string.err_no_albums_found);
+                                try {
+                                    adapterAlbums.hideHeader();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                setEmpty();
+                            } else {
+                                page = page + 1;
+                                arrayList.addAll(response.body().getContent().getContent());
+                                setAdapter();
+                            }
+                            progressBar.setVisibility(View.GONE);
+                            isLoading = false;
+                        }
+
+                        @Override
+                        public void onFailure(Call<BaseResponse<BasePaginate<ItemAlbums>>> call, Throwable t) {
+                            errr_msg = getString(R.string.err_server);
+                            setEmpty();
+                            progressBar.setVisibility(View.GONE);
+                            isLoading = false;
+                        }
+                    });
         } else {
             errr_msg = getString(R.string.err_internet_not_conn);
             setEmpty();

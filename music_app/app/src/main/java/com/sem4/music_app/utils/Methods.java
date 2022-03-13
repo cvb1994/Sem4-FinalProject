@@ -1,12 +1,19 @@
 package com.sem4.music_app.utils;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -15,11 +22,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,32 +44,28 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import com.sem4.music_app.R;
 import com.sem4.music_app.activity.LoginActivity;
+import com.sem4.music_app.adapter.AdapterPlaylistDialog;
+import com.sem4.music_app.interfaces.ClickListenerPlaylist;
 import com.sem4.music_app.interfaces.OnClickListener;
+import com.sem4.music_app.item.ItemMyPlayList;
 import com.sem4.music_app.item.ItemSong;
 import com.sem4.music_app.item.ItemUser;
 import com.yakivmospan.scytale.Crypto;
 import com.yakivmospan.scytale.Options;
-import com.yakivmospan.scytale.Store;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import javax.crypto.SecretKey;
 import javax.net.ssl.HttpsURLConnection;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 public class Methods {
 
@@ -244,6 +252,11 @@ public class Methods {
             InputStream input;
             if(Constant.SERVER_URL.contains("https://")) {
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+//                connection.setInstanceFollowRedirects(true);
+//                connection.setRequestProperty("User-Agent",
+//                        "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
+//                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+//                connection.setRequestProperty("Accept", "*/*");
                 connection.setDoInput(true);
                 connection.connect();
                 input = connection.getInputStream();
@@ -270,5 +283,257 @@ public class Methods {
         return gd;
     }
 
+    public void getListOfflineSongs() {
+        long aa = System.currentTimeMillis();
+        Constant.arrayListOfflineSongs.clear();
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor songCursor = contentResolver.query(songUri, null, null, null, MediaStore.Audio.Media.TITLE + " ASC");
 
+        if (songCursor != null && songCursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") String id = String.valueOf(songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media._ID)));
+                @SuppressLint("Range") long duration_long = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                @SuppressLint("Range") String title = songCursor.getString(songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                @SuppressLint("Range") String artist = songCursor.getString(songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                @SuppressLint("Range") String url = songCursor.getString(songCursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                String image = "null";
+
+                @SuppressLint("Range") long albumId = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
+                image = String.valueOf(albumId);
+
+                String duration = milliSecondsToTimerDownload(duration_long);
+
+                String desc = context.getString(R.string.title) + " - " + title + "</br>" + context.getString(R.string.artist) + " - " + artist;
+
+                Constant.arrayListOfflineSongs.add(new ItemSong(id, "", "", artist, url, image, image, title, duration, desc, "0", "0", "0", "0"));
+            } while (songCursor.moveToNext());
+        }
+        long bb = System.currentTimeMillis();
+    }
+
+    public String milliSecondsToTimerDownload(long milliseconds) {
+        String finalTimerString = "";
+        String hourString = "";
+        String secondsString = "";
+        String minutesString = "";
+
+        // Convert total duration into time
+        int hours = (int) (milliseconds / (1000 * 60 * 60));
+        int minutes = (int) (milliseconds % (1000 * 60 * 60)) / (1000 * 60);
+        int seconds = (int) ((milliseconds % (1000 * 60 * 60)) % (1000 * 60) / 1000);
+        // Add hours if there
+
+        if (hours != 0) {
+            hourString = hours + ":";
+        }
+
+        // Prepending 0 to seconds if it is one digit
+        if (seconds < 10) {
+            secondsString = "0" + seconds;
+        } else {
+            secondsString = "" + seconds;
+        }
+
+        // Prepending 0 to minutes if it is one digit
+        if (minutes < 10) {
+            minutesString = "0" + minutes;
+        } else {
+            minutesString = "" + minutes;
+        }
+
+        finalTimerString = hourString + minutesString + ":" + secondsString;
+
+        // return timer string
+        return finalTimerString;
+    }
+
+    public void openPlaylists(final ItemSong itemSong, final Boolean isOnline) {
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.layout_dialog_playlist);
+
+        final ArrayList<ItemMyPlayList> arrayList_playlist = dbHelper.loadPlayList(isOnline);
+
+        final ImageView iv_close = dialog.findViewById(R.id.iv_playlist_close);
+        final Button button_close = dialog.findViewById(R.id.button_close_dialog);
+        final TextView textView = dialog.findViewById(R.id.tv_empty_dialog_pl);
+        final RecyclerView recyclerView = dialog.findViewById(R.id.rv_dialog_playlist);
+        final LinearLayout ll_add_playlist = dialog.findViewById(R.id.ll_add_playlist);
+        final AppCompatButton btn_add_new = dialog.findViewById(R.id.button_add);
+        final AppCompatButton btn_add = dialog.findViewById(R.id.button_dialog_addplaylist);
+        final EditText et_Add = dialog.findViewById(R.id.et_playlist_name);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
+        final AdapterPlaylistDialog adapterPlaylist = new AdapterPlaylistDialog(arrayList_playlist, new ClickListenerPlaylist() {
+            @Override
+            public void onClick(int position) {
+                dbHelper.addToPlayList(itemSong, arrayList_playlist.get(position).getId(), isOnline);
+                Toast.makeText(context, context.getString(R.string.song_add_to_playlist) + arrayList_playlist.get(position).getName(), Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onItemZero() {
+                textView.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            }
+        });
+        recyclerView.setAdapter(adapterPlaylist);
+        if (arrayList_playlist.size() == 0) {
+            textView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
+
+        button_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_add_playlist.setVisibility(View.VISIBLE);
+                btn_add.setVisibility(View.GONE);
+            }
+        });
+
+        btn_add_new.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!et_Add.getText().toString().trim().isEmpty()) {
+                    arrayList_playlist.clear();
+                    arrayList_playlist.addAll(dbHelper.addPlayList(et_Add.getText().toString(), isOnline));
+                    adapterPlaylist.notifyDataSetChanged();
+                    textView.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+
+                    Toast.makeText(context, context.getString(R.string.playlist_added), Toast.LENGTH_SHORT).show();
+
+                    et_Add.setText("");
+                } else {
+                    Toast.makeText(context, context.getString(R.string.enter_playlist_name), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.show();
+    }
+
+    public void onClick(final int pos, final String type) {
+        onClickListener.onClick(pos, type);
+    }
+
+    public String format(Number number) {
+        char[] suffix = {' ', 'k', 'M', 'B', 'T', 'P', 'E'};
+        long numValue = number.longValue();
+        int value = (int) Math.floor(Math.log10(numValue));
+        int base = value / 3;
+        if (value >= 3 && base < suffix.length) {
+            return new DecimalFormat("#0.0").format(numValue / Math.pow(10, base * 3)) + suffix[base];
+        } else {
+            return new DecimalFormat("#,##0").format(numValue);
+        }
+    }
+
+    public int getProgressPercentage(long currentDuration, long totalDuration) {
+        Double percentage = (double) 0;
+
+        long currentSeconds = (int) (currentDuration / 1000);
+        long totalSeconds = (int) (totalDuration / 1000);
+
+        // calculating percentage
+        percentage = (((double) currentSeconds) / totalSeconds) * 100;
+
+        // return percentage
+        return percentage.intValue();
+    }
+
+    public String milliSecondsToTimer(long milliseconds) {
+        String finalTimerString = "";
+        String hourString = "";
+        String secondsString = "";
+        String minutesString = "";
+
+        // Convert total duration into time
+        int hours = (int) (milliseconds / (1000 * 60 * 60));
+        int minutes = (int) (milliseconds % (1000 * 60 * 60)) / (1000 * 60);
+        int seconds = (int) ((milliseconds % (1000 * 60 * 60)) % (1000 * 60) / 1000);
+        // Add hours if there
+        long temp_milli = (long) calculateTime(Constant.arrayList_play.get(Constant.playPos).getDuration());
+        int temp_hour = (int) (temp_milli / (1000 * 60 * 60));
+        if (temp_hour != 0) {
+            hourString = hours + ":";
+        }
+
+        // Prepending 0 to seconds if it is one digit
+        if (seconds < 10) {
+            secondsString = "0" + seconds;
+        } else {
+            secondsString = "" + seconds;
+        }
+
+        // Prepending 0 to minutes if it is one digit
+        if (minutes < 10) {
+            minutesString = "0" + minutes;
+        } else {
+            minutesString = "" + minutes;
+        }
+
+        finalTimerString = hourString + minutesString + ":" + secondsString;
+
+        // return timer string
+        return finalTimerString;
+    }
+
+    private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
+    private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+    private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
+
+    public void animateHeartButton(final View v) {
+        AnimatorSet animatorSet = new AnimatorSet();
+
+        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(v, "rotation", 0f, 360f);
+        rotationAnim.setDuration(300);
+        rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
+
+        ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(v, "scaleX", 0.2f, 1f);
+        bounceAnimX.setDuration(300);
+        bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
+
+        ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(v, "scaleY", 0.2f, 1f);
+        bounceAnimY.setDuration(300);
+        bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+        bounceAnimY.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+            }
+        });
+
+        animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
+        animatorSet.start();
+    }
 }

@@ -25,25 +25,18 @@
             android:icon="@mipmap/playlist"
             android:title="@string/playlist" />
         <item
-            android:id="@+id/nav_downloads"
-            android:icon="@mipmap/ic_download"
-            android:title="@string/downloads" />
-        <item
             android:id="@+id/nav_favourite"
             android:icon="@mipmap/favourite"
             android:title="@string/favourite" />
 
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@mipmap/profile"
+            android:title="@string/profile" />
+
     </group>
 
-    <item
-        android:id="@+id/nav_profile"
-        android:icon="@mipmap/profile"
-        android:title="@string/profile" />
 
-    <item
-        android:id="@+id/nav_settings"
-        android:icon="@mipmap/settings"
-        android:title="@string/settings" />
 
     <item
         android:id="@+id/nav_login"

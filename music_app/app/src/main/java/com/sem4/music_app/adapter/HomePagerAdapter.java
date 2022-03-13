@@ -133,7 +133,7 @@ public class HomePagerAdapter extends EnchantedViewPagerAdapter {
         @Override
         public void onClick(int position, String type) {
             Intent intent = new Intent(mContext, SongByCategoryActivity.class);
-            intent.putExtra("type", mContext.getString(R.string.banner));
+//            intent.putExtra("type", mContext.getString(R.string.banner));
             intent.putExtra("id", arrayList.get(position).getId());
             intent.putExtra("name", arrayList.get(position).getName());
 //            intent.putExtra("songs", arrayList.get(position).getArrayListSongs());

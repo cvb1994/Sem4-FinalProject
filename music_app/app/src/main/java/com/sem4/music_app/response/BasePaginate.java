@@ -6,6 +6,16 @@ public class BasePaginate<T> {
     private int page;
     private int size;
     private List<T> content;
+    private List<T> songs;
+
+    public List<T> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<T> songs) {
+        this.songs = songs;
+    }
+
     private int totalElements;
     private int number;
     private int numberOfElements;

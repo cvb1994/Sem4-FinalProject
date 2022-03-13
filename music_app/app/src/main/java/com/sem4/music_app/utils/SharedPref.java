@@ -20,11 +20,11 @@ public class SharedPref {
     }
 
     public String getUsername() {
-        return methods.decrypt(sharedPreferences.getString(TAG_USERNAME,""));
+        return sharedPreferences.getString(TAG_USERNAME,"");
     }
 
     public String getPassword() {
-        return methods.decrypt(sharedPreferences.getString(TAG_PASSWORD,""));
+        return sharedPreferences.getString(TAG_PASSWORD,"");
     }
 
     public Boolean getIsRemember() {
@@ -38,12 +38,8 @@ public class SharedPref {
 
     public void setLoginDetails(ItemUser itemUser, Boolean isRemember, String password) {
         editor.putBoolean(TAG_REMEMBER, isRemember);
-        editor.putString(TAG_UID, methods.encrypt(itemUser.getId()));
-        editor.putString(TAG_USERNAME, methods.encrypt(itemUser.getUsername()));
-        editor.putString(TAG_MOBILE, methods.encrypt(itemUser.getPhone()));
-        editor.putString(TAG_EMAIL, methods.encrypt(itemUser.getEmail()));
-        editor.putBoolean(TAG_REMEMBER, isRemember);
-        editor.putString(TAG_PASSWORD, methods.encrypt(password));
+        editor.putString(TAG_USERNAME, itemUser.getUsername());
+        editor.putString(TAG_PASSWORD, password);
         editor.apply();
     }
 

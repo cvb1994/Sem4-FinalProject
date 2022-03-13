@@ -3,7 +3,6 @@ package com.sem4.music_app.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Environment;
 
 import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain;
