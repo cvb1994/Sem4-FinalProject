@@ -25,7 +25,7 @@ import com.personal.serviceImp.UserService;
 import com.personal.utils.JwtTokenProvider;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class LoginController {
 	@Autowired
     AuthenticationManager authenticationManager;

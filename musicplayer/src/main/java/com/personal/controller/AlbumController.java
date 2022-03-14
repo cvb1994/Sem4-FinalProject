@@ -13,7 +13,7 @@ import com.personal.utils.Utilities;
 
 @RestController
 @RequestMapping(value = "/api/album")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class AlbumController {
 	@Autowired
 	Utilities util;

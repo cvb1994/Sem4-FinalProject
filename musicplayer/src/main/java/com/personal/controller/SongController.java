@@ -20,7 +20,7 @@ import com.personal.serviceImp.SongService;
 
 @RestController
 @RequestMapping(value = "/api/song")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class SongController {
 	@Autowired
 	SongService songSer;

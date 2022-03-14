@@ -18,7 +18,7 @@ import com.personal.serviceImp.PaymentParamService;
 
 @RestController
 @RequestMapping("/api/paymentParam")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class PaymentParamController {
 	@Autowired
 	private PaymentParamService paymentParamSer;

@@ -15,7 +15,7 @@ import com.personal.serviceImp.ListenCountService;
 
 @RestController
 @RequestMapping(value = "/api/listen-count")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class ListenCountController {
 	@Autowired
 	private ListenCountService listenCountSer;

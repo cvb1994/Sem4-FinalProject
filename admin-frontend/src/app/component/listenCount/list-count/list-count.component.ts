@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ListenCountService } from 'src/app/service/listen-count.service';
-import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
+// import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MatDatepicker} from '@angular/material/datepicker';
-import * as _moment from 'moment';
-import {default as _rollupMoment, Moment} from 'moment';
+// import * as _moment from 'moment';
+// import {default as _rollupMoment, Moment} from 'moment';
 
-const moment = _rollupMoment || _moment;
+// const moment = _rollupMoment || _moment;
 
 export const MY_FORMATS = {
   parse: {
@@ -29,12 +29,7 @@ export const MY_FORMATS = {
     // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
     // application's root module. We provide it at the component level here, due to limitations of
     // our example generation script.
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-    },
-
+  
     {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
   ],
 })
@@ -44,21 +39,21 @@ export class ListCountComponent implements OnInit {
   previousPageDisable : any = false;
   nextPageDisable : any = false;
   
-  chosenYearHandler(normalizedYear: Moment) {
-    const ctrlValue = this.formSearch.get('date')?.value;
-    ctrlValue.year(normalizedYear.year());
-    this.formSearch.get('date')?.setValue(ctrlValue);
-  }
+  // chosenYearHandler(normalizedYear: Moment) {
+  //   const ctrlValue = this.formSearch.get('date')?.value;
+  //   ctrlValue.year(normalizedYear.year());
+  //   this.formSearch.get('date')?.setValue(ctrlValue);
+  // }
 
-  chosenMonthHandler(normalizedMonth: Moment, datepicker: MatDatepicker<Moment>) {
-    const ctrlValue = this.formSearch.get('date')?.value;
-    ctrlValue.month(normalizedMonth.month());
-    this.formSearch.get('date')?.setValue(ctrlValue);
-    datepicker.close();
-  }
+  // chosenMonthHandler(normalizedMonth: Moment, datepicker: MatDatepicker<Moment>) {
+  //   const ctrlValue = this.formSearch.get('date')?.value;
+  //   ctrlValue.month(normalizedMonth.month());
+  //   this.formSearch.get('date')?.setValue(ctrlValue);
+  //   datepicker.close();
+  // }
 
   formSearch = new FormGroup({
-    date: new FormControl(moment())
+    // date: new FormControl(moment())
   });
 
   constructor(private countSer : ListenCountService) { }

@@ -13,5 +13,7 @@ public interface IPlayListService {
 	public ResponseDto addRemoveToFavoritePlaylist(PlayListDto model);
 	public ResponseDto getFavoritePlaylistUser(int userId);
 	public ResponseDto checkFavoriteSong(int userId, int songId);
+	public ResponseDto addtoPlaylist(int songId, int playlistId);
+	public ResponseDto removeFromPlaylist(int songId, int playlistId);
 	
 }

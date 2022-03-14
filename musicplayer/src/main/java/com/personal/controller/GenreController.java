@@ -19,7 +19,7 @@ import com.personal.utils.Utilities;
 
 @RestController
 @RequestMapping(value = "/api/genre")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class GenreController {
 	@Autowired
 	GenreService genreSer;
