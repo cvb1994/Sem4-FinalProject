@@ -62,26 +62,26 @@ public class AdapterRecent extends RecyclerView.Adapter<AdapterRecent.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
 
-//        holder.tv_title.setText(arrayList.get(position).getTitle());
-//        holder.tv_cat.setText(arrayList.get(position).getArtists().get(0).getName());
-//        Picasso.get()
-//                .load(arrayList.get(position).getImage())
-//                .placeholder(R.drawable.placeholder_song)
-//                .into(holder.iv_song);
-//
-//        holder.iv_more.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openOptionPopUp(holder.iv_more, holder.getAdapterPosition());
-//            }
-//        });
-//
-//        holder.iv_song.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                clickListenerPlayList.onClick(holder.getAdapterPosition());
-//            }
-//        });
+        holder.tv_title.setText(arrayList.get(position).getTitle());
+        holder.tv_cat.setText(arrayList.get(position).getArtists().get(0).getName());
+        Picasso.get()
+                .load(arrayList.get(position).getImageBig())
+                .placeholder(R.drawable.placeholder_song)
+                .into(holder.iv_song);
+
+        holder.iv_more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openOptionPopUp(holder.iv_more, holder.getAdapterPosition());
+            }
+        });
+
+        holder.iv_song.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListenerPlayList.onClick(holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
