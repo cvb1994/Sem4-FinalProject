@@ -39,6 +39,7 @@ export class DashboardComponent implements OnInit {
       this.listProfit = data.content;
       this.barChartData.labels = [];
       this.barChartData.datasets[0].data = [];
+      this.listProfit.reverse();
       this.listProfit.forEach((item:any) => {
           this.barChartData.labels?.push(item.month+"-"+item.year);
           this.barChartData.datasets[0].data.push(item.profit);

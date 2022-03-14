@@ -11,4 +11,5 @@ import lombok.Data;
 public class AppProperties {
 	private int defaultPage;
 	private int defaultPageSize;
+	private String frontendUrl;
 }

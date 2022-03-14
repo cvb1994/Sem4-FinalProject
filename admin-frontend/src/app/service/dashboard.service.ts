@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, Subject, throwError } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ export class DashboardService {
 
   constructor(private http: HttpClient) { }
 
-  private baseurl = 'http://localhost:8080';
+  private baseurl = environment.apiUrl;
 
   private httpOptions = {
     headers: new HttpHeaders({

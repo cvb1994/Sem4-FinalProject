@@ -21,7 +21,7 @@ import com.personal.utils.Utilities;
 
 @RestController
 @RequestMapping(value = "/api/artist")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class ArtistController {
 	@Autowired
 	Utilities util;

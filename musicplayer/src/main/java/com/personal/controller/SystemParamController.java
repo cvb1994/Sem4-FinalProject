@@ -18,7 +18,7 @@ import com.personal.serviceImp.SystemParamService;
 
 @RestController
 @RequestMapping("/api/systemParam")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class SystemParamController {
 	@Autowired
 	private SystemParamService systemParamSer;

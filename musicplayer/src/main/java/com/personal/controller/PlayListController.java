@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +21,7 @@ import com.personal.utils.Utilities;
 
 @RestController
 @RequestMapping(value = "/api/playlist")
+@CrossOrigin(origins = "*")
 public class PlayListController {
 	@Autowired
 	Utilities util;
@@ -65,5 +67,15 @@ public class PlayListController {
 	@GetMapping(value = "/like")
 	public ResponseEntity<?> getFavoriteByUser(@RequestParam("userId") int userId, @RequestParam("songId") int songId){
 		return ResponseEntity.ok(playListSer.checkFavoriteSong(userId, songId));
+	}
+	
+	@GetMapping(value = "/addToPlaylist")
+	public ResponseEntity<?> addSongToPlaylist(@RequestParam("songId") int songId, @RequestParam("playlistId") int playlistId){
+		return ResponseEntity.ok(playListSer.addtoPlaylist(songId, playlistId));
+	}
+	
+	@GetMapping(value = "/removeFromPlaylist")
+	public ResponseEntity<?> removeSongFromPlaylist(@RequestParam("songId") int songId, @RequestParam("playlistId") int playlistId){
+		return ResponseEntity.ok(playListSer.removeFromPlaylist(songId, playlistId));
 	}
 }

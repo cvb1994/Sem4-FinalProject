@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { catchError, Observable, Subject, throwError } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { catchError, Observable, Subject, throwError } from 'rxjs';
 export class LoginService {
 
   constructor(private http: HttpClient) { }
-  private baseurl = 'http://localhost:8080';
+  private baseurl = environment.apiUrl;
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type':'application/json'

@@ -246,4 +246,44 @@ public class PlayListService implements IPlayListService{
 		return res;
 	}
 
+	@Override
+	public ResponseDto addtoPlaylist(int songId, int playlistId) {
+		ResponseDto res = new ResponseDto();
+		PlayList playlist = playListRepo.findById(playlistId).get();
+		Song song = songRepo.findById(songId).get();
+		List<Song> listSong = playlist.getSongs();
+		if(listSong.contains(song)) {
+			res.setStatus(false);
+			res.setMessage("Bài Hát Đã Có Trong Playlist");
+			return res;
+		} 
+		listSong.add(song);
+		
+		playlist.setSongs(listSong);
+		playListRepo.save(playlist);
+		res.setStatus(true);
+		res.setMessage("Đã Thêm Vào PlayList");
+		return res;
+	}
+
+	@Override
+	public ResponseDto removeFromPlaylist(int songId, int playlistId) {
+		ResponseDto res = new ResponseDto();
+		PlayList playlist = playListRepo.findById(playlistId).get();
+		Song song = songRepo.findById(songId).get();
+		List<Song> listSong = playlist.getSongs();
+		if(listSong.contains(song)) {
+			listSong.remove(song);
+			playlist.setSongs(listSong);
+			playListRepo.save(playlist);
+			res.setStatus(true);
+			res.setMessage("Đã Xóa Khỏi PlayList");
+			return res;
+		}
+		
+		res.setStatus(false);
+		res.setMessage("Bài Hát Không Có Trong Playlist");
+		return res;
+	}
+
 }

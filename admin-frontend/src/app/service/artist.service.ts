@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject, throwError } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class ArtistService {
     this.message = new Subject<string>();
   }
 
-  private baseurl = 'http://localhost:8080';
+  private baseurl = environment.apiUrl;
 
   public getArtists(form:any): Observable<any>{
     const url = `${this.baseurl}/api/artist/list`;
