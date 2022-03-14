@@ -39,9 +39,6 @@
             android:name=".activity.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.OfflineMusicActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.DrawerActivity"
             android:exported="false" />
         <activity
@@ -69,6 +66,10 @@
             android:name=".activity.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan|adjustNothing" />
+        <activity
+            android:name=".activity.AllMusicActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity android:name=".activity.MiniPlayer"
             android:theme="@style/Theme.MiniPlayer"

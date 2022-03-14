@@ -204,7 +204,7 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else if (fm.getBackStackEntryCount() != 0) {
             String title = fm.getFragments().get(fm.getBackStackEntryCount()).getTag();
-            if (title.equals(getString(R.string.dashboard)) || title.equals(getString(R.string.home)) || title.equals(getString(R.string.categories)) || title.equals(getString(R.string.latest))) {
+            if (title.equals(getString(R.string.dashboard)) || title.equals(getString(R.string.home))) {
 //                title = getString(R.string.home);
                 navigationView.setCheckedItem(R.id.nav_home);
             }

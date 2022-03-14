@@ -24,11 +24,11 @@
             android:textColor="@color/white"
             android:textSize="18sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_myplaylist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="7dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_myplaylist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="7dp" />
 
         <FrameLayout
             android:id="@+id/fl_empty"

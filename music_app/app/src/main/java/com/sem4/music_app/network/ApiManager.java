@@ -41,6 +41,9 @@ public interface ApiManager {
 
     @GET("api/user/password/resetlink")
     Call<ApiResponse> forgotPassword(@Query("email") String email);
+
+//    @GET("api/user/{userId}")
+//    Call<BaseResponse<ItemUser>> userInfo(@Query("userId") String userId);
     //endregion
 
     //region Artist
@@ -75,15 +78,20 @@ public interface ApiManager {
     //endregion
 
     //region Song
+    @POST("api/song/list")
+    @FormUrlEncoded
+    Call<BaseResponse<BasePaginate<ItemSong>>> listSong(@Field("page") int page,
+                                                        @Field("size") int size);
+
     @GET("api/song/byArtistId/{artistId}")
     Call<BaseResponse<BasePaginate<ItemSong>>> listSongByArtist(@Path("artistId") int artistId,
-                                                                  @Query("page") int page,
-                                                                  @Query("size") int size);
+                                                                @Query("page") int page,
+                                                                @Query("size") int size);
 
     @GET("api/song/byAlbumId/{albumId}")
     Call<BaseResponse<BasePaginate<ItemSong>>> listSongByAlbum(@Path("albumId") int albumId,
-                                                                @Query("page") int page,
-                                                                @Query("size") int size);
+                                                               @Query("page") int page,
+                                                               @Query("size") int size);
 
     @GET("api/song/byGenreId/{genreId}")
     Call<BaseResponse<BasePaginate<ItemSong>>> listSongByGenre(@Path("genreId") int genreId,
@@ -95,10 +103,21 @@ public interface ApiManager {
     @GET("api/playlist/list/{userId}")
     Call<BaseResponse<List<ItemMyPlayList>>> getAllPlaylist(@Path("userId") String userId);
 
+    @GET("api/playlist/{playlistId}")
+    Call<BaseResponse<ItemMyPlayList>> getPlaylistById(@Path("playlistId") String playlistId);
+
     @POST("api/playlist")
     @FormUrlEncoded
-    Call<BaseResponse<List<ItemMyPlayList>>> addPlaylist(@Field("name") String name,
-                                                         @Field("userId") String userId);
+    Call<BaseResponse<Integer>> addPlaylist(@Field("name") String name,
+                                            @Field("userId") String userId);
+
+    @GET("api/playlist/addToPlaylist")
+    Call<BaseResponse> addToPlaylist(@Query("playlistId") String playlistId,
+                                     @Query("songId") String songId);
+
+    @GET("api/playlist/removeFromPlaylist")
+    Call<BaseResponse> removeFromPlaylist(@Query("playlistId") String playlistId,
+                                          @Query("songId") String songId);
 
     @DELETE("api/playlist/{playlistId}")
     Call<BaseResponse<List<ItemMyPlayList>>> deletePlaylist(@Path("playlistId") String playlistId);

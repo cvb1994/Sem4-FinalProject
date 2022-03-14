@@ -15,8 +15,8 @@ import com.sem4.bottomnavigationlib.SpaceItem;
 import com.sem4.bottomnavigationlib.SpaceNavigationView;
 import com.sem4.bottomnavigationlib.SpaceOnClickListener;
 import com.sem4.music_app.R;
+import com.sem4.music_app.activity.AllMusicActivity;
 import com.sem4.music_app.activity.MainActivity;
-import com.sem4.music_app.activity.OfflineMusicActivity;
 
 public class FragmentDashBoard extends Fragment {
 
@@ -44,7 +44,7 @@ public class FragmentDashBoard extends Fragment {
         spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
             public void onCentreButtonClick() {
-                Intent intent = new Intent(getActivity(), OfflineMusicActivity.class);
+                Intent intent = new Intent(getActivity(), AllMusicActivity.class);
                 startActivity(intent);
             }
 
@@ -55,10 +55,10 @@ public class FragmentDashBoard extends Fragment {
                         FragmentHome f1 = new FragmentHome();
                         loadFrag(f1, getString(R.string.home));
                         break;
-//                    case 1:
-//                        FragmentRecentSongs frecent = new FragmentRecentSongs();
-//                        loadFrag(frecent, getString(R.string.recently_played));
-//                        break;
+                    case 1:
+                        FragmentChart fchart = new FragmentChart();
+                        loadFrag(fchart, getString(R.string.chart));
+                        break;
                     case 2:
                         FragmentArtist fart = new FragmentArtist();
                         loadFrag(fart, getString(R.string.artist));

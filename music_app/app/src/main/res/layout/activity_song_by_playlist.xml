@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/colorPrimary"
+
             app:expandedTitleGravity="center_vertical"
             app:expandedTitleMarginStart="100dp"
             app:expandedTitleTextAppearance="@style/Base.TextAppearance.AppCompat.Large"

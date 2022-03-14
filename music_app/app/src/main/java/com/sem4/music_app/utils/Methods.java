@@ -53,6 +53,9 @@ import com.sem4.music_app.interfaces.OnClickListener;
 import com.sem4.music_app.item.ItemMyPlayList;
 import com.sem4.music_app.item.ItemSong;
 import com.sem4.music_app.item.ItemUser;
+import com.sem4.music_app.network.ApiManager;
+import com.sem4.music_app.network.Common;
+import com.sem4.music_app.response.BaseResponse;
 import com.yakivmospan.scytale.Crypto;
 import com.yakivmospan.scytale.Options;
 
@@ -62,10 +65,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.crypto.SecretKey;
 import javax.net.ssl.HttpsURLConnection;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Methods {
 
@@ -73,9 +81,9 @@ public class Methods {
     String song_image = "song_image";
 
     private Context context;
-    private DBHelper dbHelper;
     private OnClickListener onClickListener;
     private SecretKey key;
+    ApiManager apiManager = Common.getAPI();
 
     public Methods(Context context, Boolean flag) {
         this.context = context;
@@ -84,7 +92,6 @@ public class Methods {
     // constructor
     public Methods(Context context) {
         this.context = context;
-        dbHelper = new DBHelper(context);
     }
 
     public Methods(Context context, OnClickListener onClickListener) {
@@ -353,7 +360,8 @@ public class Methods {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.layout_dialog_playlist);
 
-        final ArrayList<ItemMyPlayList> arrayList_playlist = dbHelper.loadPlayList(isOnline);
+        final ArrayList<ItemMyPlayList> arrayList_playlist = new ArrayList<>();
+
 
         final ImageView iv_close = dialog.findViewById(R.id.iv_playlist_close);
         final Button button_close = dialog.findViewById(R.id.button_close_dialog);
@@ -368,11 +376,22 @@ public class Methods {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
+
         final AdapterPlaylistDialog adapterPlaylist = new AdapterPlaylistDialog(arrayList_playlist, new ClickListenerPlaylist() {
             @Override
             public void onClick(int position) {
-                dbHelper.addToPlayList(itemSong, arrayList_playlist.get(position).getId(), isOnline);
-                Toast.makeText(context, context.getString(R.string.song_add_to_playlist) + arrayList_playlist.get(position).getName(), Toast.LENGTH_SHORT).show();
+                apiManager.addToPlaylist(arrayList_playlist.get(position).getId(), itemSong.getId())
+                        .enqueue(new Callback<BaseResponse>() {
+                            @Override
+                            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                                Toast.makeText(context, context.getString(R.string.song_add_to_playlist) + arrayList_playlist.get(position).getName(), Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailure(Call<BaseResponse> call, Throwable t) {
+
+                            }
+                        });
                 dialog.dismiss();
             }
 
@@ -382,11 +401,38 @@ public class Methods {
                 recyclerView.setVisibility(View.GONE);
             }
         });
-        recyclerView.setAdapter(adapterPlaylist);
-        if (arrayList_playlist.size() == 0) {
-            textView.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        }
+
+        apiManager.getAllPlaylist(Constant.itemUser.getId())
+                .enqueue(new Callback<BaseResponse<List<ItemMyPlayList>>>() {
+                    @Override
+                    public void onResponse(Call<BaseResponse<List<ItemMyPlayList>>> call, Response<BaseResponse<List<ItemMyPlayList>>> response) {
+                        if(response.body().getContent().size() != 0){
+                            List<ItemMyPlayList> itemMyPlayLists = response.body().getContent();
+                            for (int i = 0; i < itemMyPlayLists.size(); i++) {
+                                if(!itemMyPlayLists.get(i).getName().equals(context.getString(R.string.playlist_like))){
+                                    boolean flag = true;
+                                    for(int j = 0; j < itemMyPlayLists.get(i).getSongs().size(); j++){
+                                        if(itemMyPlayLists.get(i).getSongs().get(j).getId().equals(itemSong.getId()))
+                                            flag = false;
+                                    }
+                                    if(flag)
+                                        arrayList_playlist.add(itemMyPlayLists.get(i));
+                                }
+                            }
+                        }
+                        else {
+                            textView.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                        }
+                        recyclerView.setAdapter(adapterPlaylist);
+                    }
+
+                    @Override
+                    public void onFailure(Call<BaseResponse<List<ItemMyPlayList>>> call, Throwable t) {
+                        textView.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                        recyclerView.setAdapter(adapterPlaylist);}
+                });
 
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -414,9 +460,20 @@ public class Methods {
             @Override
             public void onClick(View v) {
                 if (!et_Add.getText().toString().trim().isEmpty()) {
-                    arrayList_playlist.clear();
-                    arrayList_playlist.addAll(dbHelper.addPlayList(et_Add.getText().toString(), isOnline));
-                    adapterPlaylist.notifyDataSetChanged();
+                    apiManager.addPlaylist(et_Add.getText().toString().trim(), Constant.itemUser.getId())
+                            .enqueue(new Callback<BaseResponse<Integer>>() {
+                                @Override
+                                public void onResponse(Call<BaseResponse<Integer>> call, Response<BaseResponse<Integer>> response) {
+                                    arrayList_playlist.add(new ItemMyPlayList(response.body().getContent().toString(), et_Add.getText().toString().trim()));
+                                    Toast.makeText(context, context.getString(R.string.playlist_added), Toast.LENGTH_SHORT).show();
+                                    recyclerView.setAdapter(adapterPlaylist);
+                                }
+
+                                @Override
+                                public void onFailure(Call<BaseResponse<Integer>> call, Throwable t) {
+                                    Toast.makeText(context, context.getString(R.string.err_server), Toast.LENGTH_SHORT).show();
+                                }
+                            });
                     textView.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
 

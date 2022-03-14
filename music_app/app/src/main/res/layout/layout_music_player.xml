@@ -112,13 +112,4 @@
 
     </LinearLayout>
 
-    <include
-        android:id="@+id/bottom_palyLayout2"
-        layout="@layout/layout_music_options"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center_vertical"
-        android:orientation="vertical" />
-
 </RelativeLayout>

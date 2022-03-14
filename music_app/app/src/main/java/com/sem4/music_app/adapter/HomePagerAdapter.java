@@ -18,12 +18,14 @@ import com.sem4.music_app.R;
 import com.sem4.music_app.activity.SongByCategoryActivity;
 import com.sem4.music_app.interfaces.OnClickListener;
 import com.sem4.music_app.item.ItemAlbums;
+import com.sem4.music_app.item.ItemArtist;
 import com.sem4.music_app.utils.Methods;
 import com.squareup.picasso.Picasso;
 import com.tiagosantos.enchantedviewpager.EnchantedViewPager;
 import com.tiagosantos.enchantedviewpager.EnchantedViewPagerAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomePagerAdapter extends EnchantedViewPagerAdapter {
 
@@ -58,7 +60,7 @@ public class HomePagerAdapter extends EnchantedViewPagerAdapter {
 
         iv_forward.setColorFilter(Color.WHITE);
         tv_title.setText(arrayList.get(position).getName());
-//        tv_desc.setText(arrayList.get(position).getDesc());
+        tv_desc.setText(arrayList.get(position).getArtist().getName());
         tv_total.setText(new StringBuilder().append(String.valueOf(arrayList.get(position).getSongs().size())).append(" ").append(mContext.getString(R.string.songs)).toString());
         Picasso.get()
                 .load(arrayList.get(position).getAvatar())
@@ -66,6 +68,13 @@ public class HomePagerAdapter extends EnchantedViewPagerAdapter {
                 .into(iv_banner);
 
         new LoadColor(view_gradient, tv_title).execute(arrayList.get(position).getAvatar());
+
+        mCurrentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                methods.onClick(position, "");
+            }
+        });
 
         mCurrentView.setTag(EnchantedViewPager.ENCHANTED_VIEWPAGER_POSITION + position);
         container.addView(mCurrentView);
@@ -133,8 +142,8 @@ public class HomePagerAdapter extends EnchantedViewPagerAdapter {
         @Override
         public void onClick(int position, String type) {
             Intent intent = new Intent(mContext, SongByCategoryActivity.class);
-//            intent.putExtra("type", mContext.getString(R.string.banner));
-            intent.putExtra("id", arrayList.get(position).getId());
+            intent.putExtra("type", mContext.getString(R.string.albums));
+            intent.putExtra("id", arrayList.get(position).getId().toString());
             intent.putExtra("name", arrayList.get(position).getName());
 //            intent.putExtra("songs", arrayList.get(position).getArrayListSongs());
             mContext.startActivity(intent);

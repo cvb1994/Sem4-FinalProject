@@ -125,26 +125,6 @@
                         android:src="@color/colorPrimary"
                         app:riv_corner_radius="2dp" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:padding="10dp"
-                        android:text="@string/recently_played"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/tv_home_recent_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:padding="10dp"
-                        android:text="@string/see_all"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="14sp" />
-
                 </LinearLayout>
 
                 <RelativeLayout
