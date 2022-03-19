@@ -8,6 +8,7 @@ public class ItemMyPlayList implements Serializable {
 
     private String id, name;
     private ArrayList<String> arrayListUrl;
+    private ArrayList<ItemSong> songs;
 
     public ItemMyPlayList(String id, String name, ArrayList<String> arrayListUrl) {
         this.id = id;
@@ -30,5 +31,13 @@ public class ItemMyPlayList implements Serializable {
 
     public ArrayList<String> getArrayListUrl() {
         return arrayListUrl;
+    }
+
+    public ArrayList<ItemSong> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(ArrayList<ItemSong> songs) {
+        this.songs = songs;
     }
 }

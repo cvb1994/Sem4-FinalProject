@@ -31,7 +31,7 @@ import javax.net.ssl.HttpsURLConnection;
 import okio.BufferedSource;
 
 public class Encrypter {
-    private DBHelper dbHelper;
+
     private Context context;
     public Crypto _crypto;
     private Entity _entity;
@@ -55,7 +55,6 @@ public class Encrypter {
                 new SystemNativeCryptoLibrary());
         _entity = new Entity(saltString);
         isInited = true;
-        dbHelper = new DBHelper(context);
     }
 
     public String GetEditedFileName(File file, String token) {

@@ -1,6 +1,16 @@
 package com.sem4.music_app.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
@@ -9,19 +19,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.sem4.music_app.R;
 import com.sem4.music_app.adapter.AdapterAllSongList;
 import com.sem4.music_app.interfaces.ClickListenerPlaylist;
@@ -35,10 +32,10 @@ import com.sem4.music_app.response.BasePaginate;
 import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.service.PlayerService;
 import com.sem4.music_app.utils.Constant;
+import com.sem4.music_app.utils.EndlessRecyclerViewScrollListener;
 import com.sem4.music_app.utils.GlobalBus;
 import com.sem4.music_app.utils.Methods;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -50,44 +47,38 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SongByPlaylistActivity extends DrawerActivity {
+public class AllMusicActivity extends DrawerActivity{
 
-    AppBarLayout appBarLayout;
-    Toolbar toolbar_playlist;
     Methods methods;
     RecyclerView rv;
-    ItemMyPlayList itemMyPlayList;
     AdapterAllSongList adapter;
     ArrayList<ItemSong> arrayList;
     CircularProgressBar progressBar;
+    String id = "", name = "", type = "";
     FrameLayout frameLayout;
-    ImageView iv_playlist, iv_playlist2;
-    TextView tv_no_song;
-    String addedFrom = "myplay";
-    String errr_msg = "";
+
+    String errr_msg;
     SearchView searchView;
-    CollapsingToolbarLayout collapsing_play;
-    ApiManager apiManager;
-    ItemMyPlayList item;
+    Boolean isFromPush = false;
+    int page = 0;
+    String addedFrom = "";
+    Boolean isOver = false, isScroll = false, isLoading = false;
+    private ApiManager apiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         apiManager = Common.getAPI();
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
-        getLayoutInflater().inflate(R.layout.activity_song_by_playlist, contentFrameLayout);
+        getLayoutInflater().inflate(R.layout.activity_song_by_category, contentFrameLayout);
 
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-        itemMyPlayList = (ItemMyPlayList) getIntent().getSerializableExtra("item");
-        addedFrom = addedFrom + itemMyPlayList.getName();
-
-
-        methods = new Methods(this, new OnClickListener() {
+        methods = new Methods(AllMusicActivity.this, new OnClickListener() {
             @Override
             public void onClick(int position, String type) {
                 Constant.isOnline = true;
-                if (!Constant.addedFrom.equals(addedFrom)) {
+                if(!Constant.addedFrom.equals(addedFrom)) {
                     Constant.arrayList_play.clear();
                     Constant.arrayList_play.addAll(arrayList);
                     Constant.addedFrom = addedFrom;
@@ -95,26 +86,21 @@ public class SongByPlaylistActivity extends DrawerActivity {
                 }
                 Constant.playPos = position;
 
-                Intent intent = new Intent(SongByPlaylistActivity.this, PlayerService.class);
+                Intent intent = new Intent(AllMusicActivity.this, PlayerService.class);
                 intent.setAction(PlayerService.ACTION_PLAY);
                 startService(intent);
             }
         });
         methods.forceRTLIfSupported(getWindow());
 
-        toolbar.setVisibility(View.GONE);
-
-        appBarLayout = findViewById(R.id.mainappbar);
-        toolbar_playlist = findViewById(R.id.toolbar_playlist);
-        setSupportActionBar(toolbar_playlist);
+        toolbar.setTitle(getString(R.string.all_music));
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        arrayList = new ArrayList<>();
+        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_back);
 
         frameLayout = findViewById(R.id.fl_empty);
-        progressBar = findViewById(R.id.pb_song_by_playlist);
-        progressBar.setVisibility(View.GONE);
-        rv = findViewById(R.id.rv_song_by_playlist);
+        progressBar = findViewById(R.id.pb_song_by_cat);
+        rv = findViewById(R.id.rv_song_by_cat);
         LinearLayoutManager llm_banner = new LinearLayoutManager(this);
         rv.setLayoutManager(llm_banner);
         rv.setItemAnimator(new DefaultItemAnimator());
@@ -123,18 +109,22 @@ public class SongByPlaylistActivity extends DrawerActivity {
         arrayList = new ArrayList<>();
         loadSongs();
 
-        iv_playlist = findViewById(R.id.iv_collapse_playlist);
-        iv_playlist2 = findViewById(R.id.iv_collapse_playlist2);
-        tv_no_song = findViewById(R.id.tv_playlist_no_song);
-        collapsing_play = findViewById(R.id.collapsing_play);
-
-        AppBarLayout appBarLayout = findViewById(R.id.mainappbar);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+        rv.addOnScrollListener(new EndlessRecyclerViewScrollListener(llm_banner) {
             @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                tv_no_song.setAlpha(1 - Math.abs((float) verticalOffset / appBarLayout.getTotalScrollRange()));
-                iv_playlist.setAlpha(1 - Math.abs((float) verticalOffset / appBarLayout.getTotalScrollRange()));
-                iv_playlist2.setAlpha(1 - Math.abs((float) verticalOffset / appBarLayout.getTotalScrollRange()));
+            public void onLoadMore(int p, int totalItemsCount) {
+                if (!isOver) {
+                    if (!isLoading) {
+                        isLoading = true;
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                isScroll = true;
+                                loadSongs();
+                            }
+                        }, 0);
+                    }
+                }
             }
         });
     }
@@ -146,24 +136,7 @@ public class SongByPlaylistActivity extends DrawerActivity {
         MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
         searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setOnQueryTextListener(queryTextListener);
-
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                appBarLayout.setExpanded(false);
-            }
-        });
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
@@ -184,24 +157,75 @@ public class SongByPlaylistActivity extends DrawerActivity {
         }
     };
 
-    private void setAdapter() {
-        adapter = new AdapterAllSongList(itemMyPlayList.getId(), SongByPlaylistActivity.this, arrayList, new ClickListenerPlaylist() {
-            @Override
-            public void onClick(int position) {
-                methods.onClick(position, "");
+    private void loadSongs() {
+        if (methods.isNetworkAvailable()) {
+            if (arrayList.size() == 0) {
+                arrayList.clear();
+                frameLayout.setVisibility(View.GONE);
+                rv.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
             }
+                apiManager.listSong(page, 7)
+                        .enqueue(new Callback<BaseResponse<BasePaginate<ItemSong>>>() {
+                            @Override
+                            public void onResponse(Call<BaseResponse<BasePaginate<ItemSong>>> call, Response<BaseResponse<BasePaginate<ItemSong>>> response) {
+                                if (response.body().getContent().getContent().size() == 0){
+                                    isOver = true;
+                                    errr_msg = getString(R.string.err_no_songs_found);
+                                    setEmpty();
+                                }else{
+                                    arrayList.addAll(response.body().getContent().getContent());
+                                    if(isScroll && Constant.addedFrom.equals(addedFrom)) {
+                                        Constant.arrayList_play.clear();
+                                        Constant.arrayList_play.addAll(arrayList);
+                                        try {
+                                            GlobalBus.getBus().postSticky(new ItemMyPlayList("", "", null));
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    page = page + 1;
+                                    setAdapter();
+                                }
+                                progressBar.setVisibility(View.GONE);
+                                isLoading = false;
+                            }
 
-            @Override
-            public void onItemZero() {
-                setEmpty();
-            }
-        }, "playlist");
-        rv.setAdapter(adapter);
-        setEmpty();
+                            @Override
+                            public void onFailure(Call<BaseResponse<BasePaginate<ItemSong>>> call, Throwable t) {
+                                errr_msg = getString(R.string.err_server);
+                                setEmpty();
+                                progressBar.setVisibility(View.GONE);
+                                isLoading = false;
+                            }
+                        });
+        } else {
+            errr_msg = getString(R.string.err_internet_not_conn);
+            setEmpty();
+        }
+    }
+
+    private void setAdapter() {
+        if (!isScroll) {
+            adapter = new AdapterAllSongList(AllMusicActivity.this, arrayList, new ClickListenerPlaylist() {
+                @Override
+                public void onClick(int position) {
+                    methods.onClick(position, "");
+                }
+
+                @Override
+                public void onItemZero() {
+
+                }
+            }, "online");
+            rv.setAdapter(adapter);
+            setEmpty();
+        } else {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public void setEmpty() {
-        tv_no_song.setText(arrayList.size() + " " + getString(R.string.songs));
         if (arrayList.size() > 0) {
             rv.setVisibility(View.VISIBLE);
             frameLayout.setVisibility(View.GONE);
@@ -234,12 +258,17 @@ public class SongByPlaylistActivity extends DrawerActivity {
         }
     }
 
+
     @Override
     public void onBackPressed() {
         if (mLayout.getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else if (dialog_desc != null && dialog_desc.isShowing()) {
             dialog_desc.dismiss();
+        } else if (isFromPush) {
+            Intent intent = new Intent(AllMusicActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         } else {
             super.onBackPressed();
         }
@@ -249,47 +278,5 @@ public class SongByPlaylistActivity extends DrawerActivity {
     public void onEquilizerChange(ItemAlbums itemAlbums) {
         adapter.notifyDataSetChanged();
         GlobalBus.getBus().removeStickyEvent(itemAlbums);
-    }
-
-    private void loadSongs() {
-        if (methods.isNetworkAvailable()) {
-            if (arrayList.size() == 0) {
-                arrayList.clear();
-                frameLayout.setVisibility(View.GONE);
-                rv.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
-            }
-            apiManager.getPlaylistById(itemMyPlayList.getId())
-                    .enqueue(new Callback<BaseResponse<ItemMyPlayList>>() {
-                        @Override
-                        public void onResponse(Call<BaseResponse<ItemMyPlayList>> call, Response<BaseResponse<ItemMyPlayList>> response) {
-                            collapsing_play.setTitle(response.body().getContent().getName());
-                            if (response.body().getContent().getSongs().size() == 0){
-                                errr_msg = getString(R.string.err_no_songs_found);
-                                setEmpty();
-                            }else{
-                                arrayList.addAll(response.body().getContent().getSongs());
-                                Picasso.get()
-                                        .load(arrayList.get(0).getImageBig())
-                                        .into(iv_playlist);
-                                Picasso.get()
-                                        .load(arrayList.get(0).getImageBig())
-                                        .into(iv_playlist2);
-                                setAdapter();
-                            }
-                            progressBar.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onFailure(Call<BaseResponse<ItemMyPlayList>> call, Throwable t) {
-                            errr_msg = getString(R.string.err_server);
-                            setEmpty();
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    });
-        } else {
-            errr_msg = getString(R.string.err_internet_not_conn);
-            setEmpty();
-        }
     }
 }

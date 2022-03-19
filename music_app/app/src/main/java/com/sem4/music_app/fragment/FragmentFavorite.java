@@ -32,7 +32,6 @@ import com.sem4.music_app.response.BasePaginate;
 import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.service.PlayerService;
 import com.sem4.music_app.utils.Constant;
-import com.sem4.music_app.utils.DBHelper;
 import com.sem4.music_app.utils.GlobalBus;
 import com.sem4.music_app.utils.Methods;
 

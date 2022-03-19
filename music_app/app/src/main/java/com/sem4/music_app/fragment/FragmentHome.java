@@ -40,8 +40,8 @@ import com.sem4.music_app.network.Common;
 import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.service.PlayerService;
 import com.sem4.music_app.utils.Constant;
-import com.sem4.music_app.utils.DBHelper;
 import com.sem4.music_app.utils.Methods;
+import com.sem4.music_app.utils.RecyclerItemClickListener;
 import com.tiagosantos.enchantedviewpager.EnchantedViewPager;
 
 import java.util.ArrayList;
@@ -53,7 +53,6 @@ import retrofit2.Response;
 
 public class FragmentHome extends Fragment {
 
-    private DBHelper dbHelper;
     private Methods methods;
     private EnchantedViewPager enchantedViewPager;
     private HomePagerAdapter homePagerAdapter;
@@ -130,7 +129,7 @@ public class FragmentHome extends Fragment {
                 } else if (type.equals(getString(R.string.albums))) {
                     Intent intent = new Intent(getActivity(), SongByCategoryActivity.class);
                     intent.putExtra("type", getString(R.string.albums));
-                    intent.putExtra("id", arrayList_albums.get(position).getId());
+                    intent.putExtra("id", arrayList_albums.get(position).getId().toString());
                     intent.putExtra("name", arrayList_albums.get(position).getName());
                     startActivity(intent);
                 }
@@ -144,7 +143,6 @@ public class FragmentHome extends Fragment {
 //                }
             }
         });
-        dbHelper = new DBHelper(getActivity());
 
         arrayList_recent = new ArrayList<>();
         arrayList_artist = new ArrayList<>();
@@ -204,9 +202,22 @@ public class FragmentHome extends Fragment {
         tv_artist_all = rootView.findViewById(R.id.tv_home_artist_all);
         tv_songs_all = rootView.findViewById(R.id.tv_home_songs_all);
         tv_albums_all = rootView.findViewById(R.id.tv_home_albums_all);
-        tv_recent_all = rootView.findViewById(R.id.tv_home_recent_all);
 
         loadHome();
+
+        rv_artist.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                methods.onClick(position, getString(R.string.artist));
+            }
+        }));
+
+        rv_albums.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                methods.onClick(position, getString(R.string.albums));
+            }
+        }));
 
         tv_artist_all.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,17 +258,6 @@ public class FragmentHome extends Fragment {
 //                ft.addToBackStack(getString(R.string.all_songs));
 //                ft.commit();
 //                ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.all_songs));
-            }
-        });
-
-        tv_recent_all.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    FragmentDashBoard.spaceNavigationView.changeCurrentItem(1);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         });
         return rootView;

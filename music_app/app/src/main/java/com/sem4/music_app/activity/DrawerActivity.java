@@ -3,20 +3,15 @@ package com.sem4.music_app.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -28,7 +23,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
@@ -36,7 +30,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -44,8 +37,6 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
-import com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar;
-import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.sem4.music_app.R;
 import com.sem4.music_app.item.ItemArtist;
@@ -57,7 +48,6 @@ import com.sem4.music_app.response.BasePaginate;
 import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.service.PlayerService;
 import com.sem4.music_app.utils.Constant;
-import com.sem4.music_app.utils.DBHelper;
 import com.sem4.music_app.utils.GlobalBus;
 import com.sem4.music_app.utils.MessageEvent;
 import com.sem4.music_app.utils.Methods;
@@ -79,7 +69,6 @@ import retrofit2.Response;
 public class DrawerActivity extends AppCompatActivity implements View.OnClickListener{
 
     Methods methods;
-    DBHelper dbHelper;
     DrawerLayout drawer;
     public ViewPager viewpager;
     ImagePagerAdapter adapter;
@@ -116,7 +105,6 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         methods = new Methods(this);
-        dbHelper = new DBHelper(this);
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         mLayout = findViewById(R.id.sliding_layout);
@@ -190,6 +178,16 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         iv_music_shuffle.setOnClickListener(this);
         iv_music_repeat.setOnClickListener(this);
         iv_music_add2playlist.setOnClickListener(this);
+        if (Constant.isLoginOn) {
+            if (!Constant.isLogged) {
+                iv_max_fav.setVisibility(View.GONE);
+                iv_music_add2playlist.setVisibility(View.GONE);
+            }
+        } else {
+            iv_max_fav.setVisibility(View.GONE);
+            iv_music_add2playlist.setVisibility(View.GONE);
+        }
+
 
         ImageView iv_white_blur = findViewById(R.id.iv_music_white_blur);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (50 * methods.getScreenHeight() / 100));
@@ -547,18 +545,21 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         tv_song_count.setText(Constant.playPos + 1 + "/" + Constant.arrayList_play.size());
         tv_total_time.setText(itemSong.getDuration());
 
-        apiManager.checkFavorite(Constant.itemUser.getId(), itemSong.getId())
-                .enqueue(new retrofit2.Callback<BaseResponse<BasePaginate<ItemSong>>>() {
-                    @Override
-                    public void onResponse(Call<BaseResponse<BasePaginate<ItemSong>>> call, Response<BaseResponse<BasePaginate<ItemSong>>> response) {
-                        changeFav(response.body().isStatus());
-                    }
+        if(Constant.isLoginOn && Constant.isLogged){
+            apiManager.checkFavorite(Constant.itemUser.getId(), itemSong.getId())
+                    .enqueue(new retrofit2.Callback<BaseResponse<BasePaginate<ItemSong>>>() {
+                        @Override
+                        public void onResponse(Call<BaseResponse<BasePaginate<ItemSong>>> call, Response<BaseResponse<BasePaginate<ItemSong>>> response) {
+                            changeFav(response.body().isStatus());
+                        }
 
-                    @Override
-                    public void onFailure(Call<BaseResponse<BasePaginate<ItemSong>>> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<BaseResponse<BasePaginate<ItemSong>>> call, Throwable t) {
 
-                    }
-                });
+                        }
+                    });
+        }
+
 
         if (Constant.isOnline) {
 
@@ -628,7 +629,7 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         iv_music_previous.setEnabled(!isBuffer);
         iv_min_next.setEnabled(!isBuffer);
         iv_min_previous.setEnabled(!isBuffer);
-        iv_music_download.setEnabled(!isBuffer);
+//        iv_music_download.setEnabled(!isBuffer);
         iv_min_play.setEnabled(!isBuffer);
         seekBar_music.setEnabled(!isBuffer);
     }

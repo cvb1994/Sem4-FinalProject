@@ -1,6 +1,5 @@
 package com.sem4.music_app.service;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -57,9 +56,7 @@ import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
 import com.sem4.music_app.receiver.MediaButtonIntentReceiver;
 import com.sem4.music_app.utils.Constant;
-import com.sem4.music_app.utils.DBHelper;
 import com.sem4.music_app.utils.GlobalBus;
-import com.sem4.music_app.utils.JsonUtils;
 import com.sem4.music_app.utils.MessageEvent;
 import com.sem4.music_app.utils.Methods;
 import com.sem4.music_app.utils.StreamDataSource;
@@ -93,7 +90,6 @@ public class PlayerService extends IntentService implements Player.EventListener
 
     static PlayerService playerService;
     Methods methods;
-    DBHelper dbHelper;
     Boolean isNewSong = false;
     Bitmap bitmap;
     ComponentName componentName;
@@ -124,7 +120,6 @@ public class PlayerService extends IntentService implements Player.EventListener
     public void onCreate() {
 
         methods = new Methods(getApplicationContext());
-        dbHelper = new DBHelper(getApplicationContext());
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC,
@@ -231,7 +226,7 @@ public class PlayerService extends IntentService implements Player.EventListener
             exoPlayer.setPlayWhenReady(true);
 
             if (!Constant.isDownloaded) {
-                dbHelper.addToRecent(Constant.arrayList_play.get(Constant.playPos), Constant.isOnline);
+//                dbHelper.addToRecent(Constant.arrayList_play.get(Constant.playPos), Constant.isOnline);
             }
         } catch (Exception e) {
             e.printStackTrace();

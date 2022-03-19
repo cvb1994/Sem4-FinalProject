@@ -4,6 +4,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -31,16 +32,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sem4.music_app.R;
+import com.sem4.music_app.activity.SongByPlaylistActivity;
 import com.sem4.music_app.adapter.AdapterMyPlaylist;
 import com.sem4.music_app.interfaces.ClickListenerPlaylist;
 import com.sem4.music_app.interfaces.OnClickListener;
 import com.sem4.music_app.item.ItemMyPlayList;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
-import com.sem4.music_app.response.BasePaginate;
 import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.utils.Constant;
-import com.sem4.music_app.utils.DBHelper;
 import com.sem4.music_app.utils.Methods;
 
 import java.util.ArrayList;
@@ -52,7 +52,6 @@ import retrofit2.Response;
 
 public class FragmentPlaylist extends Fragment {
 
-    private DBHelper dbHelper;
     private Methods methods;
     private RecyclerView rv;
     private Button button_add;
@@ -68,14 +67,13 @@ public class FragmentPlaylist extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_my_playlist, container, false);
 
-        dbHelper = new DBHelper(getActivity());
         apiManager = Common.getAPI();
         methods = new Methods(getActivity(), new OnClickListener() {
             @Override
             public void onClick(int position, String type) {
-//                Intent intent = new Intent(getActivity(), SongByMyPlaylistActivity.class);
-//                intent.putExtra("item", adapterMyPlaylist.getItem(position));
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), SongByPlaylistActivity.class);
+                intent.putExtra("item", adapterMyPlaylist.getItem(position));
+                startActivity(intent);
             }
         });
 
@@ -238,12 +236,22 @@ public class FragmentPlaylist extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!editText.getText().toString().trim().isEmpty()) {
-                    arrayList.clear();
-                    //sdkaspds
-                    arrayList.addAll(dbHelper.addPlayList(editText.getText().toString(), true));
-                    Toast.makeText(getActivity(), getString(R.string.playlist_added), Toast.LENGTH_SHORT).show();
-                    adapterMyPlaylist.notifyDataSetChanged();
-                    setEmpty();
+                    apiManager.addPlaylist(editText.getText().toString().trim(), Constant.itemUser.getId())
+                            .enqueue(new Callback<BaseResponse<Integer>>() {
+                                @Override
+                                public void onResponse(Call<BaseResponse<Integer>> call, Response<BaseResponse<Integer>> response) {
+                                    arrayList.add(new ItemMyPlayList(response.body().getContent().toString(), editText.getText().toString().trim()));
+                                    Toast.makeText(getActivity(), getString(R.string.playlist_added), Toast.LENGTH_SHORT).show();
+                                    adapterMyPlaylist.notifyDataSetChanged();
+                                    setAdapter();
+                                }
+
+                                @Override
+                                public void onFailure(Call<BaseResponse<Integer>> call, Throwable t) {
+                                    Toast.makeText(getActivity(), getString(R.string.err_server), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                     dialog.dismiss();
                 }
             }

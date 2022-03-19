@@ -1,8 +1,6 @@
 package com.sem4.music_app.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,9 +20,11 @@ import com.sem4.music_app.R;
 import com.sem4.music_app.interfaces.ClickListenerPlaylist;
 import com.sem4.music_app.item.ItemArtist;
 import com.sem4.music_app.item.ItemSong;
+import com.sem4.music_app.network.ApiManager;
+import com.sem4.music_app.network.Common;
+import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.service.PlayerService;
 import com.sem4.music_app.utils.Constant;
-import com.sem4.music_app.utils.DBHelper;
 import com.sem4.music_app.utils.Methods;
 import com.squareup.picasso.Picasso;
 
@@ -33,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.claucookie.miniequalizerlibrary.EqualizerView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdapterAllSongList extends RecyclerView.Adapter {
 
@@ -43,7 +45,8 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
     private NameFilter filter;
     private String type;
     private Methods methods;
-    private DBHelper dbHelper;
+    private String playlistId;
+    ApiManager apiManager = Common.getAPI();
 
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;
@@ -55,7 +58,16 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
         this.type = type;
         this.recyclerClickListener = recyclerClickListener;
         methods = new Methods(context);
-        dbHelper = new DBHelper(context);
+    }
+
+    public AdapterAllSongList(String playlistId, Context context, ArrayList<ItemSong> arrayList, ClickListenerPlaylist recyclerClickListener, String type) {
+        this.playlistId = playlistId;
+        this.arrayList = arrayList;
+        this.filteredArrayList = arrayList;
+        this.context = context;
+        this.type = type;
+        this.recyclerClickListener = recyclerClickListener;
+        methods = new Methods(context);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -199,13 +211,24 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
                     case R.id.popup_add_song:
                         switch (type) {
                             case "playlist":
-//                                dbHelper.removeFromPlayList(arrayList.get(pos).getId(), true);
-                                arrayList.remove(pos);
-                                notifyItemRemoved(pos);
-                                Toast.makeText(context, context.getString(R.string.remove_from_playlist), Toast.LENGTH_SHORT).show();
+                                apiManager.removeFromPlaylist(playlistId , arrayList.get(pos).getId())
+                                        .enqueue(new Callback<BaseResponse>() {
+                                            @Override
+                                            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                                                Toast.makeText(context, context.getString(R.string.remove_from_playlist), Toast.LENGTH_SHORT).show();
+                                                  arrayList.remove(pos);
+                                                  notifyItemRemoved(pos);
                                 if (arrayList.size() == 0) {
                                     recyclerClickListener.onItemZero();
                                 }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<BaseResponse> call, Throwable t) {
+
+                                            }
+                                        });
+
                                 break;
                             default:
                                 methods.openPlaylists(arrayList.get(pos), true);

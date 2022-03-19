@@ -81,7 +81,7 @@ public class SongByCategoryActivity extends DrawerActivity {
         id = getIntent().getStringExtra("id");
         name = getIntent().getStringExtra("name");
 
-        methods = new Methods(this, new OnClickListener() {
+        methods = new Methods(SongByCategoryActivity.this, new OnClickListener() {
             @Override
             public void onClick(int position, String type) {
                 Constant.isOnline = true;
@@ -281,10 +281,7 @@ public class SongByCategoryActivity extends DrawerActivity {
                                 isLoading = false;
                             }
                         });
-            } else if (type.equals(getString(R.string.playlist))) {
-
             }
-
         } else {
             errr_msg = getString(R.string.err_internet_not_conn);
             setEmpty();
