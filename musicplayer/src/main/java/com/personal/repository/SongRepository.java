@@ -39,7 +39,7 @@ public interface SongRepository extends JpaRepository<Song, Integer>, JpaSpecifi
 //	
 //	List<Song> findAllByAlbum_id(int albumId);
 //	List<Song> findBySongArtist(Artist artist);
-//	List<Song> findTop4ByOrderByCreatedDateDesc();
+	List<Song> findTop10ByOrderByCreatedDateDesc();
 //	List<Song> findTop4ByOrderByListenCountDesc();
 	
 //	@Query(value = "Select s.* From songs s Inner Join song_genre sg On s.id = sg.song_id Where sg.genre_id = :genreId" , nativeQuery = true)

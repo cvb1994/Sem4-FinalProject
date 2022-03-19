@@ -19,7 +19,7 @@ public interface UserMapper {
 //	@Mapping(target = "user", expression = "java(null)")
 	PlayListDto playListToPlayListDto(PlayList playList);
 	
-	@Mapping(target = "user", expression = "java(null)")
-	PaymentDto paymentToPaymentDto(Payment payment);
+//	@Mapping(target = "user", expression = "java(null)")
+//	PaymentDto paymentToPaymentDto(Payment payment);
 	
 }

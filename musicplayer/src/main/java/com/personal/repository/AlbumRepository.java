@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.personal.entity.Album;
@@ -28,6 +29,6 @@ public interface AlbumRepository extends JpaRepository<Album, Integer>, JpaSpeci
 //	@Query(value = "Select DISTINCT (s.album_id), a.* From songs s Inner Join albums a On s.album_id = a.id Order By listen_count Limit 4" , nativeQuery = true)
 //	List<Album> findTop4ByListen();
 //	
-//	@Query(value = "Select DISTINCT (s.album_id), a.* From songs s Inner Join albums a On s.album_id = a.id Order By listen_count Limit 1" , nativeQuery = true)
-//	Album findTop1ByListen();
+	@Query(value = "Select DISTINCT (s.album_id), a.* From song s Inner Join album a On s.album_id = a.id Order By listen_count Limit 1" , nativeQuery = true)
+	Optional<Album> findTop1ByListen();
 }

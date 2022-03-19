@@ -82,7 +82,6 @@ public class Utilities {
 			
 			int totalSecond = 0;
 			int totalMinute = 0;
-			int totalHour = 0;
 			int temp = 0;
 			
 			if((albumSecond + songSecond) >= 60) {
@@ -97,12 +96,33 @@ public class Utilities {
 			} else {
 				totalMinute = albumMinute + songMinute;
 			}
-			
-			if(totalMinute >= 60) {
-				temp = totalMinute;
-				totalMinute = totalMinute%60;
-			}
+			return totalMinute+":"+totalSecond;
 		}
-		return null;
+	}
+	
+	public String removeDuration(String albumDuration, String songDuration) {
+		int albumMinute = Integer.valueOf(albumDuration.split(":")[0]);
+		int albumSecond = Integer.valueOf(albumDuration.split(":")[1]);
+		
+		int songMinute = Integer.valueOf(songDuration.split(":")[0]);
+		int songSecond = Integer.valueOf(songDuration.split(":")[1]);
+		
+		int totalSecond = 0;
+		int totalMinute = 0;
+		int temp = 0;
+		
+		if((albumSecond - songSecond) < 0) {
+			temp = 1;
+			totalSecond = 60 + (albumSecond - songSecond);
+		} else {
+			totalSecond = albumSecond - songSecond;
+		}
+		
+		if(temp == 1) {
+			totalMinute = albumMinute - songMinute - 1;
+		} else {
+			totalMinute = albumMinute - songMinute;
+		}
+		return totalMinute+":"+totalSecond;
 	}
 }

@@ -279,4 +279,10 @@ public class AlbumService implements IAlbumService {
 		return albumRepo.countByCreatedDateBetween(start, end);
 	}
 
+	@Override
+	public AlbumDto top1Album() {
+		AlbumDto album = albumRepo.findTop1ByListen().map(albumMapper::entityToDto).orElse(null);
+		return album;
+	}
+
 }

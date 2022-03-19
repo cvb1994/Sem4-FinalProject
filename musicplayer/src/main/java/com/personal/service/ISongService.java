@@ -25,4 +25,5 @@ public interface ISongService {
 	public Long countSong();
 	public void resetListTrending();
 	public int countSongNewInMonth();
+	public List<SongDto> newlySong();
 }

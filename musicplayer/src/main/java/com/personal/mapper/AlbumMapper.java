@@ -23,7 +23,7 @@ public interface AlbumMapper {
 	@Mapping(target = "listAlbum", expression = "java(null)")
 	ArtistDto artistToArtistDto(Artist artist);
 	
-	@Mapping(target = "artists", expression = "java(null)")
+//	@Mapping(target = "artists", expression = "java(null)")
 	@Mapping(target = "album", expression = "java(null)")
 	@Mapping(target = "genres", expression = "java(null)")
 	SongDto songToSongDto(Song song);

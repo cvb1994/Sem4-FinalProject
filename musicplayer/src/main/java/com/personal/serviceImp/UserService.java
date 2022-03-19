@@ -223,32 +223,28 @@ public class UserService implements IUserService{
 	@Override
 	public ResponseDto update(UserDto model) {
 		ResponseDto res = new ResponseDto();
+		User user = userRepo.getById(model.getId());
 		
-		Optional<User> optUser = userRepo.findByUsernameAndIdNot(model.getUsername(), model.getId());
-		if(optUser.isPresent()) {
-			res.setMessage("Username đã tồn tại");
-			res.setStatus(false);
-			return res;
+		if(model.getUsername() != null) {
+			Optional<User> optUser = userRepo.findByUsernameAndIdNot(model.getUsername(), model.getId());
+			if(optUser.isPresent()) {
+				res.setMessage("Username đã tồn tại");
+				res.setStatus(false);
+				return res;
+			}
 		}
 		
-		Optional<User> listCheckUser = userRepo.findByEmailAndIdNot(model.getEmail(), model.getId());
-		if(listCheckUser.isPresent()) {
-			res.setMessage("Email đã đăng ký tài khoản");
-			res.setStatus(false);
-			return res;
+		if(model.getEmail() != null) {
+			Optional<User> listCheckUser = userRepo.findByEmailAndIdNot(model.getEmail(), model.getId());
+			if(listCheckUser.isPresent()) {
+				res.setMessage("Email đã đăng ký tài khoản");
+				res.setStatus(false);
+				return res;
+			}
+			user.setEmail(model.getEmail());
 		}
 		
-		
-		User user = Optional.ofNullable(model).map(userMapper::dtoToEntity).orElse(null);
-		if(user == null) {
-			res.setMessage("Dữ liệu không đúng");
-			res.setStatus(false);
-			return res;
-		}
-		
-		if(model.getFile() == null) {
-			user.setAvatar(userRepo.findById(model.getId()).get().getAvatar());
-		} else {
+		if(model.getFile() != null) {
 			String extension = util.getFileExtension(model.getFile());
 			if(extension != null) {
 				String name = util.nameIdentifier(model.getUsername(), extension);
@@ -265,7 +261,12 @@ public class UserService implements IUserService{
 				return res;
 			}
 		}
-		user.setPassword(passEncoder.encode(user.getPassword()));
+		
+		user.setPhone(model.getPhone());
+		user.setBirthday(model.getBirthday());
+		user.setFirstName(model.getFirstName());
+		user.setLastName(model.getLastName());
+		user.setGender(model.getGender());
 		
 		User savedUser = userRepo.save(user);
 		if(savedUser != null) {

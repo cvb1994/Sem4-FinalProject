@@ -3,6 +3,7 @@ package com.personal.repository;
 import com.personal.entity.Artist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public interface ArtistRepository extends JpaRepository<Artist, Integer>, JpaSpe
 	List<Artist> findTop10ByOrderByModifiedDateDesc();
 	int countByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 
-//	@Query(value = "select distinct(a.id), a.*  from songs s Join song_artist sa On s.id = sa.song_id "
-//			+ "Join artists a On a.id = sa.artist Order By s.listen_count desc Limit 10" , nativeQuery = true)
-//	List<Artist> findTopArtist();
+	@Query(value = "select distinct(a.id), a.*  from song s Join song_artist sa On s.id = sa.song_id "
+			+ "Join artist a On a.id = sa.artist_id Order By s.listen_count_reset desc Limit 10" , nativeQuery = true)
+	List<Artist> findTopArtist();
 }

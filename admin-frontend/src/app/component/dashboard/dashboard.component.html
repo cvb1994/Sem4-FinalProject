@@ -3,13 +3,7 @@
         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
             <h4 class="page-title">Dashboard</h4>
         </div>
-        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
-            <div class="d-md-flex">
-                <ol class="breadcrumb ms-auto">
-                    <li><a href="#" class="fw-normal">Dashboard</a></li>
-                </ol>
-            </div>
-        </div>
+        
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -24,85 +18,83 @@
     <!-- Three charts -->
     <!-- ============================================================== -->
     <div class="row justify-content-center">
-        <div class="col-lg-4 col-md-12">
-            <div class="white-box analytics-info">
-                <h3 class="box-title">Tổng số bài hát</h3>
-                <ul class="list-inline two-part d-flex align-items-center mb-0">
-                    <li>
-                        <div id="sparklinedash"><canvas width="67" height="30"
-                                style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                        </div>
-                    </li>
-                    <li class="ms-auto"><span class="counter text-success">{{totalSong}}</span></li>
-                </ul>
+        <div class="col-lg-4">
+            <div class="small-box bg-info">
+                <div class="inner">
+                  <h3>{{totalSong}}</h3>
+  
+                  <p>Tổng số bài hát</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-ios-musical-note"></i>
+                </div>
+                <a [routerLink]="['/list-song']" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{totalAlbum}}</h3>
+
+                <p>Tổng số Album</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-ios-musical-notes"></i>
+              </div>
+              <a [routerLink]="['/list-album']" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <div class="col-lg-4 col-md-12">
-            <div class="white-box analytics-info">
-                <h3 class="box-title">Tổng số album</h3>
-                <ul class="list-inline two-part d-flex align-items-center mb-0">
-                    <li>
-                        <div id="sparklinedash2"><canvas width="67" height="30"
-                                style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                        </div>
-                    </li>
-                    <li class="ms-auto"><span class="counter text-purple">{{totalAlbum}}</span></li>
-                </ul>
+        <div class="col-lg-4">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                  <h3>{{totalUser}}</h3>
+  
+                  <p>Tổng số Users</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-ios-people"></i>
+                </div>
+                <a [routerLink]="['/list-user']" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="small-box bg-info">
+                <div class="inner">
+                  <h3>{{newPayment}}</h3>
+  
+                  <p>Đăng Ký Mới Trong Tháng</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-card"></i>
+                </div>
+                <a [routerLink]="['/list-user']" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{newAlbum}}</h3>
+
+                <p>Album Mới Trong Tháng</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-ios-musical-notes"></i>
+              </div>
+              <a [routerLink]="['/list-album']" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <div class="col-lg-4 col-md-12"> 
-            <div class="white-box analytics-info">
-                <h3 class="box-title">Tổng số User</h3>
-                <ul class="list-inline two-part d-flex align-items-center mb-0">
-                    <li>
-                        <div id="sparklinedash3"><canvas width="67" height="30"
-                                style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                        </div>
-                    </li>
-                    <li class="ms-auto"><span class="counter text-info">{{totalUser}}</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-12">
-            <div class="white-box analytics-info">
-                <h3 class="box-title">Đăng Ký Mới Trong Tháng</h3>
-                <ul class="list-inline two-part d-flex align-items-center mb-0">
-                    <li>
-                        <div id="sparklinedash"><canvas width="67" height="30"
-                                style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                        </div>
-                    </li>
-                    <li class="ms-auto"><span class="counter text-success">{{newPayment}}</span></li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-12">
-            <div class="white-box analytics-info">
-                <h3 class="box-title">Album Mới Trong Tháng</h3>
-                <ul class="list-inline two-part d-flex align-items-center mb-0">
-                    <li>
-                        <div id="sparklinedash2"><canvas width="67" height="30"
-                                style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                        </div>
-                    </li>
-                    <li class="ms-auto"><span class="counter text-purple">{{newAlbum}}</span></li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-12"> 
-            <div class="white-box analytics-info">
-                <h3 class="box-title">User Mới Trong Tháng</h3>
-                <ul class="list-inline two-part d-flex align-items-center mb-0">
-                    <li>
-                        <div id="sparklinedash3"><canvas width="67" height="30"
-                                style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                        </div>
-                    </li>
-                    <li class="ms-auto"><span class="counter text-info">{{newUser}}</span>
-                    </li>
-                </ul>
-            </div>
+        <div class="col-lg-4">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                  <h3>{{newUser}}</h3>
+  
+                  <p>User Mới Trong Tháng</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-person-add"></i>
+                </div>
+                <a [routerLink]="['/list-user']" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
         </div>
     </div>
     <div class="row">

@@ -589,4 +589,9 @@ public class SongService implements ISongService{
 		LocalDateTime end = current.withDayOfMonth(current.getDayOfMonth());
 		return songRepo.countByCreatedDateBetween(start, end);
 	}
+
+	@Override
+	public List<SongDto> newlySong() {
+		return songRepo.findTop10ByOrderByCreatedDateDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+	}
 }

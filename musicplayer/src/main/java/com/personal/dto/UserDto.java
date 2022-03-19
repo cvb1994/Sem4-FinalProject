@@ -41,7 +41,7 @@ public class UserDto extends BaseDto{
 //	private LocalDateTime tokenExpire;
 	
 	private List<PlayListDto> playlists;
-	private List<PaymentDto> payments;
+//	private List<PaymentDto> payments;
 	private String jwtToken;
 	
 	private MultipartFile file; 				//required

@@ -17,4 +17,6 @@ public interface IArtistService {
 	public ResponseDto getListArtistOrderByName();
 	public Long countArtist();
 	public int countArtistNewInMonth();
+	public List<ArtistDto> getTopArtist();
+	
 }

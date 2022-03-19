@@ -232,4 +232,9 @@ public class ArtistService implements IArtistService{
 		return artistRepo.countByCreatedDateBetween(start, end);
 	}
 
+	@Override
+	public List<ArtistDto> getTopArtist() {
+		return artistRepo.findTopArtist().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+	}
+
 }

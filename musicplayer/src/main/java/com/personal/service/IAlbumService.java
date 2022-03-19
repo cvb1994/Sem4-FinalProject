@@ -20,4 +20,5 @@ public interface IAlbumService {
 	public ResponseDto finByArtistId(AlbumDto criteria);
 	public Long coutAlbum();
 	public int countAlbumNewInMonth();
+	public AlbumDto top1Album();
 }

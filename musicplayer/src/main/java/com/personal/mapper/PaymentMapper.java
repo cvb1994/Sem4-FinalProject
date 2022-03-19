@@ -13,7 +13,7 @@ public interface PaymentMapper {
 	PaymentDto entityToDto(Payment dto);
 	Payment dtoToEntity(PaymentDto dto);
 	
-	@Mapping(target = "playlists", expression = "java(null)")
-	@Mapping(target = "payments", expression = "java(null)")
-	UserDto userToUserDto(User user);
+//	@Mapping(target = "playlists", expression = "java(null)")
+//	@Mapping(target = "payments", expression = "java(null)")
+//	UserDto userToUserDto(User user);
 }

@@ -5,7 +5,7 @@ public enum FolderTypeEnum {
 	ARTIST_IMAGE_FOLDER("artist-upload"),
 	ALBUM_IMAGE_FOLDER("album-upload"),
 	SONG_IMAGE_FOLDER("song-upload"),
-	USER_IMAGE_FOLDER("user-upload"),
+	USER_IMAGE_FOLDER("user-upload-image"),
 	AUDIO_FOLDER("music-upload")
 	;
 	

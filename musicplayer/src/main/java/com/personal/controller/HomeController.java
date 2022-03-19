@@ -50,9 +50,31 @@ public class HomeController {
         List<AlbumDto> banner = iAlbumService.getTop5ByModifiedDateDesc();
         List<AlbumDto> listNewBanner =  iAlbumService.getTop10ByModifiedDateDesc();
         List<ArtistDto> listNewArtist = iArtistService.getTop10ByModifiedDateDesc();
-        HomeDto data =  new HomeDto(banner, listNewArtist, listTrending, listNewBanner);
+        HomeDto data =  new HomeDto();
+        data.setBanner(banner);
+        data.setListArtist(listNewArtist);
+        data.setListTrending(listTrending);
+        data.setListAlbum(listNewBanner);
         res.setContent(data);
         return res;
+    }
+    
+    @GetMapping("web/home")
+    public ResponseDto getWebHome(Authentication auth) {
+    	ResponseDto res = new ResponseDto();
+    	AlbumDto top1Album = iAlbumService.top1Album();
+    	List<SongDto> listTrending = iSongService.ListTrending(auth);
+    	List<SongDto> newlySong = iSongService.newlySong();
+    	List<ArtistDto> topArtist = iArtistService.getTopArtist();
+    	List<AlbumDto> newlyAlbum =  iAlbumService.getTop10ByModifiedDateDesc();
+    	HomeDto data =  new HomeDto();
+    	data.setListTrending(listTrending);
+    	data.setTop1Album(top1Album);
+    	data.setNewlySong(newlySong);
+    	data.setTopArtist(topArtist);
+    	data.setNewlyAlbum(newlyAlbum);
+    	res.setContent(data);
+    	return res;
     }
 
     @GetMapping("/admin/dashboard")
