@@ -20,6 +20,8 @@ public class ItemSong implements Serializable {
     private String url;
     private List<ItemArtist> artists = null;
     private Boolean isSelected = false;
+    private int listenCount;
+    private boolean vipOnly;
 
     public List<ItemArtist> getArtists() {
         return artists;
@@ -56,6 +58,21 @@ public class ItemSong implements Serializable {
         this.description = Description;
     }
 
+    public int getListenCount() {
+        return listenCount;
+    }
+
+    public void setListenCount(int listenCount) {
+        this.listenCount = listenCount;
+    }
+
+    public boolean isVipOnly() {
+        return vipOnly;
+    }
+
+    public void setVipOnly(boolean vipOnly) {
+        this.vipOnly = vipOnly;
+    }
 
     public String getId() {
         return id;

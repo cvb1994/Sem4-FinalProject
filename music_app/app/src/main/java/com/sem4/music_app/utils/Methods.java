@@ -467,6 +467,7 @@ public class Methods {
                                     arrayList_playlist.add(new ItemMyPlayList(response.body().getContent().toString(), et_Add.getText().toString().trim()));
                                     Toast.makeText(context, context.getString(R.string.playlist_added), Toast.LENGTH_SHORT).show();
                                     recyclerView.setAdapter(adapterPlaylist);
+                                    et_Add.setText("");
                                 }
 
                                 @Override
@@ -478,8 +479,6 @@ public class Methods {
                     recyclerView.setVisibility(View.VISIBLE);
 
                     Toast.makeText(context, context.getString(R.string.playlist_added), Toast.LENGTH_SHORT).show();
-
-                    et_Add.setText("");
                 } else {
                     Toast.makeText(context, context.getString(R.string.enter_playlist_name), Toast.LENGTH_SHORT).show();
                 }

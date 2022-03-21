@@ -99,14 +99,11 @@ public class AdapterRecent extends RecyclerView.Adapter<AdapterRecent.MyViewHold
         popup.getMenuInflater().inflate(R.menu.popup_song, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.popup_add_song:
-//                        methods.openPlaylists(arrayList.get(pos), true);
-//                        break;
-//                    case R.id.popup_download:
-//                        methods.download(arrayList.get(pos));
-//                        break;
-//                }
+                switch (item.getItemId()) {
+                    case R.id.popup_add_song:
+                        methods.openPlaylists(arrayList.get(pos), true);
+                        break;
+                }
                 return true;
             }
         });

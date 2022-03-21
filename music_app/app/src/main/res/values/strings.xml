@@ -27,7 +27,7 @@
     <string name="playlist_like">playlist-like</string>
     <string name="refresh">Tải lại</string>
     <string name="see_all">Xem tất cả</string>
-    <string name="search">Search</string>
+    <string name="search">Tìm kiếm</string>
     <string name="err_server">Không thể kết nối đến server</string>
     <string name="recent">Gần đây</string>
     <string name="chart">BXH</string>

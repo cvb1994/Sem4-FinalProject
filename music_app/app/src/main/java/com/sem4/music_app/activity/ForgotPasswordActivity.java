@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.sem4.music_app.R;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
-import com.sem4.music_app.response.ApiResponse;
+import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.utils.Methods;
 import com.sem4.music_app.utils.SharedPref;
 
@@ -76,19 +76,15 @@ public class ForgotPasswordActivity extends BaseActivity {
     private void loadForgotPass() {
         progressDialog.show();
         apiManager.forgotPassword(etEmail.getText().toString())
-                .enqueue(new Callback<ApiResponse>() {
+                .enqueue(new Callback<BaseResponse>() {
                     @Override
-                    public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                    public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                         progressDialog.dismiss();
-                        if (response.body().isSuccess()) {
-                            Toast.makeText(ForgotPasswordActivity.this, "Hãy kiếm tra email để nhận link reset mật khẩu", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(ForgotPasswordActivity.this, response.body().getError(), Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(ForgotPasswordActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onFailure(Call<ApiResponse> call, Throwable t) {
+                    public void onFailure(Call<BaseResponse> call, Throwable t) {
                         progressDialog.dismiss();
                         Toast.makeText(ForgotPasswordActivity.this, getString(R.string.err_server), Toast.LENGTH_SHORT).show();
                     }

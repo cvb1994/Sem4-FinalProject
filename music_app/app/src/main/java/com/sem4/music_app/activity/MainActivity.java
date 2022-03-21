@@ -23,6 +23,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.sem4.music_app.R;
 import com.sem4.music_app.fragment.FragmentAlbums;
 import com.sem4.music_app.fragment.FragmentArtist;
+import com.sem4.music_app.fragment.FragmentChart;
 import com.sem4.music_app.fragment.FragmentDashBoard;
 import com.sem4.music_app.fragment.FragmentFavorite;
 import com.sem4.music_app.fragment.FragmentGenre;
@@ -69,6 +70,14 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
             case R.id.nav_home:
                 FragmentDashBoard f_home = new FragmentDashBoard();
                 loadFrag(f_home, getString(R.string.dashboard), fm);
+                break;
+            case R.id.nav_chart:
+                FragmentChart f_chart = new FragmentChart();
+                loadFrag(f_chart, getString(R.string.chart), fm);
+                break;
+            case R.id.nav_allsongs:
+                Intent intent1 = new Intent(MainActivity.this, AllMusicActivity.class);
+                startActivity(intent1);
                 break;
             case R.id.nav_albums:
                 FragmentAlbums f_album = new FragmentAlbums();

@@ -107,25 +107,41 @@
                     android:layout_marginStart="2dp"
                     android:gravity="center"
                     android:text="25"
+                    android:layout_marginEnd="5dp"
                     android:textColor="@color/text_desc"
                     android:textSize="11sp"/>
 
-                <ImageView
-                    android:id="@+id/iv_fav_icon"
-                    android:layout_width="15dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:src="@mipmap/ic_fav_orange" />
-
                 <TextView
-                    android:id="@+id/tv_songlist_fav"
+                    android:id="@+id/tv_songlist_vip"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/bg_round_green"
                     android:gravity="center"
-                    android:text="25"
-                    android:textColor="@color/text_desc"
-                    android:textSize="11sp" />
+                    android:paddingEnd="6dp"
+                    android:paddingStart="6dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="VIP"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:layout_marginBottom="1dp"/>
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/iv_fav_icon"-->
+<!--                    android:layout_width="15dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="6dp"-->
+<!--                    android:src="@mipmap/ic_fav_orange" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_songlist_fav"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="2dp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="25"-->
+<!--                    android:textColor="@color/text_desc"-->
+<!--                    android:textSize="11sp" />-->
 
                 <TextView
                     android:id="@+id/tv_songlist_duration"

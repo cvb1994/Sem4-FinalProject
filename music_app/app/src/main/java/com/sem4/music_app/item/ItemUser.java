@@ -16,6 +16,24 @@ public class ItemUser implements Serializable {
     private String gender;
     private String avatar;
     private String jwtToken;
+    private boolean isVip;
+    private String vipExpireDate;
+
+    public String getVipExpireDate() {
+        return vipExpireDate;
+    }
+
+    public void setVipExpireDate(String vipExpireDate) {
+        this.vipExpireDate = vipExpireDate;
+    }
+
+    public boolean isVip() {
+        return isVip;
+    }
+
+    public void setVip(boolean vip) {
+        isVip = vip;
+    }
 
     public String getJwtToken() {
         return jwtToken;

@@ -92,10 +92,26 @@ public class SongByCategoryActivity extends DrawerActivity {
                     Constant.isNewAdded = true;
                 }
                 Constant.playPos = position;
-
-                Intent intent = new Intent(SongByCategoryActivity.this, PlayerService.class);
-                intent.setAction(PlayerService.ACTION_PLAY);
-                startService(intent);
+                if(!Constant.itemUser.isVip()){
+                    boolean isContainVipSong = false;
+                    for (int i = 0; i < Constant.arrayList_play.size(); i++) {
+                        if (Constant.arrayList_play.get(i).isVipOnly()) {
+                            isContainVipSong = true;
+                            break;
+                        }
+                    }
+                    if(isContainVipSong){
+                        openRegisterVipDialog();
+                    }else {
+                        Intent intent = new Intent(SongByCategoryActivity.this, PlayerService.class);
+                        intent.setAction(PlayerService.ACTION_PLAY);
+                        startService(intent);
+                    }
+                }else {
+                    Intent intent = new Intent(SongByCategoryActivity.this, PlayerService.class);
+                    intent.setAction(PlayerService.ACTION_PLAY);
+                    startService(intent);
+                }
             }
         });
         methods.forceRTLIfSupported(getWindow());
@@ -139,11 +155,12 @@ public class SongByCategoryActivity extends DrawerActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-        MenuItem item = menu.findItem(R.id.menu_search);
-        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(queryTextListener);
+        menu.clear();
+//        getMenuInflater().inflate(R.menu.menu_search, menu);
+//        MenuItem item = menu.findItem(R.id.menu_search);
+//        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+//        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+//        searchView.setOnQueryTextListener(queryTextListener);
         return super.onCreateOptionsMenu(menu);
     }
 
