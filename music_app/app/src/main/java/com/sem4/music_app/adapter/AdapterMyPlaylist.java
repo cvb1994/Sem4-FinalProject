@@ -83,58 +83,73 @@ public class AdapterMyPlaylist extends RecyclerView.Adapter<AdapterMyPlaylist.My
         holder.textView.setText(arrayList.get(position).getName());
 
         if(isOnline) {
-            if(arrayList.get(position).getSongs().size() > 0){
-                if(arrayList.get(position).getSongs().size() == 1){
+            if(arrayList.get(position).getSongs() != null){
+                if(arrayList.get(position).getSongs().size() > 0){
+                    if(arrayList.get(position).getSongs().size() == 1){
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView1);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView2);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView3);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView4);
+                    }else if(arrayList.get(position).getSongs().size() == 2){
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView1);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(1).getImageBig())
+                                .into(holder.imageView2);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(1).getImageBig())
+                                .into(holder.imageView3);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView4);
+                    }else if (arrayList.get(position).getSongs().size() == 3){
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView1);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(1).getImageBig())
+                                .into(holder.imageView2);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(2).getImageBig())
+                                .into(holder.imageView3);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView4);
+                    }else {
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                                .into(holder.imageView1);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(1).getImageBig())
+                                .into(holder.imageView2);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(2).getImageBig())
+                                .into(holder.imageView3);
+                        Picasso.get()
+                                .load(arrayList.get(position).getSongs().get(3).getImageBig())
+                                .into(holder.imageView4);
+                    }
+                }else{
                     Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                            .load(R.drawable.placeholder_song)
                             .into(holder.imageView1);
                     Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                            .load(R.drawable.placeholder_song)
                             .into(holder.imageView2);
                     Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
+                            .load(R.drawable.placeholder_song)
                             .into(holder.imageView3);
                     Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
-                            .into(holder.imageView4);
-                }else if(arrayList.get(position).getSongs().size() == 2){
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
-                            .into(holder.imageView1);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(1).getImageBig())
-                            .into(holder.imageView2);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(1).getImageBig())
-                            .into(holder.imageView3);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
-                            .into(holder.imageView4);
-                }else if (arrayList.get(position).getSongs().size() == 3){
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
-                            .into(holder.imageView1);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(1).getImageBig())
-                            .into(holder.imageView2);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(2).getImageBig())
-                            .into(holder.imageView3);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
-                            .into(holder.imageView4);
-                }else {
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(0).getImageBig())
-                            .into(holder.imageView1);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(1).getImageBig())
-                            .into(holder.imageView2);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(2).getImageBig())
-                            .into(holder.imageView3);
-                    Picasso.get()
-                            .load(arrayList.get(position).getSongs().get(3).getImageBig())
+                            .load(R.drawable.placeholder_song)
                             .into(holder.imageView4);
                 }
             }else{
@@ -151,6 +166,7 @@ public class AdapterMyPlaylist extends RecyclerView.Adapter<AdapterMyPlaylist.My
                         .load(R.drawable.placeholder_song)
                         .into(holder.imageView4);
             }
+
         }
 
         holder.rl.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, columnWidth));

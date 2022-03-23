@@ -37,6 +37,7 @@ import com.sem4.music_app.item.ItemAlbums;
 import com.sem4.music_app.item.ItemArtist;
 import com.sem4.music_app.item.ItemHome;
 import com.sem4.music_app.item.ItemSong;
+import com.sem4.music_app.item.ItemUser;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
 import com.sem4.music_app.response.BaseResponse;
@@ -272,6 +273,28 @@ public class FragmentHome extends Fragment {
             }
         });
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(Constant.isLoginOn){
+            if(Constant.isLogged){
+                apiManager.userInfo(Constant.itemUser.getId())
+                        .enqueue(new Callback<BaseResponse<ItemUser>>() {
+                            @Override
+                            public void onResponse(Call<BaseResponse<ItemUser>> call, Response<BaseResponse<ItemUser>> response) {
+                                Constant.itemUser.setVip(response.body().getContent().isVip());
+                                Constant.itemUser.setVipExpireDate(response.body().getContent().getVipExpireDate());
+                            }
+
+                            @Override
+                            public void onFailure(Call<BaseResponse<ItemUser>> call, Throwable t) {
+
+                            }
+                        });
+            }
+        }
     }
 
     @Override

@@ -159,6 +159,7 @@ public class AllMusicActivity extends DrawerActivity{
                             @Override
                             public void onResponse(Call<BaseResponse<ItemUser>> call, Response<BaseResponse<ItemUser>> response) {
                                 Constant.itemUser.setVip(response.body().getContent().isVip());
+                                Constant.itemUser.setVipExpireDate(response.body().getContent().getVipExpireDate());
                             }
 
                             @Override
