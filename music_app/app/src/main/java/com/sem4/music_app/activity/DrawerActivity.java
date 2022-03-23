@@ -305,7 +305,7 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
                                 break;
 
                             case DialogInterface.BUTTON_NEGATIVE:
-                                Uri uri = Uri.parse("https://music-player-ner3yu5pda-as.a.run.app/payment/" + Constant.itemUser.getId());
+                                Uri uri = Uri.parse("https://music-payment-ner3yu5pda-as.a.run.app/payment/" + Constant.itemUser.getId());
                                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                 startActivity(intent);
                                 break;
