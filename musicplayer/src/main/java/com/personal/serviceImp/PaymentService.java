@@ -60,7 +60,7 @@ public class PaymentService implements IPaymentService {
 	private Utilities utils;
 
 	@Override
-	public String sendQuery(PaymentDto model, HttpServletRequest req) throws UnsupportedEncodingException {
+	public ResponseDto sendQuery(PaymentDto model, HttpServletRequest req) throws UnsupportedEncodingException {
 		
 		String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
@@ -149,11 +149,14 @@ public class PaymentService implements IPaymentService {
         String vnp_SecureHash = vnPayUtils.hmacSHA512(vnPayUtils.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = vnPayUtils.vnp_PayUrl + "?" + queryUrl;
-        return paymentUrl;
+        ResponseDto res = new ResponseDto();
+        res.setStatus(true);
+        res.setContent(paymentUrl);
+        return res;
 	}
 
 	@Override
-	public String returnPayment(@RequestParam Map<String,String> allParams) {
+	public boolean returnPayment(@RequestParam Map<String,String> allParams) {
 		String vnp_SecureHash = allParams.get("vnp_SecureHash");
 		String vnp_ResponseCode = allParams.get("vnp_ResponseCode");
 		
@@ -196,15 +199,15 @@ public class PaymentService implements IPaymentService {
 				user.setVipExpireDate(payment.getExpireDate());
 				userRepo.save(user);
 				
-				return "Thanh toán thành công";
+				return true;
 			}
 			
 			
 		} else {
-			return "Thanh toán không thành công";
+			return false;
 		}
 		
-		return "Giao dich không thành công";
+		return false;
 	}
 
 	@Override

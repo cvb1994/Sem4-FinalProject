@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.personal.config.AppProperties;
 import com.personal.dto.PaymentDto;
@@ -50,8 +51,20 @@ public class PaymentController {
 	}
 	
 	@GetMapping(value = "/returnPay")
-	public ResponseEntity<?> returnPayment(@RequestParam Map<String,String> allParams) throws IOException{
-		return ResponseEntity.ok(paymentService.returnPayment(allParams));
+	public ModelAndView  returnPayment(@RequestParam Map<String,String> allParams) throws IOException{
+		boolean result = paymentService.returnPayment(allParams);
+		if(result) {
+			return new ModelAndView("redirect:" + "http://localhost:4200/returnPage");
+		} else {
+			return new ModelAndView("redirect:" + "http://localhost:4200/returnPageFailed");
+		}
+		
+//		if(result) {
+//			return new ModelAndView("redirect:" + "https://music-payment-ner3yu5pda-as.a.run.app/returnPage");
+//		} else {
+//			return new ModelAndView("redirect:" + "https://music-payment-ner3yu5pda-as.a.run.app/returnPageFailed");
+//		}
+		
 	}
 	
 }

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -234,7 +235,16 @@ public class ArtistService implements IArtistService{
 
 	@Override
 	public List<ArtistDto> getTopArtist() {
-		return artistRepo.findTopArtist().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+//		return artistRepo.findTopArtist().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+		Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+		List<ArtistDto> list = artistRepo.findAll(artistSpec.filterTop(),pageable).stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+		return list;
+	}
+
+	@Override
+	public List<ArtistDto> searchArtist(String name) {
+		List<ArtistDto> list = artistRepo.findByNameContaining(name).stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+		return list;
 	}
 
 }

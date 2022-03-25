@@ -26,4 +26,6 @@ public interface ISongService {
 	public void resetListTrending();
 	public int countSongNewInMonth();
 	public List<SongDto> newlySong();
+	public List<SongDto> searchSong(String title, Authentication authentication);
+	List<SongDto> ListTop15Trending(Authentication authentication);
 }

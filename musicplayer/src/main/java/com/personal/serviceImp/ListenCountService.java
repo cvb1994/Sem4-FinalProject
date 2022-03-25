@@ -45,7 +45,7 @@ public class ListenCountService implements IListenCountService {
 	@Override
 	public void saveTopTrendingBeforeReset() {
 		LocalDateTime current = LocalDateTime.now();
-		List<SongSimplyDto> listTopSong = songRepo.findTop10ByOrderByListenCountResetDesc().stream().map(songMapper::entityToSimplyDto).collect(Collectors.toList());
+		List<SongSimplyDto> listTopSong = songRepo.findTop20ByOrderByListenCountResetDesc().stream().map(songMapper::entityToSimplyDto).collect(Collectors.toList());
 		
 		ObjectMapper map = new ObjectMapper();
 		map.enable(SerializationFeature.INDENT_OUTPUT);

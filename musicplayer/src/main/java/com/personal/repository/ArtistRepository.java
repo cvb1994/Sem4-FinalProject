@@ -16,8 +16,6 @@ public interface ArtistRepository extends JpaRepository<Artist, Integer>, JpaSpe
 	Optional<Artist> findByName(String name);
 	List<Artist> findTop10ByOrderByModifiedDateDesc();
 	int countByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
+	List<Artist> findByNameContaining(String name);
 
-	@Query(value = "select distinct(a.id), a.*  from song s Join song_artist sa On s.id = sa.song_id "
-			+ "Join artist a On a.id = sa.artist_id Order By s.listen_count_reset desc Limit 10" , nativeQuery = true)
-	List<Artist> findTopArtist();
 }

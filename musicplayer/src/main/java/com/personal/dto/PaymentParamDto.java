@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 public class PaymentParamDto extends BaseDto{
 	private int id;
 	private int price;
+	private int actualPrice;
 	private int timeExpire;
 	private double discount;
 	private String unit;
+	
+	private boolean isSelect = false;
 }

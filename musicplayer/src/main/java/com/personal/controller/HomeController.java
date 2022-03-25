@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,11 +60,19 @@ public class HomeController {
         return res;
     }
     
+    @GetMapping("/topTrending")
+    public ResponseDto getTopTrending() {
+    	ResponseDto res = new ResponseDto();
+    	List<SongDto> listTrending = iSongService.ListTrending(null);
+    	res.setContent(listTrending);
+    	return res;
+    }
+    
     @GetMapping("web/home")
     public ResponseDto getWebHome(Authentication auth) {
     	ResponseDto res = new ResponseDto();
     	AlbumDto top1Album = iAlbumService.top1Album();
-    	List<SongDto> listTrending = iSongService.ListTrending(auth);
+    	List<SongDto> listTrending = iSongService.ListTop15Trending(auth);
     	List<SongDto> newlySong = iSongService.newlySong();
     	List<ArtistDto> topArtist = iArtistService.getTopArtist();
     	List<AlbumDto> newlyAlbum =  iAlbumService.getTop10ByModifiedDateDesc();
@@ -73,6 +82,20 @@ public class HomeController {
     	data.setNewlySong(newlySong);
     	data.setTopArtist(topArtist);
     	data.setNewlyAlbum(newlyAlbum);
+    	res.setContent(data);
+    	return res;
+    }
+    
+    @GetMapping("web/search")
+    public ResponseDto searchWeb(@RequestParam("keyword") String search, Authentication auth) {
+    	ResponseDto res = new ResponseDto();
+    	List<SongDto> listSong = iSongService.searchSong(search, auth);
+    	List<ArtistDto> listArtist = iArtistService.searchArtist(search);
+    	List<AlbumDto> listAlbum = iAlbumService.searchAlbum(search);
+    	HomeDto data =  new HomeDto();
+    	data.setSearchArtist(listArtist);
+    	data.setSearchSong(listSong);
+    	data.setSearchAlbum(listAlbum);
     	res.setContent(data);
     	return res;
     }

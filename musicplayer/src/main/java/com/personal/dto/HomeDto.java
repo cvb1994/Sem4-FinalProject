@@ -17,5 +17,9 @@ public class HomeDto {
     private List<SongDto> newlySong;
     private List<ArtistDto> topArtist;
     private List<AlbumDto> newlyAlbum;
+    
+    private List<SongDto> searchSong;
+    private List<ArtistDto> searchArtist;
+    private List<AlbumDto> searchAlbum;
 
 }

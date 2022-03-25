@@ -112,23 +112,23 @@ public class SongService implements ISongService{
 		Page<Song> page = songRepo.findAll(specification, PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 		
-		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
-			User user = userRepo.findByUsername(auth.getName()).get();
-			LocalDate current = LocalDate.now();
-			if(current.isAfter(user.getVipExpireDate())) {
-				list.stream().forEach(s -> {
-					if(s.getVipOnly()) {
-						s.setMediaUrl(null);
-					}
-				});
-			}
-		} else if(auth == null) {
-			list.stream().forEach(s -> {
-				if(s.getVipOnly()) {
-					s.setMediaUrl(null);
-				}
-			});
-		}
+//		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+//			User user = userRepo.findByUsername(auth.getName()).get();
+//			LocalDate current = LocalDate.now();
+//			if(current.isAfter(user.getVipExpireDate())) {
+//				list.stream().forEach(s -> {
+//					if(s.getVipOnly()) {
+//						s.setMediaUrl(null);
+//					}
+//				});
+//			}
+//		} else if(auth == null) {
+//			list.stream().forEach(s -> {
+//				if(s.getVipOnly()) {
+//					s.setMediaUrl(null);
+//				}
+//			});
+//		}
 		
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
@@ -152,26 +152,26 @@ public class SongService implements ISongService{
 	public ResponseDto getById(int songId, Authentication auth) {
 		ResponseDto res = new ResponseDto();
 		SongDto song = songRepo.findById(songId).map(songMapper::entityToDto).orElse(null);
-		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
-			if(song.getVipOnly()) {
-				User user = userRepo.findByUsername(auth.getName()).get();
-				LocalDate current = LocalDate.now();
-				if(current.isAfter(user.getVipExpireDate())) {
-					song.setMediaUrl(null);
-					
-					res.setStatus(true);
-					res.setContent(song);
-					return res;
-				}
-			}
-		} else if(auth == null) {
-			if(song.getVipOnly()) {
-				song.setMediaUrl(null);
-				res.setStatus(true);
-				res.setContent(song);
-				return res;
-			}
-		}
+//		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+//			if(song.getVipOnly()) {
+//				User user = userRepo.findByUsername(auth.getName()).get();
+//				LocalDate current = LocalDate.now();
+//				if(current.isAfter(user.getVipExpireDate())) {
+//					song.setMediaUrl(null);
+//					
+//					res.setStatus(true);
+//					res.setContent(song);
+//					return res;
+//				}
+//			}
+//		} else if(auth == null) {
+//			if(song.getVipOnly()) {
+//				song.setMediaUrl(null);
+//				res.setStatus(true);
+//				res.setContent(song);
+//				return res;
+//			}
+//		}
 		
 		res.setStatus(true);
 		res.setContent(song);
@@ -414,6 +414,10 @@ public class SongService implements ISongService{
 			song.setListenCount(song.getListenCount() + 1);
 			song.setListenCountReset(song.getListenCountReset() + 1);
 			songRepo.save(song);
+			
+			Album album = song.getAlbum();
+			album.setTotalListen(album.getTotalListen() + 1);
+			albumRepo.save(album);
 		}
 	}
 	
@@ -428,24 +432,24 @@ public class SongService implements ISongService{
 
 	@Override
 	public List<SongDto> ListTrending(Authentication auth) {
-		List<SongDto> list = songRepo.findTop10ByOrderByListenCountResetDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
-		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
-			User user = userRepo.findByUsername(auth.getName()).get();
-			LocalDate current = LocalDate.now();
-			if(current.isAfter(user.getVipExpireDate())) {
-				list.stream().forEach(s -> {
-					if(s.getVipOnly()) {
-						s.setMediaUrl(null);
-					}
-				});
-			}
-		} else if(auth == null) {
-			list.stream().forEach(s -> {
-				if(s.getVipOnly()) {
-					s.setMediaUrl(null);
-				}
-			});
-		}
+		List<SongDto> list = songRepo.findTop20ByOrderByListenCountResetDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+//		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+//			User user = userRepo.findByUsername(auth.getName()).get();
+//			LocalDate current = LocalDate.now();
+//			if(current.isAfter(user.getVipExpireDate())) {
+//				list.stream().forEach(s -> {
+//					if(s.getVipOnly()) {
+//						s.setMediaUrl(null);
+//					}
+//				});
+//			}
+//		} else if(auth == null) {
+//			list.stream().forEach(s -> {
+//				if(s.getVipOnly()) {
+//					s.setMediaUrl(null);
+//				}
+//			});
+//		}
 		return list;
 	}
 
@@ -454,23 +458,23 @@ public class SongService implements ISongService{
 		ResponseDto res = new ResponseDto();
 		Page<Song> page =  songRepo.findSongByAlbumId(criteria.getAlbumId(), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
-		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
-			User user = userRepo.findByUsername(auth.getName()).get();
-			LocalDate current = LocalDate.now();
-			if(current.isAfter(user.getVipExpireDate())) {
-				list.stream().forEach(s -> {
-					if(s.getVipOnly()) {
-						s.setMediaUrl(null);
-					}
-				});
-			}
-		} else if(auth == null) {
-			list.stream().forEach(s -> {
-				if(s.getVipOnly()) {
-					s.setMediaUrl(null);
-				}
-			});
-		}
+//		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+//			User user = userRepo.findByUsername(auth.getName()).get();
+//			LocalDate current = LocalDate.now();
+//			if(current.isAfter(user.getVipExpireDate())) {
+//				list.stream().forEach(s -> {
+//					if(s.getVipOnly()) {
+//						s.setMediaUrl(null);
+//					}
+//				});
+//			}
+//		} else if(auth == null) {
+//			list.stream().forEach(s -> {
+//				if(s.getVipOnly()) {
+//					s.setMediaUrl(null);
+//				}
+//			});
+//		}
 
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
@@ -495,23 +499,23 @@ public class SongService implements ISongService{
 		ResponseDto res = new ResponseDto();
 		Page<Song> page =  songRepo.findSongByArtists_Id(criteria.getArtistIds().get(0), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
-		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
-			User user = userRepo.findByUsername(auth.getName()).get();
-			LocalDate current = LocalDate.now();
-			if(current.isAfter(user.getVipExpireDate())) {
-				list.stream().forEach(s -> {
-					if(s.getVipOnly()) {
-						s.setMediaUrl(null);
-					}
-				});
-			}
-		} else if(auth == null) {
-			list.stream().forEach(s -> {
-				if(s.getVipOnly()) {
-					s.setMediaUrl(null);
-				}
-			});
-		}
+//		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+//			User user = userRepo.findByUsername(auth.getName()).get();
+//			LocalDate current = LocalDate.now();
+//			if(current.isAfter(user.getVipExpireDate())) {
+//				list.stream().forEach(s -> {
+//					if(s.getVipOnly()) {
+//						s.setMediaUrl(null);
+//					}
+//				});
+//			}
+//		} else if(auth == null) {
+//			list.stream().forEach(s -> {
+//				if(s.getVipOnly()) {
+//					s.setMediaUrl(null);
+//				}
+//			});
+//		}
 
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
@@ -536,23 +540,23 @@ public class SongService implements ISongService{
 		ResponseDto res = new ResponseDto();
 		Page<Song> page =  songRepo.findSongByGenres_Id(criteria.getGenreIds().get(0), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
-		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
-			User user = userRepo.findByUsername(auth.getName()).get();
-			LocalDate current = LocalDate.now();
-			if(current.isAfter(user.getVipExpireDate())) {
-				list.stream().forEach(s -> {
-					if(s.getVipOnly()) {
-						s.setMediaUrl(null);
-					}
-				});
-			}
-		} else if(auth == null) {
-			list.stream().forEach(s -> {
-				if(s.getVipOnly()) {
-					s.setMediaUrl(null);
-				}
-			});
-		}
+//		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+//			User user = userRepo.findByUsername(auth.getName()).get();
+//			LocalDate current = LocalDate.now();
+//			if(current.isAfter(user.getVipExpireDate())) {
+//				list.stream().forEach(s -> {
+//					if(s.getVipOnly()) {
+//						s.setMediaUrl(null);
+//					}
+//				});
+//			}
+//		} else if(auth == null) {
+//			list.stream().forEach(s -> {
+//				if(s.getVipOnly()) {
+//					s.setMediaUrl(null);
+//				}
+//			});
+//		}
 
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
@@ -593,5 +597,51 @@ public class SongService implements ISongService{
 	@Override
 	public List<SongDto> newlySong() {
 		return songRepo.findTop10ByOrderByCreatedDateDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<SongDto> searchSong(String title, Authentication auth) {
+		List<SongDto> list = songRepo.findByTitleContaining(title).stream().map(songMapper::entityToDto).collect(Collectors.toList());
+//		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+//			User user = userRepo.findByUsername(auth.getName()).get();
+//			LocalDate current = LocalDate.now();
+//			if(current.isAfter(user.getVipExpireDate())) {
+//				list.stream().forEach(s -> {
+//					if(s.getVipOnly()) {
+//						s.setMediaUrl(null);
+//					}
+//				});
+//			}
+//		} else if(auth == null) {
+//			list.stream().forEach(s -> {
+//				if(s.getVipOnly()) {
+//					s.setMediaUrl(null);
+//				}
+//			});
+//		}
+		return list;
+	}
+
+	@Override
+	public List<SongDto> ListTop15Trending(Authentication auth) {
+		List<SongDto> list = songRepo.findTop15ByOrderByListenCountResetDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+//		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
+//			User user = userRepo.findByUsername(auth.getName()).get();
+//			LocalDate current = LocalDate.now();
+//			if(current.isAfter(user.getVipExpireDate())) {
+//				list.stream().forEach(s -> {
+//					if(s.getVipOnly()) {
+//						s.setMediaUrl(null);
+//					}
+//				});
+//			}
+//		} else if(auth == null) {
+//			list.stream().forEach(s -> {
+//				if(s.getVipOnly()) {
+//					s.setMediaUrl(null);
+//				}
+//			});
+//		}
+		return list;
 	}
 }

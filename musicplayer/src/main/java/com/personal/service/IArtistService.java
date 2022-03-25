@@ -18,5 +18,6 @@ public interface IArtistService {
 	public Long countArtist();
 	public int countArtistNewInMonth();
 	public List<ArtistDto> getTopArtist();
+	public List<ArtistDto> searchArtist(String name);
 	
 }

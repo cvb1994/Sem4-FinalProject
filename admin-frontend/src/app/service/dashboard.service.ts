@@ -30,4 +30,9 @@ export class DashboardService {
     const url = `${this.baseurl}/api/v1/admin/profit-report`;
     return this.http.get<any>(url, {params:queryParams});
   }
+
+  public getGenreReport():Observable<any>{
+    const url = `${this.baseurl}/api/genre/getReport`;
+    return this.http.get<any>(url);
+  }
 }

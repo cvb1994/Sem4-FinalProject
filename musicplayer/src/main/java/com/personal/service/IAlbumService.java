@@ -21,4 +21,5 @@ public interface IAlbumService {
 	public Long coutAlbum();
 	public int countAlbumNewInMonth();
 	public AlbumDto top1Album();
+	public List<AlbumDto> searchAlbum(String name);
 }

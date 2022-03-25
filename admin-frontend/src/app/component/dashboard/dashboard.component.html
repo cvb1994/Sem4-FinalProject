@@ -120,20 +120,15 @@
     </div>
     <div class="row">
         <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-            <div class="white-box">
-                <div>
-                    <div>
-                      <div style="display: block">
-                        <canvas baseChart
-                          [data]="barChartData"
-                          [options]="barChartOptions"
-                          [plugins]="barChartPlugins"
-                          [type]="barChartType">
-                        </canvas>
-                      </div>
-                    </div>
-                  </div>
-            </div>
+          <div style="display: block; width: 100%;">
+            <canvas style="width: 100%;" id="myChart2"></canvas>
+          </div>
+        </div>
+        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+          <h3 style="padding-top: 3%;" class="text-center">Tỷ lệ nghe theo thể loại</h3>
+          <div style="display: block; width: 100%;" class="piechart">
+            <canvas style="width: 50%; margin: auto; padding-top: 2%;" id="myChart"></canvas>
+          </div>
         </div>
     </div>
     

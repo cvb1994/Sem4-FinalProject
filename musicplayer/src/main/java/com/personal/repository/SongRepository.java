@@ -24,7 +24,8 @@ public interface SongRepository extends JpaRepository<Song, Integer>, JpaSpecifi
 //	@Query(value = "Select s.* From songs s Where s.id = :songId And s.deleted = false" , nativeQuery = true)
 //	Song findBySongId(@Param("songId") int id);
 	Optional<Song> findByTitle(String title);
-	List<Song> findTop10ByOrderByListenCountResetDesc();
+	List<Song> findTop20ByOrderByListenCountResetDesc();
+	List<Song> findTop15ByOrderByListenCountResetDesc();
 	Page<Song> findSongByArtists_Id(int artistId, Pageable pageable);
 	Page<Song> findSongByAlbumId(int albumId, Pageable pageable);
 	Page<Song> findSongByGenres_Id(int genreId, Pageable pageable);
@@ -34,16 +35,13 @@ public interface SongRepository extends JpaRepository<Song, Integer>, JpaSpecifi
 	@Query("update Song s set s.listenCountReset = 0 ")
 	void resetListTrending();
 	
+	List<Song> findByTitleContaining(String title);
+	
 	int countByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 
-//	
-//	List<Song> findAllByAlbum_id(int albumId);
-//	List<Song> findBySongArtist(Artist artist);
 	List<Song> findTop10ByOrderByCreatedDateDesc();
-//	List<Song> findTop4ByOrderByListenCountDesc();
 	
 //	@Query(value = "Select s.* From songs s Inner Join song_genre sg On s.id = sg.song_id Where sg.genre_id = :genreId" , nativeQuery = true)
 //	List<Song> findAllByGenre(@Param("genreId") int id);
-	
-//	List<Song> findTop10ByGenreOrderByListenCountReset(Genre genre);
+
 }

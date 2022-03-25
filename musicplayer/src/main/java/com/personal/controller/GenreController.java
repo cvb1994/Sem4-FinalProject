@@ -69,4 +69,9 @@ public class GenreController {
 		return ResponseEntity.ok(genreSer.getAllOrderByName());
 	}
 	
+	@GetMapping(value = "/getReport")
+	public ResponseEntity<?> getReport(){
+		return ResponseEntity.ok(genreSer.genreReport());
+	}
+	
 }

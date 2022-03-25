@@ -23,7 +23,25 @@ export class UtilitiesService {
     return this.listCountries;
   }
 
-  public listCountries : any = [ 
+  public getListColor(){
+    return this.listColor;
+  }
+
+  private listColor : any = [
+    'rgba(255, 99, 132, 1)',
+    'rgb(218, 42, 159)',
+    'rgb(188, 30, 219)',
+    'rgb(96, 30, 219)',
+    'rgb(30, 58, 219)',
+    'rgb(30, 165, 219)',
+    'rgb(30, 219, 125)',
+    'rgb(52, 219, 30)',
+    'rgb(147, 219, 30)',
+    'rgb(219, 175, 30)',
+    'rgb(219, 74, 30)'
+  ]
+
+  private listCountries : any = [ 
     {name: 'Afghanistan', code: 'AF'}, 
     {name: 'Åland Islands', code: 'AX'}, 
     {name: 'Albania', code: 'AL'}, 

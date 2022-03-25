@@ -28,7 +28,7 @@ public interface AlbumRepository extends JpaRepository<Album, Integer>, JpaSpeci
 	
 //	@Query(value = "Select DISTINCT (s.album_id), a.* From songs s Inner Join albums a On s.album_id = a.id Order By listen_count Limit 4" , nativeQuery = true)
 //	List<Album> findTop4ByListen();
-//	
-	@Query(value = "Select DISTINCT (s.album_id), a.* From song s Inner Join album a On s.album_id = a.id Order By listen_count Limit 1" , nativeQuery = true)
-	Optional<Album> findTop1ByListen();
+	
+	Optional<Album> findTop1ByOrderByTotalListenDesc();
+	List<Album> findByNameContaining(String name);
 }

@@ -1,0 +1,45 @@
+<div class="container d-lg-flex">
+    <div class="box-1 bg-light user">
+        <div class="d-flex align-items-center mb-3">
+            <img [src]="user.avatar" class="pic rounded-circle" alt="">
+            <p class="ps-2 name">{{user.username}}</p>
+        </div>
+        <div class="box-inner-1 pb-3 mb-3 ">
+            <img src="../../../assets/apple-music-library-hero.webp" class="d-block w-100">
+            <p class="text-center dis info my-3">Tham gia cùng chúng tôi để khám phá thế giới âm nhạc chất lượng cao</p>
+            
+        </div>
+    </div>
+    <div class="box-2">
+        <div class="box-inner-2">
+            <div>
+                <p class="fw-bold">Lựa chọn gói phù hợp</p>
+                <p class="dis mb-3">VUi lòng lựa chọn gói phù hợp với nhu cầu</p>
+            </div>
+            <div *ngFor="let opt of listPayment; let i = index" >
+                <label for="opt{{i}}" [ngClass]="opt.select ? 'box py-2 active' : 'box py-2'">
+                    <div (click)="clickSelect(opt.id)" class="d-flex align-items-start"> <span [ngClass]="opt.select ? 'circle active' : 'circle'"></span>
+                        <div class="course">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-bold">{{opt.price | currency : 'VND':'code'}}</span>
+                                <span>{{opt.timeExpire}} {{opt.unit}}</span>
+                            </div>
+                            <span *ngIf="opt.discount != 0">
+                                Giảm {{opt.discount}}%
+                            </span>
+                        </div>
+                    </div>
+                </label> 
+            </div>
+            <div>
+                <div class="d-flex flex-column dis">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <p class="fw-bold">Tổng cộng</p>
+                        <p class="fw-bold">{{total| currency : 'VND':'code'}}</p>
+                    </div>
+                    <div class="btn btn-primary mt-2" (click)="submitPayment()">Tiếp tục thanh toán</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

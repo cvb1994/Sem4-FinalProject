@@ -281,8 +281,14 @@ public class AlbumService implements IAlbumService {
 
 	@Override
 	public AlbumDto top1Album() {
-		AlbumDto album = albumRepo.findTop1ByListen().map(albumMapper::entityToDto).orElse(null);
+		AlbumDto album = albumRepo.findTop1ByOrderByTotalListenDesc().map(albumMapper::entityToDto).orElse(null);
 		return album;
+	}
+
+	@Override
+	public List<AlbumDto> searchAlbum(String name) {
+		List<AlbumDto> list = albumRepo.findByNameContaining(name).stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		return list;
 	}
 
 }

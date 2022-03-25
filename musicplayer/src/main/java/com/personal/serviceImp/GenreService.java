@@ -1,5 +1,6 @@
 package com.personal.serviceImp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,9 +15,11 @@ import com.personal.common.FileTypeEnum;
 import com.personal.common.FolderTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.GenreDto;
+import com.personal.dto.GenreReportDto;
 import com.personal.dto.PageDto;
 import com.personal.dto.ResponseDto;
 import com.personal.entity.Genre;
+import com.personal.entity.Song;
 import com.personal.entity.SystemParam;
 import com.personal.mapper.GenreMapper;
 import com.personal.musicplayer.specification.GenreSpecification;
@@ -236,5 +239,29 @@ public class GenreService implements IGenreService{
 	@Override
 	public Long countGenre() {
 		return genreRepo.count();
+	}
+
+	@Override
+	public ResponseDto genreReport() {
+		ResponseDto res = new ResponseDto();
+		List<GenreReportDto> listReport = new ArrayList<>();
+		
+		List<Genre> list = genreRepo.findAll();
+		for(Genre g : list) {
+			List<Song> listSong = g.getSongs();
+			int total = 0;
+			for(Song s : listSong) {
+				total = total + s.getListenCountReset();
+			}
+			GenreReportDto dto = new GenreReportDto();
+			dto.setName(g.getName());
+			dto.setCount(total);
+			
+			listReport.add(dto);
+		}
+
+		res.setContent(listReport);
+		res.setStatus(true);
+		return res;
 	}
 }
