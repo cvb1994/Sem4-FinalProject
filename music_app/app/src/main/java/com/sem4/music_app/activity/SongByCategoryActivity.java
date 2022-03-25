@@ -26,6 +26,7 @@ import com.sem4.music_app.interfaces.OnClickListener;
 import com.sem4.music_app.item.ItemAlbums;
 import com.sem4.music_app.item.ItemMyPlayList;
 import com.sem4.music_app.item.ItemSong;
+import com.sem4.music_app.item.ItemUser;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
 import com.sem4.music_app.response.BasePaginate;
@@ -92,10 +93,26 @@ public class SongByCategoryActivity extends DrawerActivity {
                     Constant.isNewAdded = true;
                 }
                 Constant.playPos = position;
-
-                Intent intent = new Intent(SongByCategoryActivity.this, PlayerService.class);
-                intent.setAction(PlayerService.ACTION_PLAY);
-                startService(intent);
+                if(!Constant.itemUser.isVip()){
+                    boolean isContainVipSong = false;
+                    for (int i = 0; i < Constant.arrayList_play.size(); i++) {
+                        if (Constant.arrayList_play.get(i).isVipOnly()) {
+                            isContainVipSong = true;
+                            break;
+                        }
+                    }
+                    if(isContainVipSong){
+                        openRegisterVipDialog();
+                    }else {
+                        Intent intent = new Intent(SongByCategoryActivity.this, PlayerService.class);
+                        intent.setAction(PlayerService.ACTION_PLAY);
+                        startService(intent);
+                    }
+                }else {
+                    Intent intent = new Intent(SongByCategoryActivity.this, PlayerService.class);
+                    intent.setAction(PlayerService.ACTION_PLAY);
+                    startService(intent);
+                }
             }
         });
         methods.forceRTLIfSupported(getWindow());
@@ -138,12 +155,35 @@ public class SongByCategoryActivity extends DrawerActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(Constant.isLoginOn){
+            if(Constant.isLogged){
+                apiManager.userInfo(Constant.itemUser.getId())
+                        .enqueue(new Callback<BaseResponse<ItemUser>>() {
+                            @Override
+                            public void onResponse(Call<BaseResponse<ItemUser>> call, Response<BaseResponse<ItemUser>> response) {
+                                Constant.itemUser.setVip(response.body().getContent().isVip());
+                                Constant.itemUser.setVipExpireDate(response.body().getContent().getVipExpireDate());
+                            }
+
+                            @Override
+                            public void onFailure(Call<BaseResponse<ItemUser>> call, Throwable t) {
+
+                            }
+                        });
+            }
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-        MenuItem item = menu.findItem(R.id.menu_search);
-        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(queryTextListener);
+        menu.clear();
+//        getMenuInflater().inflate(R.menu.menu_search, menu);
+//        MenuItem item = menu.findItem(R.id.menu_search);
+//        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+//        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+//        searchView.setOnQueryTextListener(queryTextListener);
         return super.onCreateOptionsMenu(menu);
     }
 

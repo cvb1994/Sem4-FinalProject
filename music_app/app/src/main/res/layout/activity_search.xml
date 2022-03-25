@@ -58,17 +58,17 @@
                         android:textSize="13sp"
                         android:layout_marginTop="2dp"/>
 
-                    <TextView
-                        android:id="@+id/tv_search_songs_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:padding="10dp"
-                        android:text="@string/see_all"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="14sp"
-                        android:layout_gravity="end"/>
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_search_songs_all"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginEnd="10dp"-->
+<!--                        android:background="?attr/selectableItemBackground"-->
+<!--                        android:padding="10dp"-->
+<!--                        android:text="@string/see_all"-->
+<!--                        android:textColor="@color/colorPrimaryDark"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:layout_gravity="end"/>-->
 
                 </LinearLayout>
 
@@ -142,16 +142,16 @@
                         android:textSize="13sp"
                         android:layout_marginTop="2dp"/>
 
-                    <TextView
-                        android:id="@+id/tv_search_artist"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:padding="10dp"
-                        android:text="@string/see_all"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="14sp" />
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_search_artist"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginEnd="10dp"-->
+<!--                        android:background="?attr/selectableItemBackground"-->
+<!--                        android:padding="10dp"-->
+<!--                        android:text="@string/see_all"-->
+<!--                        android:textColor="@color/colorPrimaryDark"-->
+<!--                        android:textSize="14sp" />-->
 
                 </LinearLayout>
 
@@ -225,16 +225,16 @@
                         android:textSize="13sp"
                         android:layout_marginTop="2dp"/>
 
-                    <TextView
-                        android:id="@+id/tv_search_albums"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:padding="10dp"
-                        android:text="@string/see_all"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="14sp" />
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_search_albums"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginEnd="10dp"-->
+<!--                        android:background="?attr/selectableItemBackground"-->
+<!--                        android:padding="10dp"-->
+<!--                        android:text="@string/see_all"-->
+<!--                        android:textColor="@color/colorPrimaryDark"-->
+<!--                        android:textSize="14sp" />-->
 
                 </LinearLayout>
 

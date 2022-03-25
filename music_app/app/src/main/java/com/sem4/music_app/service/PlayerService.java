@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
 
@@ -55,6 +57,7 @@ import com.sem4.music_app.item.ItemAlbums;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
 import com.sem4.music_app.receiver.MediaButtonIntentReceiver;
+import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.utils.Constant;
 import com.sem4.music_app.utils.GlobalBus;
 import com.sem4.music_app.utils.MessageEvent;
@@ -66,9 +69,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PlayerService extends IntentService implements Player.EventListener {
 
@@ -95,6 +104,35 @@ public class PlayerService extends IntentService implements Player.EventListener
     ComponentName componentName;
     AudioManager mAudioManager;
     PowerManager.WakeLock mWakeLock;
+    CurrentPlay currentPlay = new CurrentPlay();
+
+    class CurrentPlay{
+        String id;
+        boolean isSeek;
+
+        CurrentPlay(){}
+
+        CurrentPlay(String id, boolean isSeek){
+            this.id = id;
+            this.isSeek = isSeek;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public boolean isSeek() {
+            return isSeek;
+        }
+
+        public void setSeek(boolean seek) {
+            isSeek = seek;
+        }
+    }
     private ApiManager apiManager = Common.getAPI();
 
     public PlayerService() {
@@ -158,7 +196,6 @@ public class PlayerService extends IntentService implements Player.EventListener
         try {
             String action = intent.getAction();
             switch (action) {
-
                 case ACTION_PLAY:
                     startNewSong();
                     break;
@@ -199,7 +236,12 @@ public class PlayerService extends IntentService implements Player.EventListener
 
         String url;
         try {
+            if(!Constant.itemUser.isVip() && Constant.arrayList_play.get(Constant.playPos).isVipOnly()){
+                Constant.playPos += 1;
+            }
             url = Constant.arrayList_play.get(Constant.playPos).getUrl();
+            currentPlay.setId(Constant.arrayList_play.get(Constant.playPos).getId());
+            currentPlay.setSeek(false);
 
 //            MediaSource videoSource = new ExtractorMediaSource(Uri.parse(url),
 //                    dataSourceFactory, extractorsFactory, null, null);
@@ -275,9 +317,23 @@ public class PlayerService extends IntentService implements Player.EventListener
 
     private void seekTo(long seek) {
         exoPlayer.seekTo((int) seek);
+        currentPlay.setSeek(true);
     }
 
     private void onCompletion() {
+        if(!currentPlay.isSeek()){
+            apiManager.increaseListens(currentPlay.getId())
+                    .enqueue(new Callback<BaseResponse>() {
+                        @Override
+                        public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                        }
+
+                        @Override
+                        public void onFailure(Call<BaseResponse> call, Throwable t) {
+                        }
+                    });
+        }
+        currentPlay.setSeek(false);
         if (Constant.isRepeat) {
             exoPlayer.seekTo(0);
         } else {
@@ -540,12 +596,12 @@ public class PlayerService extends IntentService implements Player.EventListener
             }
         }
 
-        if(playWhenReady) {
-            if(!mWakeLock.isHeld()) {
+        if (playWhenReady) {
+            if (!mWakeLock.isHeld()) {
                 mWakeLock.acquire(60000);
             }
         } else {
-            if(mWakeLock.isHeld()) {
+            if (mWakeLock.isHeld()) {
                 mWakeLock.release();
             }
         }
@@ -556,7 +612,7 @@ public class PlayerService extends IntentService implements Player.EventListener
             if (Constant.isOnline) {
                 URL url = new URL(src);
                 InputStream input;
-                if(Constant.SERVER_URL.contains("https://")) {
+                if (Constant.SERVER_URL.contains("https://")) {
                     HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                     connection.setDoInput(true);
                     connection.connect();
@@ -667,8 +723,7 @@ public class PlayerService extends IntentService implements Player.EventListener
     AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
-            switch (focusChange)
-            {
+            switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_GAIN:
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
 //                    resumePlayer(); // Resume your media player here
@@ -692,7 +747,7 @@ public class PlayerService extends IntentService implements Player.EventListener
     public void onDestroy() {
 
         try {
-            if(mWakeLock.isHeld()) {
+            if (mWakeLock.isHeld()) {
                 mWakeLock.release();
             }
             exoPlayer.stop();

@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.sem4.music_app.R;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
-import com.sem4.music_app.response.ApiResponse;
+import com.sem4.music_app.response.BaseResponse;
 import com.sem4.music_app.utils.Methods;
 import com.sem4.music_app.utils.SharedPref;
 
@@ -48,8 +48,8 @@ public class RegisterActivity extends BaseActivity {
         tvLoginNow = findViewById(R.id.tvLoginNow);
         btRegister = findViewById(R.id.btRegister);
         etEmail = findViewById(R.id.etEmail);
-        etFirstName = findViewById(R.id.etFirstName);
-        etLastName = findViewById(R.id.etLastName);
+//        etFirstName = findViewById(R.id.etFirstName);
+//        etLastName = findViewById(R.id.etLastName);
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
@@ -88,11 +88,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private Boolean validate() {
-        if (etLastName.getText().toString().trim().isEmpty()) {
-            etLastName.setError(getResources().getString(R.string.enter_name));
-            etLastName.requestFocus();
-            return false;
-        } else if (etUsername.getText().toString().trim().isEmpty()) {
+        if (etUsername.getText().toString().trim().isEmpty()) {
             etUsername.setError(getResources().getString(R.string.error_invalid_username));
             etUsername.requestFocus();
             return false;
@@ -136,28 +132,27 @@ public class RegisterActivity extends BaseActivity {
     private void loadRegister() {
         if (methods.isNetworkAvailable()) {
             progressDialog.show();
-            apiManager.register(etFirstName.getText().toString(),
-                    etLastName.getText().toString(),
+            apiManager.register(
                     etUsername.getText().toString(),
                     etPassword.getText().toString(),
                     etEmail.getText().toString(),
                     etPhone.getText().toString())
-                    .enqueue(new Callback<ApiResponse>() {
+                    .enqueue(new Callback<BaseResponse>() {
                         @Override
-                        public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                        public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                             progressDialog.dismiss();
-                            if (response.body().isSuccess()) {
+                            if (response.body().isStatus()) {
                                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                                 finish();
                             } else {
-                                Toast.makeText(RegisterActivity.this, response.body().getError(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
-                        public void onFailure(Call<ApiResponse> call, Throwable t) {
+                        public void onFailure(Call<BaseResponse> call, Throwable t) {
                             progressDialog.dismiss();
                             Toast.makeText(RegisterActivity.this, getString(R.string.err_server), Toast.LENGTH_SHORT).show();
                         }

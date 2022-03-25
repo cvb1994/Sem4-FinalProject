@@ -5,9 +5,9 @@ import com.sem4.music_app.item.ItemArtist;
 import com.sem4.music_app.item.ItemGenre;
 import com.sem4.music_app.item.ItemHome;
 import com.sem4.music_app.item.ItemMyPlayList;
+import com.sem4.music_app.item.ItemSearch;
 import com.sem4.music_app.item.ItemSong;
 import com.sem4.music_app.item.ItemUser;
-import com.sem4.music_app.response.ApiResponse;
 import com.sem4.music_app.response.BasePaginate;
 import com.sem4.music_app.response.BaseResponse;
 
@@ -32,18 +32,16 @@ public interface ApiManager {
 
     @POST("api/user")
     @FormUrlEncoded
-    Call<ApiResponse> register(@Field("firstName") String firstName,
-                               @Field("lastName") String lastName,
-                               @Field("username") String username,
+    Call<BaseResponse> register(@Field("username") String username,
                                @Field("password") String password,
                                @Field("email") String email,
                                @Field("phone") String phone);
 
     @GET("api/user/password/resetlink")
-    Call<ApiResponse> forgotPassword(@Query("email") String email);
+    Call<BaseResponse> forgotPassword(@Query("email") String email);
 
-//    @GET("api/user/{userId}")
-//    Call<BaseResponse<ItemUser>> userInfo(@Query("userId") String userId);
+    @GET("api/user/{userId}")
+    Call<BaseResponse<ItemUser>> userInfo(@Path("userId") String userId);
     //endregion
 
     //region Artist
@@ -56,6 +54,9 @@ public interface ApiManager {
     //region Home
     @GET("api/v1/home")
     Call<BaseResponse<ItemHome>> homePage();
+
+    @GET("api/v1/web/search")
+    Call<BaseResponse<ItemSearch>> searchHomePage(@Query("keyword") String keyword);
     //endregion
 
     //region Genre
@@ -97,6 +98,9 @@ public interface ApiManager {
     Call<BaseResponse<BasePaginate<ItemSong>>> listSongByGenre(@Path("genreId") int genreId,
                                                                @Query("page") int page,
                                                                @Query("size") int size);
+
+    @GET("api/song/count/{songId}")
+    Call<BaseResponse> increaseListens(@Path("songId") String songId);
     //endregion
 
     //region Playlist
@@ -133,5 +137,8 @@ public interface ApiManager {
 
     @GET("api/playlist/like/{userId}")
     Call<BaseResponse<BasePaginate<ItemSong>>> getPlaylistFavorite(@Path("userId") String userId);
+
+    @GET("api/v1/topTrending")
+    Call<BaseResponse<List<ItemSong>>> getChart();
     //endregion
 }

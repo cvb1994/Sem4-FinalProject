@@ -2,6 +2,7 @@ package com.sem4.music_app.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -10,6 +11,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
@@ -287,6 +289,57 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         });
 
         tv_current_time.setText("00:00");
+    }
+
+    public void openRegisterVipDialog(){
+        if (Constant.isLoginOn) {
+            if (Constant.isLogged) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                Intent intent1 = new Intent(DrawerActivity.this, PlayerService.class);
+                                intent1.setAction(PlayerService.ACTION_PLAY);
+                                startService(intent1);
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                Uri uri = Uri.parse("https://music-payment-ner3yu5pda-as.a.run.app/payment/" + Constant.itemUser.getId());
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Trong danh sách có bài hát VIP. Đăng ký ngay?").setPositiveButton("Để sau", dialogClickListener)
+                        .setNegativeButton("OK", dialogClickListener).show();
+            } else {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                Intent intent1 = new Intent(DrawerActivity.this, PlayerService.class);
+                                intent1.setAction(PlayerService.ACTION_PLAY);
+                                startService(intent1);
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                methods.clickLogin();
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Trong danh sách có bài hát VIP. Đăng nhập ngay?").setPositiveButton("Không", dialogClickListener)
+                        .setNegativeButton("OK", dialogClickListener).show();
+            }
+        }
+
     }
 
     @Override

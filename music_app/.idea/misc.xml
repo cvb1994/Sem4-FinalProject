@@ -69,12 +69,17 @@
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/bottomnavigationlib/src/main/res/drawable/white_ripple.xml" value="0.1805" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/bottomnavigationlib/src/main/res/layout/space_item_view.xml" value="0.2164855072463768" />
         <entry key="app/src/main/res/layout/activity_all_music.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/layout/activity_drawer.xml" value="0.3233695652173913" />
         <entry key="app/src/main/res/layout/activity_offline_music.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/layout/activity_register.xml" value="0.24113475177304963" />
+        <entry key="app/src/main/res/layout/activity_search.xml" value="0.2132725430597771" />
         <entry key="app/src/main/res/layout/activity_song_by_category.xml" value="0.3442028985507246" />
         <entry key="app/src/main/res/layout/activity_song_by_offline_music.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/layout/activity_song_by_playlist.xml" value="0.33958333333333335" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.3442028985507246" />
+        <entry key="app/src/main/res/layout/fragment_categories.xml" value="0.3233695652173913" />
+        <entry key="app/src/main/res/layout/fragment_chart.xml" value="0.3233695652173913" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.3442028985507246" />
         <entry key="app/src/main/res/layout/fragment_my_playlist.xml" value="0.16032608695652173" />
         <entry key="app/src/main/res/layout/layout_mini_musicplayer.xml" value="0.18385416666666668" />
@@ -82,11 +87,13 @@
         <entry key="app/src/main/res/layout/layout_music_min_header.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/layout_music_options.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/layout_music_player.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/layout/layout_recent.xml" value="0.3233695652173913" />
+        <entry key="app/src/main/res/layout/layout_recent_songs.xml" value="0.375" />
+        <entry key="app/src/main/res/menu/activity_main_drawer.xml" value="0.4317948717948718" />
+        <entry key="app/src/main/res/menu/menu_search.xml" value="0.3527777777777778" />
+        <entry key="app/src/main/res/menu/popup_song.xml" value="0.2989583333333333" />
       </map>
     </option>
-  </component>
-  <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_offline_music.xml" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

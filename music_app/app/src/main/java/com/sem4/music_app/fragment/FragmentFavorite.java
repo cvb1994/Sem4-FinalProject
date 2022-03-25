@@ -121,13 +121,13 @@ public class FragmentFavorite extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
-        inflater.inflate(R.menu.menu_search, menu);
-
-        MenuItem item = menu.findItem(R.id.menu_search);
-        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(queryTextListener);
-        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.menu_search, menu);
+//
+//        MenuItem item = menu.findItem(R.id.menu_search);
+//        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+//        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+//        searchView.setOnQueryTextListener(queryTextListener);
+//        super.onCreateOptionsMenu(menu, inflater);
     }
 
     SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
@@ -178,12 +178,18 @@ public class FragmentFavorite extends Fragment {
                     .enqueue(new Callback<BaseResponse<BasePaginate<ItemSong>>>() {
                         @Override
                         public void onResponse(Call<BaseResponse<BasePaginate<ItemSong>>> call, Response<BaseResponse<BasePaginate<ItemSong>>> response) {
-                            if (response.body().getContent().getSongs().size() == 0) {
+                            if(response.body().getContent() != null){
+                                if (response.body().getContent().getSongs().size() == 0) {
+                                    errr_msg = getString(R.string.err_no_songs_found);
+                                    setEmpty();
+                                } else {
+                                    arrayList.addAll(response.body().getContent().getSongs());
+                                    setAdapter();
+                                }
+                            }
+                            else {
                                 errr_msg = getString(R.string.err_no_songs_found);
                                 setEmpty();
-                            } else {
-                                arrayList.addAll(response.body().getContent().getSongs());
-                                setAdapter();
                             }
                             progressBar.setVisibility(View.GONE);
                         }

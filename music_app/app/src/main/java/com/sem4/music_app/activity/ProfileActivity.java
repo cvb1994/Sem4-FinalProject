@@ -32,7 +32,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     Methods methods;
     Toolbar toolbar;
-    TextView textView_name, textView_email, textView_mobile, textView_notlog;
+    TextView textView_name, textView_vip, textView_email, textView_mobile, textView_notlog;
     LinearLayout ll_mobile;
     View view_phone;
     ProgressDialog progressDialog;
@@ -55,8 +55,9 @@ public class ProfileActivity extends AppCompatActivity {
         progressDialog.setMessage(getResources().getString(R.string.loading));
         progressDialog.setCancelable(false);
 
-        textView_name = findViewById(R.id.tv_prof_fname);
+//        textView_name = findViewById(R.id.tv_prof_fname);
         textView_email = findViewById(R.id.tv_prof_email);
+        textView_vip = findViewById(R.id.tv_vip);
         textView_mobile = findViewById(R.id.tv_prof_mobile);
         textView_notlog = findViewById(R.id.textView_notlog);
 
@@ -73,31 +74,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_profile, menu);
-
-        if (Constant.itemUser != null && !Constant.itemUser.getId().equals("")) {
-            menu.findItem(R.id.item_profile_edit).setVisible(true);
-        } else {
-            menu.findItem(R.id.item_profile_edit).setVisible(false);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                break;
-            case R.id.item_profile_edit:
-                if (Constant.itemUser != null && !Constant.itemUser.getId().equals("")) {
-                    Intent intent = new Intent(ProfileActivity.this, ProfileEditActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(ProfileActivity.this, getString(R.string.not_log), Toast.LENGTH_SHORT).show();
-                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -108,9 +88,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void setVariables(ItemUser user) {
-        textView_name.setText(user.getFirstName() + " " + user.getLastName());
         textView_mobile.setText(user.getPhone());
         textView_email.setText(user.getEmail());
+        textView_vip.setText(user.isVip() ? "VIP(".concat(user.getVipExpireDate()).concat(")") : "Không");
 
         if (!user.getPhone().trim().isEmpty()) {
             ll_mobile.setVisibility(View.VISIBLE);

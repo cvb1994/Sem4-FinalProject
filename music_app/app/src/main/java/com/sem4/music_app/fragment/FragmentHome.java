@@ -17,12 +17,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sem4.music_app.R;
+import com.sem4.music_app.activity.DrawerActivity;
 import com.sem4.music_app.activity.MainActivity;
 import com.sem4.music_app.activity.SongByCategoryActivity;
 import com.sem4.music_app.adapter.AdapterAlbumsHome;
@@ -35,6 +37,7 @@ import com.sem4.music_app.item.ItemAlbums;
 import com.sem4.music_app.item.ItemArtist;
 import com.sem4.music_app.item.ItemHome;
 import com.sem4.music_app.item.ItemSong;
+import com.sem4.music_app.item.ItemUser;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
 import com.sem4.music_app.response.BaseResponse;
@@ -95,9 +98,26 @@ public class FragmentHome extends Fragment {
                     }
                     Constant.playPos = position;
 
-                    Intent intent = new Intent(getActivity(), PlayerService.class);
-                    intent.setAction(PlayerService.ACTION_PLAY);
-                    getActivity().startService(intent);
+                    if(!Constant.itemUser.isVip()){
+                        boolean isContainVipSong = false;
+                        for (int i = 0; i < Constant.arrayList_play.size(); i++) {
+                            if (Constant.arrayList_play.get(i).isVipOnly()) {
+                                isContainVipSong = true;
+                                break;
+                            }
+                        }
+                        if(isContainVipSong){
+                            ((DrawerActivity)getActivity()).openRegisterVipDialog();
+                        }else {
+                            Intent intent = new Intent(getActivity(), PlayerService.class);
+                            intent.setAction(PlayerService.ACTION_PLAY);
+                            getActivity().startService(intent);
+                        }
+                    }else {
+                        Intent intent = new Intent(getActivity(), PlayerService.class);
+                        intent.setAction(PlayerService.ACTION_PLAY);
+                        getActivity().startService(intent);
+                    }
                 } else if (type.equals(getString(R.string.recent))) {
                     addedFrom = "recent";
                     Constant.isOnline = true;
@@ -133,14 +153,6 @@ public class FragmentHome extends Fragment {
                     intent.putExtra("name", arrayList_albums.get(position).getName());
                     startActivity(intent);
                 }
-//                else if (type.equals(getString(R.string.banner))) {
-//                    Intent intent = new Intent(getActivity(), SongByCategoryActivity.class);
-//                    intent.putExtra("type", getString(R.string.banner));
-//                    intent.putExtra("id", arrayList_banner.get(position).getId());
-//                    intent.putExtra("name", arrayList_banner.get(position).getName());
-////                    intent.putExtra("songs", arrayList_banner.get(position).getArrayListSongs());
-//                    startActivity(intent);
-//                }
             }
         });
 
@@ -250,17 +262,39 @@ public class FragmentHome extends Fragment {
         tv_songs_all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                FragmentSongs f_all_songs = new FragmentSongs();
-//                FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                ft.hide(getFragmentManager().getFragments().get(getFragmentManager().getBackStackEntryCount()));
-//                ft.add(R.id.fragment, f_all_songs, getString(R.string.all_songs));
-//                ft.addToBackStack(getString(R.string.all_songs));
-//                ft.commit();
-//                ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.all_songs));
+                FragmentChart f_chart = new FragmentChart();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.hide(getFragmentManager().getFragments().get(getFragmentManager().getBackStackEntryCount()));
+                ft.add(R.id.fragment, f_chart, getString(R.string.chart));
+                ft.addToBackStack(getString(R.string.chart));
+                ft.commit();
+                ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.chart));
             }
         });
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(Constant.isLoginOn){
+            if(Constant.isLogged){
+                apiManager.userInfo(Constant.itemUser.getId())
+                        .enqueue(new Callback<BaseResponse<ItemUser>>() {
+                            @Override
+                            public void onResponse(Call<BaseResponse<ItemUser>> call, Response<BaseResponse<ItemUser>> response) {
+                                Constant.itemUser.setVip(response.body().getContent().isVip());
+                                Constant.itemUser.setVipExpireDate(response.body().getContent().getVipExpireDate());
+                            }
+
+                            @Override
+                            public void onFailure(Call<BaseResponse<ItemUser>> call, Throwable t) {
+
+                            }
+                        });
+            }
+        }
     }
 
     @Override
@@ -271,6 +305,7 @@ public class FragmentHome extends Fragment {
         MenuItem item = menu.findItem(R.id.menu_search);
         MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint("Tìm kiếm..");
         searchView.setOnQueryTextListener(queryTextListener);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -278,15 +313,15 @@ public class FragmentHome extends Fragment {
     SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String s) {
-//            Constant.search_item = s.replace(" ", "%20");
-//            FragmentSearch fsearch = new FragmentSearch();
-//            FragmentManager fm = getFragmentManager();
-//            FragmentTransaction ft = fm.beginTransaction();
-//            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//            ft.hide(fm.findFragmentByTag(getString(R.string.home)));
-//            ft.add(R.id.fragment, fsearch, getString(R.string.search));
-//            ft.addToBackStack(getString(R.string.search));
-//            ft.commit();
+            Constant.search_item = s;
+            FragmentSearch fsearch = new FragmentSearch();
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ft.hide(fm.findFragmentByTag(getString(R.string.home)));
+            ft.add(R.id.fragment, fsearch, getString(R.string.search));
+            ft.addToBackStack(getString(R.string.search));
+            ft.commit();
             return true;
         }
 
@@ -329,6 +364,7 @@ public class FragmentHome extends Fragment {
                             adapterTrending = new AdapterRecent(getActivity(), arrayList_trend_songs, new ClickListenerPlaylist() {
                                 @Override
                                 public void onClick(int position) {
+                                    methods.onClick(position, getString(R.string.songs));
                                 }
                                 @Override
                                 public void onItemZero() {

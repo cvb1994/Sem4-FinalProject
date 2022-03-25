@@ -71,7 +71,7 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView textView_song, textView_duration, textView_catname, tv_views, tv_fav;
+        TextView textView_song, textView_duration, textView_catname, tv_views, tv_fav, tv_vip;
         EqualizerView equalizer;
         ImageView imageView, imageView_option, iv_fav_icon;
         RelativeLayout rl;
@@ -80,14 +80,15 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
             super(view);
             rl = view.findViewById(R.id.ll_songlist);
             tv_views = view.findViewById(R.id.tv_songlist_views);
-            tv_fav = view.findViewById(R.id.tv_songlist_fav);
+//            tv_fav = view.findViewById(R.id.tv_songlist_fav);
             textView_song = view.findViewById(R.id.tv_songlist_name);
+            tv_vip = view.findViewById(R.id.tv_songlist_vip);
             textView_duration = view.findViewById(R.id.tv_songlist_duration);
             equalizer = view.findViewById(R.id.equalizer_view);
             textView_catname = view.findViewById(R.id.tv_songlist_cat);
             imageView = view.findViewById(R.id.iv_songlist);
             imageView_option = view.findViewById(R.id.iv_songlist_option);
-            iv_fav_icon = view.findViewById(R.id.iv_fav_icon);
+//            iv_fav_icon = view.findViewById(R.id.iv_fav_icon);
         }
     }
 
@@ -116,7 +117,8 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
 
-//            ((MyViewHolder) holder).tv_views.setText(methods.format(Double.parseDouble(arrayList.get(position).getViews())));
+            ((MyViewHolder) holder).tv_views.setText(methods.format(arrayList.get(position).getListenCount()));
+            ((MyViewHolder) holder).tv_vip.setVisibility(arrayList.get(position).isVipOnly() ? View.VISIBLE : View.GONE);
 //            ((MyViewHolder) holder).tv_download.setText(methods.format(Double.parseDouble(arrayList.get(position).getDownloads())));
 
             ((MyViewHolder) holder).textView_song.setText(arrayList.get(position).getTitle());
@@ -160,12 +162,28 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
                 }
             });
 
-            ((MyViewHolder) holder).imageView_option.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    openOptionPopUp(((MyViewHolder) holder).imageView_option, holder.getAdapterPosition());
+            if(arrayList.get(position).isVipOnly()){
+                if(Constant.itemUser.isVip()){
+                    ((MyViewHolder) holder).imageView_option.setVisibility(View.VISIBLE);
+                    ((MyViewHolder) holder).imageView_option.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            openOptionPopUp(((MyViewHolder) holder).imageView_option, holder.getAdapterPosition());
+                        }
+                    });
+                }else {
+                    ((MyViewHolder) holder).imageView_option.setVisibility(View.GONE);
                 }
-            });
+            }else{
+                ((MyViewHolder) holder).imageView_option.setVisibility(View.VISIBLE);
+                ((MyViewHolder) holder).imageView_option.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        openOptionPopUp(((MyViewHolder) holder).imageView_option, holder.getAdapterPosition());
+                    }
+                });
+            }
+
         }
     }
 
@@ -200,46 +218,91 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
     }
 
     private void openOptionPopUp(ImageView imageView, final int pos) {
-        PopupMenu popup = new PopupMenu(context, imageView);
-        popup.getMenuInflater().inflate(R.menu.popup_song, popup.getMenu());
-        if (type.equals("playlist")) {
-            popup.getMenu().findItem(R.id.popup_add_song).setTitle(context.getString(R.string.delete));
-        }
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.popup_add_song:
-                        switch (type) {
-                            case "playlist":
-                                apiManager.removeFromPlaylist(playlistId , arrayList.get(pos).getId())
-                                        .enqueue(new Callback<BaseResponse>() {
-                                            @Override
-                                            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                                                Toast.makeText(context, context.getString(R.string.remove_from_playlist), Toast.LENGTH_SHORT).show();
-                                                  arrayList.remove(pos);
-                                                  notifyItemRemoved(pos);
-                                if (arrayList.size() == 0) {
-                                    recyclerClickListener.onItemZero();
+        if(arrayList.get(pos).isVipOnly()){
+            if(Constant.itemUser.isVip()){
+                PopupMenu popup = new PopupMenu(context, imageView);
+                popup.getMenuInflater().inflate(R.menu.popup_song, popup.getMenu());
+                if (type.equals("playlist")) {
+                    popup.getMenu().findItem(R.id.popup_add_song).setTitle(context.getString(R.string.delete));
+                }
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.popup_add_song:
+                                switch (type) {
+                                    case "playlist":
+                                        apiManager.removeFromPlaylist(playlistId , arrayList.get(pos).getId())
+                                                .enqueue(new Callback<BaseResponse>() {
+                                                    @Override
+                                                    public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                                                        Toast.makeText(context, context.getString(R.string.remove_from_playlist), Toast.LENGTH_SHORT).show();
+                                                        arrayList.remove(pos);
+                                                        notifyItemRemoved(pos);
+                                                        if (arrayList.size() == 0) {
+                                                            recyclerClickListener.onItemZero();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<BaseResponse> call, Throwable t) {
+
+                                                    }
+                                                });
+
+                                        break;
+                                    default:
+                                        methods.openPlaylists(arrayList.get(pos), true);
+                                        break;
                                 }
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<BaseResponse> call, Throwable t) {
-
-                                            }
-                                        });
-
-                                break;
-                            default:
-                                methods.openPlaylists(arrayList.get(pos), true);
                                 break;
                         }
-                        break;
-                }
-                return true;
+                        return true;
+                    }
+                });
+                popup.show();
             }
-        });
-        popup.show();
+        }else{
+            PopupMenu popup = new PopupMenu(context, imageView);
+            popup.getMenuInflater().inflate(R.menu.popup_song, popup.getMenu());
+            if (type.equals("playlist")) {
+                popup.getMenu().findItem(R.id.popup_add_song).setTitle(context.getString(R.string.delete));
+            }
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.popup_add_song:
+                            switch (type) {
+                                case "playlist":
+                                    apiManager.removeFromPlaylist(playlistId , arrayList.get(pos).getId())
+                                            .enqueue(new Callback<BaseResponse>() {
+                                                @Override
+                                                public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                                                    Toast.makeText(context, context.getString(R.string.remove_from_playlist), Toast.LENGTH_SHORT).show();
+                                                    arrayList.remove(pos);
+                                                    notifyItemRemoved(pos);
+                                                    if (arrayList.size() == 0) {
+                                                        recyclerClickListener.onItemZero();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<BaseResponse> call, Throwable t) {
+
+                                                }
+                                            });
+
+                                    break;
+                                default:
+                                    methods.openPlaylists(arrayList.get(pos), true);
+                                    break;
+                            }
+                            break;
+                    }
+                    return true;
+                }
+            });
+            popup.show();
+        }
     }
 
     public Filter getFilter() {

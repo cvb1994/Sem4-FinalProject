@@ -9,6 +9,14 @@
             android:icon="@mipmap/home"
             android:title="@string/home" />
         <item
+            android:id="@+id/nav_allsongs"
+            android:icon="@mipmap/ic_all_songs"
+            android:title="@string/all_songs" />
+        <item
+            android:id="@+id/nav_chart"
+            android:icon="@drawable/ic_chart"
+            android:title="@string/chart" />
+        <item
             android:id="@+id/nav_artist"
             android:icon="@mipmap/ic_artist"
             android:title="@string/artist" />
