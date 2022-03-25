@@ -89,7 +89,28 @@ public class AllMusicActivity extends DrawerActivity{
                     Constant.isNewAdded = true;
                 }
                 Constant.playPos = position;
-                if(!Constant.itemUser.isVip()){
+                if(Constant.itemUser != null){
+                    if(!Constant.itemUser.isVip()){
+                        boolean isContainVipSong = false;
+                        for (int i = 0; i < Constant.arrayList_play.size(); i++) {
+                            if (Constant.arrayList_play.get(i).isVipOnly()) {
+                                isContainVipSong = true;
+                                break;
+                            }
+                        }
+                        if(isContainVipSong){
+                            openRegisterVipDialog();
+                        }else {
+                            Intent intent = new Intent(AllMusicActivity.this, PlayerService.class);
+                            intent.setAction(PlayerService.ACTION_PLAY);
+                            startService(intent);
+                        }
+                    }else {
+                        Intent intent = new Intent(AllMusicActivity.this, PlayerService.class);
+                        intent.setAction(PlayerService.ACTION_PLAY);
+                        startService(intent);
+                    }
+                }else{
                     boolean isContainVipSong = false;
                     for (int i = 0; i < Constant.arrayList_play.size(); i++) {
                         if (Constant.arrayList_play.get(i).isVipOnly()) {
@@ -104,11 +125,8 @@ public class AllMusicActivity extends DrawerActivity{
                         intent.setAction(PlayerService.ACTION_PLAY);
                         startService(intent);
                     }
-                }else {
-                    Intent intent = new Intent(AllMusicActivity.this, PlayerService.class);
-                    intent.setAction(PlayerService.ACTION_PLAY);
-                    startService(intent);
                 }
+
             }
         });
         methods.forceRTLIfSupported(getWindow());

@@ -98,7 +98,28 @@ public class FragmentHome extends Fragment {
                     }
                     Constant.playPos = position;
 
-                    if(!Constant.itemUser.isVip()){
+                    if (Constant.itemUser != null) {
+                        if (!Constant.itemUser.isVip()) {
+                            boolean isContainVipSong = false;
+                            for (int i = 0; i < Constant.arrayList_play.size(); i++) {
+                                if (Constant.arrayList_play.get(i).isVipOnly()) {
+                                    isContainVipSong = true;
+                                    break;
+                                }
+                            }
+                            if (isContainVipSong) {
+                                ((DrawerActivity) getActivity()).openRegisterVipDialog();
+                            } else {
+                                Intent intent = new Intent(getActivity(), PlayerService.class);
+                                intent.setAction(PlayerService.ACTION_PLAY);
+                                getActivity().startService(intent);
+                            }
+                        } else {
+                            Intent intent = new Intent(getActivity(), PlayerService.class);
+                            intent.setAction(PlayerService.ACTION_PLAY);
+                            getActivity().startService(intent);
+                        }
+                    } else {
                         boolean isContainVipSong = false;
                         for (int i = 0; i < Constant.arrayList_play.size(); i++) {
                             if (Constant.arrayList_play.get(i).isVipOnly()) {
@@ -106,17 +127,13 @@ public class FragmentHome extends Fragment {
                                 break;
                             }
                         }
-                        if(isContainVipSong){
-                            ((DrawerActivity)getActivity()).openRegisterVipDialog();
-                        }else {
+                        if (isContainVipSong) {
+                            ((DrawerActivity) getActivity()).openRegisterVipDialog();
+                        } else {
                             Intent intent = new Intent(getActivity(), PlayerService.class);
                             intent.setAction(PlayerService.ACTION_PLAY);
                             getActivity().startService(intent);
                         }
-                    }else {
-                        Intent intent = new Intent(getActivity(), PlayerService.class);
-                        intent.setAction(PlayerService.ACTION_PLAY);
-                        getActivity().startService(intent);
                     }
                 } else if (type.equals(getString(R.string.recent))) {
                     addedFrom = "recent";
@@ -278,8 +295,8 @@ public class FragmentHome extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(Constant.isLoginOn){
-            if(Constant.isLogged){
+        if (Constant.isLoginOn) {
+            if (Constant.isLogged) {
                 apiManager.userInfo(Constant.itemUser.getId())
                         .enqueue(new Callback<BaseResponse<ItemUser>>() {
                             @Override
@@ -366,6 +383,7 @@ public class FragmentHome extends Fragment {
                                 public void onClick(int position) {
                                     methods.onClick(position, getString(R.string.songs));
                                 }
+
                                 @Override
                                 public void onItemZero() {
                                 }

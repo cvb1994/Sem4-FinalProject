@@ -163,17 +163,22 @@ public class AdapterAllSongList extends RecyclerView.Adapter {
             });
 
             if(arrayList.get(position).isVipOnly()){
-                if(Constant.itemUser.isVip()){
-                    ((MyViewHolder) holder).imageView_option.setVisibility(View.VISIBLE);
-                    ((MyViewHolder) holder).imageView_option.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            openOptionPopUp(((MyViewHolder) holder).imageView_option, holder.getAdapterPosition());
-                        }
-                    });
-                }else {
+                if(Constant.itemUser != null){
+                    if(Constant.itemUser.isVip()){
+                        ((MyViewHolder) holder).imageView_option.setVisibility(View.VISIBLE);
+                        ((MyViewHolder) holder).imageView_option.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                openOptionPopUp(((MyViewHolder) holder).imageView_option, holder.getAdapterPosition());
+                            }
+                        });
+                    }else {
+                        ((MyViewHolder) holder).imageView_option.setVisibility(View.GONE);
+                    }
+                }else{
                     ((MyViewHolder) holder).imageView_option.setVisibility(View.GONE);
                 }
+
             }else{
                 ((MyViewHolder) holder).imageView_option.setVisibility(View.VISIBLE);
                 ((MyViewHolder) holder).imageView_option.setOnClickListener(new View.OnClickListener() {
