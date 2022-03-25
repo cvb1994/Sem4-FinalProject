@@ -69,12 +69,38 @@ public class AdapterRecent extends RecyclerView.Adapter<AdapterRecent.MyViewHold
                 .placeholder(R.drawable.placeholder_song)
                 .into(holder.iv_song);
 
-        holder.iv_more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openOptionPopUp(holder.iv_more, holder.getAdapterPosition());
+        if(arrayList.get(position).isVipOnly()){
+            if(Constant.itemUser != null){
+                if(Constant.itemUser.isVip()){
+                    holder.iv_more.setVisibility(View.VISIBLE);
+                    holder.iv_more.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openOptionPopUp(holder.iv_more, holder.getAdapterPosition());
+                        }
+                    });
+                }else {
+                    holder.iv_more.setVisibility(View.GONE);
+                }
+            }else{
+                holder.iv_more.setVisibility(View.GONE);
             }
-        });
+
+        }else{
+            if(Constant.itemUser != null){
+                holder.iv_more.setVisibility(View.VISIBLE);
+                holder.iv_more.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openOptionPopUp(holder.iv_more, holder.getAdapterPosition());
+                    }
+                });
+            }
+            else {
+                holder.iv_more.setVisibility(View.GONE);
+            }
+        }
+
 
         holder.iv_song.setOnClickListener(new View.OnClickListener() {
             @Override

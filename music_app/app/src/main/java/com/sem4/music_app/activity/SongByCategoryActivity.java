@@ -183,6 +183,7 @@ public class SongByCategoryActivity extends DrawerActivity {
                             public void onResponse(Call<BaseResponse<ItemUser>> call, Response<BaseResponse<ItemUser>> response) {
                                 Constant.itemUser.setVip(response.body().getContent().isVip());
                                 Constant.itemUser.setVipExpireDate(response.body().getContent().getVipExpireDate());
+                                loadSongs();
                             }
 
                             @Override

@@ -242,7 +242,6 @@ public class FragmentPlaylist extends Fragment {
                                 public void onResponse(Call<BaseResponse<Integer>> call, Response<BaseResponse<Integer>> response) {
                                     arrayList.add(new ItemMyPlayList(response.body().getContent().toString(), editText.getText().toString().trim()));
                                     Toast.makeText(getActivity(), getString(R.string.playlist_added), Toast.LENGTH_SHORT).show();
-                                    adapterMyPlaylist.notifyDataSetChanged();
                                     setAdapter();
                                 }
 
