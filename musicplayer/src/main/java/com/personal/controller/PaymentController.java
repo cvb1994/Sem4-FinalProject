@@ -53,17 +53,17 @@ public class PaymentController {
 	@GetMapping(value = "/returnPay")
 	public ModelAndView  returnPayment(@RequestParam Map<String,String> allParams) throws IOException{
 		boolean result = paymentService.returnPayment(allParams);
-		if(result) {
-			return new ModelAndView("redirect:" + "http://localhost:4200/returnPage");
-		} else {
-			return new ModelAndView("redirect:" + "http://localhost:4200/returnPageFailed");
-		}
-		
 //		if(result) {
-//			return new ModelAndView("redirect:" + "https://music-payment-ner3yu5pda-as.a.run.app/returnPage");
+//			return new ModelAndView("redirect:" + "http://localhost:4200/returnPage");
 //		} else {
-//			return new ModelAndView("redirect:" + "https://music-payment-ner3yu5pda-as.a.run.app/returnPageFailed");
+//			return new ModelAndView("redirect:" + "http://localhost:4200/returnPageFailed");
 //		}
+		
+		if(result) {
+			return new ModelAndView("redirect:" + "https://music-payment-ner3yu5pda-as.a.run.app/returnPage");
+		} else {
+			return new ModelAndView("redirect:" + "https://music-payment-ner3yu5pda-as.a.run.app/returnPageFailed");
+		}
 		
 	}
 	

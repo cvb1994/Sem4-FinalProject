@@ -14,18 +14,18 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
-                <h3 class="box-title">Payment List</h3>
+                <h3 class="box-title">Lịch sử thanh toán</h3>
                 <h4>User: {{listPayment[0].user.username}}</h4>
                 <div class="table-responsive">
                     <table class="table text-nowrap">
                         <thead>
                             <tr>
-                                <th class="border-top-0 text-center">#</th>
-                                <th class="border-top-0 text-center">Price</th>
-                                <th class="border-top-0 text-center">Discount</th>
-                                <th class="border-top-0 text-center">Payment Method</th>
-                                <th class="border-top-0 text-center">Transaction Code</th>
-                                <th class="border-top-0 text-center">Expire Date</th>
+                                <th class="border-top-0 text-center">STT</th>
+                                <th class="border-top-0 text-center">Giá tiền</th>
+                                <th class="border-top-0 text-center">Giảm giá</th>
+                                <th class="border-top-0 text-center">Phương thức thanh toán</th>
+                                <th class="border-top-0 text-center">Mã giao dịch</th>
+                                <th class="border-top-0 text-center">Ngày hết hạn</th>
                             </tr>
                         </thead>
                         <tbody *ngFor="let payment of listPayment; let i = index">

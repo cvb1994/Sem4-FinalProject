@@ -30,6 +30,8 @@ public class AlbumSpecification {
             	predicates.add(cb.equal(artistRoot.get("id"), criteria.getArtistId()));
             }
 			
+			predicates.add(cb.equal(root.get("deleted"), false));
+			
 			return cb.and(predicates.stream().toArray(Predicate[]::new));
 		};
 	}

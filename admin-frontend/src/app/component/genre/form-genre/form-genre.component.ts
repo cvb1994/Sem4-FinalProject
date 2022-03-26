@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/fo
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from "ngx-spinner";
 import { GenreService } from 'src/app/service/genre.service';
+import { UtilitiesService } from 'src/app/service/utilities.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -14,6 +15,7 @@ export class FormGenreComponent implements OnInit {
   public genreId:any;
   public editGenre:any;
   public divStyle:any;
+  listImageExten: any;
 
   @ViewChild('previewImg')
   public myImg!: ElementRef;
@@ -26,10 +28,12 @@ export class FormGenreComponent implements OnInit {
     name: new FormControl('', Validators.required),
     avatar: new FormControl(''),
   });
+  
 
   get name(){return this.genreForm.get('name')};
 
   constructor(
+    private utilSer : UtilitiesService,
     private genreSer : GenreService,
     private _Activatedroute:ActivatedRoute,
     private _router: Router,
@@ -37,6 +41,7 @@ export class FormGenreComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.listImageExten = this.utilSer.getListImageExtension();
     this._Activatedroute.paramMap.subscribe(params => {
       this.genreId = params.get('genreId');
       if(this.genreId != null){
@@ -54,14 +59,19 @@ export class FormGenreComponent implements OnInit {
   }
 
   onFileSelect(event:any) {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      this.genreForm.get('avatar')?.setValue(file);
-      this.myImg.nativeElement.src = URL.createObjectURL(file);
-      this.bigImg.nativeElement.src = URL.createObjectURL(file);
-      this.divStyle = 200;
+    if(this.listImageExten.includes(event.target.files[0].type)){
+      if (event.target.files.length > 0) {
+        const file = event.target.files[0];
+        this.genreForm.get('avatar')?.setValue(file);
+        this.myImg.nativeElement.src = URL.createObjectURL(file);
+        this.bigImg.nativeElement.src = URL.createObjectURL(file);
+        this.divStyle = 200;
+      }
+    } else {
+      this.simpleAlert("Định dạng ảnh không hỗ trợ");
     }
   }
+
 
   onSubmit() {
     const formData = new FormData();

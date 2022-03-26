@@ -225,12 +225,12 @@ public class AlbumService implements IAlbumService {
 
 	@Override
 	public List<AlbumDto> getTop5ByModifiedDateDesc() {
-		return albumRepo.findTop5ByOrderByModifiedDateDesc().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		return albumRepo.findTop5ByOrderByModifiedDateDescAndDeletedFalse().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<AlbumDto> getTop10ByModifiedDateDesc() {
-		return albumRepo.findTop10ByOrderByModifiedDateDesc().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		return albumRepo.findTop10ByOrderByModifiedDateDescAndDeletedFalse().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 	}
 
 	@Override
@@ -245,7 +245,7 @@ public class AlbumService implements IAlbumService {
 	@Override
 	public ResponseDto finByArtistId(AlbumDto criteria) {
 		ResponseDto res = new ResponseDto();
-		Page<Album> page = albumRepo.findByArtistId(criteria.getArtistId(), PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
+		Page<Album> page = albumRepo.findByArtistIdAndDeletedFalse(criteria.getArtistId(), PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<AlbumDto> list = page.getContent().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
@@ -281,13 +281,15 @@ public class AlbumService implements IAlbumService {
 
 	@Override
 	public AlbumDto top1Album() {
-		AlbumDto album = albumRepo.findTop1ByOrderByTotalListenDesc().map(albumMapper::entityToDto).orElse(null);
+		AlbumDto album = albumRepo.findTop1ByOrderByTotalListenDescAndDeletedFalse().map(albumMapper::entityToDto).orElse(null);
 		return album;
 	}
 
 	@Override
 	public List<AlbumDto> searchAlbum(String name) {
-		List<AlbumDto> list = albumRepo.findByNameContaining(name).stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		AlbumDto criteria = new AlbumDto();
+		criteria.setName(name);
+		List<AlbumDto> list = albumRepo.findAll(albumSpec.filter(criteria)).stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 		return list;
 	}
 

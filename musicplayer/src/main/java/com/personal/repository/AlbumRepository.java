@@ -18,9 +18,9 @@ import com.personal.entity.Album;
 public interface AlbumRepository extends JpaRepository<Album, Integer>, JpaSpecificationExecutor<Album>{
 	Optional<Album> findById(int id);
 	Optional<Album> findByName(String name);
-	List<Album> findTop5ByOrderByModifiedDateDesc();
-	List<Album> findTop10ByOrderByModifiedDateDesc();
-	Page<Album> findByArtistId(int artistId, Pageable pageable);
+	List<Album> findTop5ByOrderByModifiedDateDescAndDeletedFalse();
+	List<Album> findTop10ByOrderByModifiedDateDescAndDeletedFalse();
+	Page<Album> findByArtistIdAndDeletedFalse(int artistId, Pageable pageable);
 	int countByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 //	List<Album> findAllByArtist_id(int artistId);
 //	
@@ -29,6 +29,5 @@ public interface AlbumRepository extends JpaRepository<Album, Integer>, JpaSpeci
 //	@Query(value = "Select DISTINCT (s.album_id), a.* From songs s Inner Join albums a On s.album_id = a.id Order By listen_count Limit 4" , nativeQuery = true)
 //	List<Album> findTop4ByListen();
 	
-	Optional<Album> findTop1ByOrderByTotalListenDesc();
-	List<Album> findByNameContaining(String name);
+	Optional<Album> findTop1ByOrderByTotalListenDescAndDeletedFalse();
 }

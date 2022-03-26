@@ -29,6 +29,8 @@ public class SongSpecification {
             	predicates.add(cb.like(cb.upper(root.get("composer")), "%" + criteria.getComposer().toUpperCase() + "%"));
             }
 			
+			predicates.add(cb.equal(root.get("deleted"), false));
+			
 			return cb.and(predicates.stream().toArray(Predicate[]::new));
 		};
 	}

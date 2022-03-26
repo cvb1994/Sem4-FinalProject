@@ -129,7 +129,7 @@ public class UserService implements IUserService{
 	@Override
 	public ResponseDto getByName(String name) {
 		ResponseDto res = new ResponseDto();
-		UserDto userDto =  userRepo.findByUsername(name).map(userMapper::entityToDto).orElse(null);
+		UserDto userDto =  userRepo.findByUsernameAndDeletedFalse(name).map(userMapper::entityToDto).orElse(null);
 		if(userDto != null) {
 			if(userDto.getVipExpireDate() != null) {
 				LocalDate current = LocalDate.now();

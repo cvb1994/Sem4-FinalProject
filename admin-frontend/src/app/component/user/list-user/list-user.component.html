@@ -43,15 +43,15 @@
                     <table class="table text-nowrap">
                         <thead>
                             <tr>
-                                <th class="border-top-0 text-center">#</th>
+                                <th class="border-top-0 text-center">STT</th>
                                 <th class="border-top-0 text-center">Username</th>
-                                <th class="border-top-0 text-center">Full Name</th>
-                                <th class="border-top-0 text-center">Gender</th>
+                                <th class="border-top-0 text-center">Họ tên</th>
+                                <th class="border-top-0 text-center">Giới tính</th>
                                 <th class="border-top-0 text-center">Email</th>
-                                <th class="border-top-0 text-center">Phone</th>
-                                <th class="border-top-0 text-center">Birthday</th>
-                                <th class="border-top-0 text-center">VipAvailable</th>
-                                <th class="border-top-0 text-center">Action</th>
+                                <th class="border-top-0 text-center">Điện thoại</th>
+                                <th class="border-top-0 text-center">Ngày sinh</th>
+                                <th class="border-top-0 text-center">Vip</th>
+                                <th class="border-top-0 text-center">#</th>
                             </tr>
                         </thead>
                         <tbody *ngFor="let user of listUser; let i = index">
@@ -70,8 +70,8 @@
                                             <i class="fa fa-bars"></i>
                                         </a>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                            <li><a class="dropdown-item item-dropdown" [routerLink]="['/list-payment/',user.id]">Payment</a></li>
-                                            <li><a class="dropdown-item item-dropdown" (click)="onDelete(user.id)">Delete</a></li>
+                                            <li><a class="dropdown-item item-dropdown" [routerLink]="['/list-payment/',user.id]">Thanh toán</a></li>
+                                            <li><a class="dropdown-item item-dropdown" (click)="onDelete(user.id)">Xóa</a></li>
                                         </ul>
                                       </div>
                                 </td>

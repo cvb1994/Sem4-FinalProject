@@ -15,18 +15,18 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
-                <h3 class="box-title">Payment Param List</h3>
-                <a class="btn btn-primary" [routerLink]="['/form-payment-param']">Add New</a>
+                <h3 class="box-title">Danh sách biểu giá</h3>
+                <a class="btn btn-primary" [routerLink]="['/form-payment-param']">Thêm mới</a>
                 <div class="table-responsive">
                     <table class="table text-nowrap">
                         <thead>
                             <tr>
+                                <th class="border-top-0 text-center">STT</th>
+                                <th class="border-top-0 text-center">Giá</th>
+                                <th class="border-top-0 text-center">Giảm(%)</th>
+                                <th class="border-top-0 text-center">Thời gian hết hạn</th>
+                                <th class="border-top-0 text-center">Đơn vị</th>
                                 <th class="border-top-0 text-center">#</th>
-                                <th class="border-top-0 text-center">Price</th>
-                                <th class="border-top-0 text-center">Discount</th>
-                                <th class="border-top-0 text-center">Time Expire</th>
-                                <th class="border-top-0 text-center">Unit</th>
-                                <th class="border-top-0 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody *ngFor="let param of listParam; let i = index">

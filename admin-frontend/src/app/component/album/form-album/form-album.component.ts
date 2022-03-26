@@ -17,6 +17,7 @@ export class FormAlbumComponent implements OnInit {
   public editAlbum:any;
   public divStyle:any;
   public listArtist:any;
+  public listImageExten :any;
 
   @ViewChild('previewImg')
   public myImg!: ElementRef;
@@ -47,6 +48,7 @@ export class FormAlbumComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.listImageExten = this.utilSer.getListImageExtension();
     this._Activatedroute.paramMap.subscribe(params => {
       this.albumId = params.get('albumId');
       if(this.albumId != null){
@@ -78,12 +80,16 @@ export class FormAlbumComponent implements OnInit {
   };
   
   onFileSelect(event:any) {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      this.albumForm.get('avatar')?.setValue(file);
-      this.myImg.nativeElement.src = URL.createObjectURL(file);
-      this.bigImg.nativeElement.src = URL.createObjectURL(file);
-      this.divStyle = 200;
+    if(this.listImageExten.includes(event.target.files[0].type)){
+      if (event.target.files.length > 0) {
+        const file = event.target.files[0];
+        this.albumForm.get('avatar')?.setValue(file);
+        this.myImg.nativeElement.src = URL.createObjectURL(file);
+        this.bigImg.nativeElement.src = URL.createObjectURL(file);
+        this.divStyle = 200;
+      }
+    } else {
+      this.simpleAlert("Định dạng ảnh không hỗ trợ");
     }
   }
 

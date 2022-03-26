@@ -27,6 +27,15 @@ export class UtilitiesService {
     return this.listColor;
   }
 
+  public getListImageExtension(){
+    return this.listExtensionImage;
+  }
+  
+  private listExtensionImage : any = [
+    'image/png',
+    'image/jpeg'
+  ]
+
   private listColor : any = [
     'rgba(255, 99, 132, 1)',
     'rgb(218, 42, 159)',

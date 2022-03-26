@@ -10,6 +10,7 @@ import { AlbumService } from 'src/app/service/album.service';
 import { Observable } from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import { UtilitiesService } from 'src/app/service/utilities.service';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
@@ -32,6 +33,7 @@ export class FormSongComponent implements OnInit {
   public duration:any;
 
   artistSelectCtrl = new FormControl();
+  listImageExten: any;
   get artistSelect(){return this.artistSelectCtrl};
   filterListArtist: Observable<any>;
   @ViewChild('artistSelectInput')
@@ -71,6 +73,7 @@ export class FormSongComponent implements OnInit {
   get image(){return this.songForm.get('image')};
 
   constructor(
+    private utilSer : UtilitiesService,
     private albumSer : AlbumService,
     private songSer : SongService,
     private artistSer: ArtistService,
@@ -167,6 +170,7 @@ export class FormSongComponent implements OnInit {
 
 
   getInitData(){
+    this.listImageExten = this.utilSer.getListImageExtension();
     this._Activatedroute.paramMap.subscribe(params => {
       this.songId = params.get('songId');
       if(this.songId != null){
@@ -233,37 +237,35 @@ export class FormSongComponent implements OnInit {
   }
 
   onFileSelect(event:any) {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      let extension = file.name.split('.').pop();
-      if(extension === 'jpg' || extension === 'png'){
+    if(this.listImageExten.includes(event.target.files[0].type)){
+      if (event.target.files.length > 0) {
+        const file = event.target.files[0];
         this.songForm.get('image')?.setValue(file);
         this.myImg.nativeElement.src = URL.createObjectURL(file);
         this.bigImg.nativeElement.src = URL.createObjectURL(file);
         this.divStyle = 200;
-      } else {
-        this.songForm.get("image")?.setErrors({'invalid':true});
       }
+    } else {
+      this.songForm.get("image")?.setErrors({'invalid':true});
+      this.simpleAlert("Định dạng ảnh không hỗ trợ");
     }
   }
 
   onAudioSelect(event:any){
-    if (event.target.files.length > 0) {
-      const mp3 = event.target.files[0];
-      let extension = mp3.name.split('.').pop();
-      if(extension === 'mp3'){
+    if(event.target.files[0].type == 'audio/mpeg'){
+      if (event.target.files.length > 0) {
+        const mp3 = event.target.files[0];
         this.songForm.get('mediaUrl')?.setValue(mp3);
         this.myAudio.nativeElement.src = URL.createObjectURL(mp3);
-      } else {
-        this.songForm.get("mediaUrl")?.setErrors({'invalid':true});
       }
-      
+    } else {
+      this.songForm.get("mediaUrl")?.setErrors({'invalid':true});
+      this.simpleAlert("Định dạng nhạc không hỗ trợ");
     }
   }
 
   setDuration(load_event:any): void {
     this.duration = Math.round(load_event.currentTarget.duration);
-    console.log(load_event.currentTarget.duration);
     this.songForm.get("timePlay")?.setValue(durationConvert(load_event.currentTarget.duration));
   }
 

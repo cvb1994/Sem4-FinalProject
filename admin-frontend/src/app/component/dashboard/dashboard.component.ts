@@ -53,11 +53,15 @@ export class DashboardComponent implements OnInit {
     this.dashboardSer.getGenreReport().subscribe((data) =>{
       let listColor = this.utilSer.getListColor();
       this.listGenreReport = data.content;
+      let total = 0;
+      this.listGenreReport.forEach((item: { count: number; }) =>{
+        total = total + item.count;
+      });
       this.listGenreReport.forEach((item: { name: any; count: any; })=>{
         if(parseInt(item.count) > 0){
           this.pieChart.data.datasets[0].backgroundColor.push(this.randomColor(listColor));
           this.pieChart.data.labels.push(item.name);
-          this.pieChart.data.datasets[0].data.push(item.count);
+          this.pieChart.data.datasets[0].data.push(Math.ceil(item.count/total*100));
         }
       });
       this.pieChart.update();

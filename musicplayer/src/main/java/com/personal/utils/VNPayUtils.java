@@ -23,8 +23,8 @@ public class VNPayUtils {
 	public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 	public static String vnp_HashSecret = "VOIECACJFEQEXNXHZSINKYVAEOHJZDJQ";
 	public static String vnp_TmnCode = "K8EVRL7V";
-//	public static String vnp_Returnurl = "https://music-ner3yu5pda-as.a.run.app/api/payment/returnPay";
-	public static String vnp_Returnurl = "https://localhost:8080/api/payment/returnPay";
+	public static String vnp_Returnurl = "https://music-ner3yu5pda-as.a.run.app/api/payment/returnPay";
+//	public static String vnp_Returnurl = "https://localhost:8080/api/payment/returnPay";
 	
 	public static String md5(String message) {
         String digest = null;

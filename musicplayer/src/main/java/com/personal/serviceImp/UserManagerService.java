@@ -36,7 +36,7 @@ public class UserManagerService implements UserDetailsService{
 			Admin admin = optAdmin.get();
 			return new UserPrincipal(admin.getId(), admin.getUsername(), admin.getPassword(), UserTypeEnum.ADMIN.name);
 		} else {
-			Optional<User> optUser = userRepo.findByUsername(actualUserName);
+			Optional<User> optUser = userRepo.findByUsernameAndDeletedFalse(actualUserName);
 			if(!optUser.isPresent()) throw new UsernameNotFoundException(actualUserName);
 			
 			User user = optUser.get();
