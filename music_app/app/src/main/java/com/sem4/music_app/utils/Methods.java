@@ -219,7 +219,7 @@ public class Methods {
     public void logout(Activity activity) {
         changeAutoLogin(false);
         Constant.isLogged = false;
-        Constant.itemUser = new ItemUser();
+        Constant.itemUser = null;
         Intent intent1 = new Intent(context, LoginActivity.class);
         intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent1.putExtra("from", "");

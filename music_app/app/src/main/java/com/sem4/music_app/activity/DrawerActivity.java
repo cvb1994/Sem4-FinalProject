@@ -342,6 +342,31 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    public void openExtendVipDialog(){
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Intent intent1 = new Intent(DrawerActivity.this, PlayerService.class);
+                        intent1.setAction(PlayerService.ACTION_PLAY);
+                        startService(intent1);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        Uri uri = Uri.parse("https://music-payment-ner3yu5pda-as.a.run.app/payment/" + Constant.itemUser.getId());
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Trong danh sách có bài hát VIP. Gia hạn ngay?").setPositiveButton("Để sau", dialogClickListener)
+                .setNegativeButton("OK", dialogClickListener).show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {

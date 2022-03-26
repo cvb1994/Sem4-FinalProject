@@ -34,12 +34,15 @@
                 android:id="@+id/iv_recent_more"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_margin="3dp"
-                android:padding="5dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-                android:src="@mipmap/ic_more"
-                android:background="@drawable/ripple"/>
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="3dp"
+                android:background="@drawable/ripple"
+                android:padding="5dp"
+                android:src="@mipmap/ic_more" />
 
             <TextView
                 android:id="@+id/tv_recent_song"

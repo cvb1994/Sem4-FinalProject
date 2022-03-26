@@ -29,6 +29,7 @@ import com.sem4.music_app.interfaces.OnClickListener;
 import com.sem4.music_app.item.ItemAlbums;
 import com.sem4.music_app.item.ItemMyPlayList;
 import com.sem4.music_app.item.ItemSong;
+import com.sem4.music_app.item.ItemUser;
 import com.sem4.music_app.network.ApiManager;
 import com.sem4.music_app.network.Common;
 import com.sem4.music_app.response.BasePaginate;
@@ -95,9 +96,43 @@ public class SongByPlaylistActivity extends DrawerActivity {
                 }
                 Constant.playPos = position;
 
-                Intent intent = new Intent(SongByPlaylistActivity.this, PlayerService.class);
-                intent.setAction(PlayerService.ACTION_PLAY);
-                startService(intent);
+                if(Constant.itemUser != null){
+                    if(!Constant.itemUser.isVip()){
+                        boolean isContainVipSong = false;
+                        for (int i = 0; i < Constant.arrayList_play.size(); i++) {
+                            if (Constant.arrayList_play.get(i).isVipOnly()) {
+                                isContainVipSong = true;
+                                break;
+                            }
+                        }
+                        if(isContainVipSong){
+                            openExtendVipDialog();
+                        }else {
+                            Intent intent = new Intent(SongByPlaylistActivity.this, PlayerService.class);
+                            intent.setAction(PlayerService.ACTION_PLAY);
+                            startService(intent);
+                        }
+                    }else {
+                        Intent intent = new Intent(SongByPlaylistActivity.this, PlayerService.class);
+                        intent.setAction(PlayerService.ACTION_PLAY);
+                        startService(intent);
+                    }
+                }else{
+                    boolean isContainVipSong = false;
+                    for (int i = 0; i < Constant.arrayList_play.size(); i++) {
+                        if (Constant.arrayList_play.get(i).isVipOnly()) {
+                            isContainVipSong = true;
+                            break;
+                        }
+                    }
+                    if(isContainVipSong){
+                        openExtendVipDialog();
+                    }else {
+                        Intent intent = new Intent(SongByPlaylistActivity.this, PlayerService.class);
+                        intent.setAction(PlayerService.ACTION_PLAY);
+                        startService(intent);
+                    }
+                }
             }
         });
         methods.forceRTLIfSupported(getWindow());
@@ -137,6 +172,28 @@ public class SongByPlaylistActivity extends DrawerActivity {
                 iv_playlist2.setAlpha(1 - Math.abs((float) verticalOffset / appBarLayout.getTotalScrollRange()));
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Constant.isLoginOn){
+            if(Constant.isLogged){
+                apiManager.userInfo(Constant.itemUser.getId())
+                        .enqueue(new Callback<BaseResponse<ItemUser>>() {
+                            @Override
+                            public void onResponse(Call<BaseResponse<ItemUser>> call, Response<BaseResponse<ItemUser>> response) {
+                                Constant.itemUser.setVip(response.body().getContent().isVip());
+                                Constant.itemUser.setVipExpireDate(response.body().getContent().getVipExpireDate());
+                            }
+
+                            @Override
+                            public void onFailure(Call<BaseResponse<ItemUser>> call, Throwable t) {
+
+                            }
+                        });
+            }
+        }
     }
 
     @Override

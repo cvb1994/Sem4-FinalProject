@@ -236,8 +236,12 @@ public class PlayerService extends IntentService implements Player.EventListener
 
         String url;
         try {
-            if(!Constant.itemUser.isVip() && Constant.arrayList_play.get(Constant.playPos).isVipOnly()){
-                Constant.playPos += 1;
+            while ((Constant.itemUser == null || !Constant.itemUser.isVip()) && Constant.arrayList_play.get(Constant.playPos).isVipOnly()){
+                if(Constant.playPos == Constant.arrayList_play.size() - 1){
+                    Constant.playPos = 0;
+                }else{
+                    Constant.playPos += 1;
+                }
             }
             url = Constant.arrayList_play.get(Constant.playPos).getUrl();
             currentPlay.setId(Constant.arrayList_play.get(Constant.playPos).getId());

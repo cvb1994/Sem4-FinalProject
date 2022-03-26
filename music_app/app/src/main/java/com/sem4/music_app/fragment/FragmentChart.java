@@ -89,7 +89,29 @@ public class FragmentChart extends Fragment {
                 }
                 Constant.playPos = position;
 
-                if(!Constant.itemUser.isVip()){
+                if (Constant.itemUser != null) {
+                    if(!Constant.itemUser.isVip()){
+                        boolean isContainVipSong = false;
+                        for (int i = 0; i < Constant.arrayList_play.size(); i++) {
+                            if (Constant.arrayList_play.get(i).isVipOnly()) {
+                                isContainVipSong = true;
+                                break;
+                            }
+                        }
+                        if(isContainVipSong){
+                            ((DrawerActivity)getActivity()).openRegisterVipDialog();
+                        }else {
+                            Intent intent = new Intent( getActivity(), PlayerService.class);
+                            intent.setAction(PlayerService.ACTION_PLAY);
+                            getActivity().startService(intent);
+                        }
+                    }else {
+                        Intent intent = new Intent( getActivity(), PlayerService.class);
+                        intent.setAction(PlayerService.ACTION_PLAY);
+                        getActivity().startService(intent);
+                    }
+                }
+                else{
                     boolean isContainVipSong = false;
                     for (int i = 0; i < Constant.arrayList_play.size(); i++) {
                         if (Constant.arrayList_play.get(i).isVipOnly()) {
@@ -104,10 +126,6 @@ public class FragmentChart extends Fragment {
                         intent.setAction(PlayerService.ACTION_PLAY);
                         getActivity().startService(intent);
                     }
-                }else {
-                    Intent intent = new Intent( getActivity(), PlayerService.class);
-                    intent.setAction(PlayerService.ACTION_PLAY);
-                    getActivity().startService(intent);
                 }
             }
         });
