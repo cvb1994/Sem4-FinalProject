@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/GitHub_Pull/Sem4-FinalProject/music_app/app/src/main/res/layout/activity_profile.xml" value="0.12335359675785208" />
+        <entry key="..\:/GitHub_Pull/Sem4-FinalProject/music_app/app/src/main/res/layout/content_main.xml" value="0.12335359675785208" />
+        <entry key="..\:/GitHub_Pull/Sem4-FinalProject/music_app/app/src/main/res/layout/fragment_chart.xml" value="0.12183383991894631" />
+        <entry key="..\:/GitHub_Pull/Sem4-FinalProject/music_app/app/src/main/res/layout/fragment_dashboard.xml" value="0.1983695652173913" />
+        <entry key="..\:/GitHub_Pull/Sem4-FinalProject/music_app/app/src/main/res/layout/fragment_home.xml" value="0.1983695652173913" />
+        <entry key="..\:/GitHub_Pull/Sem4-FinalProject/music_app/app/src/main/res/layout/layout_err_internet.xml" value="0.1983695652173913" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/drawable/background_tab.xml" value="0.221" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/drawable/bg_corner_top_orange.xml" value="0.1465" />
         <entry key="..\:/Workspace/Learning/FPT/Sem4/Sem4-FinalProject/music_app/app/src/main/res/drawable/bg_gradient_white_music.xml" value="0.1465" />

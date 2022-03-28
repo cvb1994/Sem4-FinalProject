@@ -6,11 +6,13 @@ import androidx.appcompat.widget.Toolbar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
     View view_phone;
     ProgressDialog progressDialog;
     ApiManager apiManager;
+    Button btn_subcribe_vip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,8 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             setEmpty(true, getString(R.string.not_log));
         }
+
+
     }
 
     @Override
@@ -98,6 +103,19 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         textView_notlog.setVisibility(View.GONE);
+
+        btn_subcribe_vip = findViewById(R.id.btn_subcribe_vip);
+        if (!user.isVip()) {
+            btn_subcribe_vip.setVisibility(View.VISIBLE);
+            btn_subcribe_vip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Uri uri = Uri.parse("https://music-payment-ner3yu5pda-as.a.run.app/payment/" + Constant.itemUser.getId());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);                }
+            });
+        }
+
     }
 
     public void setEmpty(Boolean flag, String message) {
