@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.personal.common.FileTypeEnum;
 import com.personal.common.FolderTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.ArtistDto;
@@ -26,7 +25,6 @@ import com.personal.repository.ArtistRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.service.IArtistService;
 import com.personal.utils.CloudStorageUtils;
-import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
 @Service
@@ -41,8 +39,6 @@ public class ArtistService implements IArtistService{
 	private ArtistMapper artistMapper;
 	@Autowired
 	private Utilities util;
-	@Autowired
-	private UploadToDrive uploadDrive;
 	@Autowired
 	private CloudStorageUtils uploadCloudStorage;
 
@@ -82,7 +78,7 @@ public class ArtistService implements IArtistService{
 	@Override
 	public ResponseDto getById(int artistId) {
 		ResponseDto res = new ResponseDto();
-		ArtistDto artist = artistRepo.findById(artistId).map(artistMapper::entityToDto).orElse(null);
+		ArtistDto artist = artistRepo.findByIdAndDeletedFalse(artistId).map(artistMapper::entityToDto).orElse(null);
 		res.setStatus(true);
 		res.setContent(artist);
 		return res;
@@ -91,7 +87,7 @@ public class ArtistService implements IArtistService{
 	@Override
 	public ResponseDto getByName(String name) {
 		ResponseDto res = new ResponseDto();
-		ArtistDto artist =  artistRepo.findByName(name).map(artistMapper::entityToDto).orElse(null);
+		ArtistDto artist =  artistRepo.findByNameAndDeletedFalse(name).map(artistMapper::entityToDto).orElse(null);
 		res.setStatus(true);
 		res.setContent(artist);
 		return res;
@@ -208,13 +204,17 @@ public class ArtistService implements IArtistService{
 
 	@Override
 	public List<ArtistDto> getTop10ByModifiedDateDesc() {
-		return artistRepo.findTop10ByOrderByModifiedDateDesc().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+		ArtistDto criteria = new ArtistDto();
+		PageRequest limit = PageRequest.of(0, 10, Sort.by("modifiedDate").descending());
+		return artistRepo.findAll(artistSpec.filter(criteria),limit).stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+//		return artistRepo.findTop10ByOrderByModifiedDateDesc().stream().map(artistMapper::entityToDto).collect(Collectors.toList());
 	}
 
 	@Override
 	public ResponseDto getListArtistOrderByName() {
 		ResponseDto res = new ResponseDto();
-		List<ArtistDto> list =  artistRepo.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+		ArtistDto criteria = new ArtistDto();
+		List<ArtistDto> list =  artistRepo.findAll(artistSpec.filter(criteria), Sort.by(Sort.Direction.ASC, "name")).stream().map(artistMapper::entityToDto).collect(Collectors.toList());
 		res.setStatus(true);
 		res.setContent(list);
 		return res;
@@ -243,7 +243,9 @@ public class ArtistService implements IArtistService{
 
 	@Override
 	public List<ArtistDto> searchArtist(String name) {
-		List<ArtistDto> list = artistRepo.findByNameContaining(name).stream().map(artistMapper::entityToDto).collect(Collectors.toList());
+		ArtistDto criteria = new ArtistDto();
+		criteria.setName(name);
+		List<ArtistDto> list = artistRepo.findAll(artistSpec.filter(criteria)).stream().map(artistMapper::entityToDto).collect(Collectors.toList());
 		return list;
 	}
 

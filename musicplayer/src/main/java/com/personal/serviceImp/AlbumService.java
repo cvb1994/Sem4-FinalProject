@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.personal.common.FileTypeEnum;
 import com.personal.common.FolderTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.AlbumDto;
@@ -27,7 +26,6 @@ import com.personal.repository.ArtistRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.service.IAlbumService;
 import com.personal.utils.CloudStorageUtils;
-import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
 @Service
@@ -44,8 +42,6 @@ public class AlbumService implements IAlbumService {
 	private AlbumMapper albumMapper;
 	@Autowired
 	private Utilities util;
-	@Autowired
-	private UploadToDrive uploadDrive;
 	@Autowired
 	private CloudStorageUtils uploadCloudStorage;
 
@@ -86,7 +82,7 @@ public class AlbumService implements IAlbumService {
 	@Override
 	public ResponseDto getById(int albumId) {
 		ResponseDto res = new ResponseDto();
-		AlbumDto album = albumRepo.findById(albumId).map(albumMapper::entityToDto).orElse(null);
+		AlbumDto album = albumRepo.findByIdAndDeletedFalse(albumId).map(albumMapper::entityToDto).orElse(null);
 		res.setStatus(true);
 		res.setContent(album);
 		return res;
@@ -95,7 +91,7 @@ public class AlbumService implements IAlbumService {
 	@Override
 	public ResponseDto getByName(String name) {
 		ResponseDto res = new ResponseDto();
-		AlbumDto album = albumRepo.findByName(name).map(albumMapper::entityToDto).orElse(null);
+		AlbumDto album = albumRepo.findByNameAndDeletedFalse(name).map(albumMapper::entityToDto).orElse(null);
 		res.setStatus(true);
 		res.setContent(album);
 		return res;
@@ -225,18 +221,25 @@ public class AlbumService implements IAlbumService {
 
 	@Override
 	public List<AlbumDto> getTop5ByModifiedDateDesc() {
-		return albumRepo.findTop5ByOrderByModifiedDateDescAndDeletedFalse().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		AlbumDto criteria = new AlbumDto();
+		PageRequest limit = PageRequest.of(0, 5, Sort.by("modifiedDate").descending());
+		return albumRepo.findAll(albumSpec.filter(criteria),limit).stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+//		return albumRepo.findTop5ByOrderByModifiedDateDesc().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<AlbumDto> getTop10ByModifiedDateDesc() {
-		return albumRepo.findTop10ByOrderByModifiedDateDescAndDeletedFalse().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		AlbumDto criteria = new AlbumDto();
+		PageRequest limit = PageRequest.of(0, 10, Sort.by("modifiedDate").descending());
+		return albumRepo.findAll(albumSpec.filter(criteria),limit).stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+//		return albumRepo.findTop10ByOrderByModifiedDateDesc().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 	}
 
 	@Override
 	public ResponseDto getAllOrderByName() {
+		AlbumDto criteria = new AlbumDto();
 		ResponseDto res = new ResponseDto();
-		List<AlbumDto> list = albumRepo.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		List<AlbumDto> list = albumRepo.findAll(albumSpec.filter(criteria), Sort.by(Sort.Direction.ASC, "name")).stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 		res.setStatus(true);
 		res.setContent(list);
 		return res;
@@ -245,7 +248,7 @@ public class AlbumService implements IAlbumService {
 	@Override
 	public ResponseDto finByArtistId(AlbumDto criteria) {
 		ResponseDto res = new ResponseDto();
-		Page<Album> page = albumRepo.findByArtistIdAndDeletedFalse(criteria.getArtistId(), PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
+		Page<Album> page = albumRepo.findAll(albumSpec.filter(criteria), PageRequest.of(criteria.getPage(), criteria.getSize(), Sort.by("id").descending()));
 		List<AlbumDto> list = page.getContent().stream().map(albumMapper::entityToDto).collect(Collectors.toList());
 		PageDto pageDto = new PageDto();
 		pageDto.setContent(list);
@@ -281,8 +284,14 @@ public class AlbumService implements IAlbumService {
 
 	@Override
 	public AlbumDto top1Album() {
-		AlbumDto album = albumRepo.findTop1ByOrderByTotalListenDescAndDeletedFalse().map(albumMapper::entityToDto).orElse(null);
-		return album;
+		AlbumDto criteria = new AlbumDto();
+		PageRequest limit = PageRequest.of(0, 1, Sort.by("totalListen").descending());
+		List<AlbumDto> list = albumRepo.findAll(albumSpec.filter(criteria),limit).stream().map(albumMapper::entityToDto).collect(Collectors.toList());
+		AlbumDto top1 = list.get(0);
+		return top1;
+		
+//		AlbumDto album = albumRepo.findTop1ByOrderByTotalListenDesc().map(albumMapper::entityToDto).orElse(null);
+//		return album;
 	}
 
 	@Override

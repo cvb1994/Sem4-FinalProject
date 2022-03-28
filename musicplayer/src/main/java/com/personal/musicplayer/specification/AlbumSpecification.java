@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import com.personal.dto.AlbumDto;
 import com.personal.entity.Album;
 import com.personal.entity.Artist;
-import com.personal.entity.Song;
 
 @Component
 public class AlbumSpecification {

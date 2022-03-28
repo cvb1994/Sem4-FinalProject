@@ -10,11 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.personal.entity.Artist;
-import com.personal.entity.Genre;
 import com.personal.entity.Song;
 
 import javax.transaction.Transactional;
@@ -26,9 +23,9 @@ public interface SongRepository extends JpaRepository<Song, Integer>, JpaSpecifi
 	Optional<Song> findByTitle(String title);
 	List<Song> findTop20ByOrderByListenCountResetDesc();
 	List<Song> findTop15ByOrderByListenCountResetDesc();
-	Page<Song> findSongByArtists_Id(int artistId, Pageable pageable);
-	Page<Song> findSongByAlbumId(int albumId, Pageable pageable);
-	Page<Song> findSongByGenres_Id(int genreId, Pageable pageable);
+	Page<Song> findSongByArtists_IdAndDeletedFalse(int artistId, Pageable pageable);
+	Page<Song> findSongByAlbumIdAndDeletedFalse(int albumId, Pageable pageable);
+	Page<Song> findSongByGenres_IdAndDeletedFalse(int genreId, Pageable pageable);
 
 	@Modifying
 	@Transactional

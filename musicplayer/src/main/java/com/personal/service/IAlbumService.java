@@ -2,7 +2,6 @@ package com.personal.service;
 
 import com.personal.dto.AlbumDto;
 import com.personal.dto.ResponseDto;
-import com.personal.entity.Album;
 
 import java.util.List;
 

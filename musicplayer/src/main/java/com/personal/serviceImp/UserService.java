@@ -26,12 +26,10 @@ import com.personal.entity.SystemParam;
 import com.personal.entity.User;
 import com.personal.event.SendMailPublisher;
 import com.personal.mapper.UserMapper;
-import com.personal.repository.PaymentRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.repository.UserRepository;
 import com.personal.service.IUserService;
 import com.personal.utils.CloudStorageUtils;
-import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
 @Service
@@ -40,10 +38,6 @@ public class UserService implements IUserService{
 	private UserRepository userRepo;
 	@Autowired
 	private SystemParamRepository systemRepo;
-	@Autowired
-	private PaymentRepository paymentRepo;
-	@Autowired
-	private UploadToDrive uploadDrive;
 	@Autowired
 	private UserMapper userMapper;
 	@Autowired

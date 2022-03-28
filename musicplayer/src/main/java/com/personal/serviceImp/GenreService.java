@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.personal.common.FileTypeEnum;
 import com.personal.common.FolderTypeEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.GenreDto;
@@ -27,7 +26,6 @@ import com.personal.repository.GenreRepository;
 import com.personal.repository.SystemParamRepository;
 import com.personal.service.IGenreService;
 import com.personal.utils.CloudStorageUtils;
-import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
 @Service
@@ -42,8 +40,6 @@ public class GenreService implements IGenreService{
 	private GenreMapper genreMapper;
 	@Autowired
 	Utilities util;
-	@Autowired
-	private UploadToDrive uploadDrive;
 	@Autowired
 	private CloudStorageUtils uploadCloudStorage;
 
@@ -83,7 +79,7 @@ public class GenreService implements IGenreService{
 	@Override
 	public ResponseDto getById(int genreId) {
 		ResponseDto res = new ResponseDto();
-		GenreDto genre = genreRepo.findById(genreId).map(genreMapper::entityToDto).orElse(null);
+		GenreDto genre = genreRepo.findByIdAndDeletedFalse(genreId).map(genreMapper::entityToDto).orElse(null);
 		res.setStatus(true);
 		res.setContent(genre);
 		return res;
@@ -92,7 +88,7 @@ public class GenreService implements IGenreService{
 	@Override
 	public ResponseDto getByName(String name) {
 		ResponseDto res = new ResponseDto();
-		GenreDto genre = genreRepo.findByName(name).map(genreMapper::entityToDto).orElse(null);
+		GenreDto genre = genreRepo.findByNameAndDeletedFalse(name).map(genreMapper::entityToDto).orElse(null);
 		res.setStatus(true);
 		res.setContent(genre);
 		return res;
@@ -230,7 +226,8 @@ public class GenreService implements IGenreService{
 	@Override
 	public ResponseDto getAllOrderByName() {
 		ResponseDto res = new ResponseDto();
-		List<GenreDto> list = genreRepo.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(genreMapper::entityToDto).collect(Collectors.toList());
+		GenreDto criteria = new GenreDto();
+		List<GenreDto> list = genreRepo.findAll(genreSpec.filter(criteria), Sort.by(Sort.Direction.ASC, "name")).stream().map(genreMapper::entityToDto).collect(Collectors.toList());
 		res.setStatus(true);
 		res.setContent(list);
 		return res;

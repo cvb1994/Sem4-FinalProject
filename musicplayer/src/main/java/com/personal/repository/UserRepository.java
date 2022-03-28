@@ -11,7 +11,7 @@ import com.personal.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User>{
-	Optional<User> findByIdAAndDeletedFalse(int id);
+	Optional<User> findByIdAndDeletedFalse(int id);
 	Optional<User> findByUsername(String name);
 	Optional<User> findByUsernameAndDeletedFalse(String name);
 	Optional<User> findByEmail(String email);

@@ -1,6 +1,5 @@
 package com.personal.serviceImp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.personal.common.FileExtensionEnum;
-import com.personal.common.FileTypeEnum;
 import com.personal.common.FolderTypeEnum;
-import com.personal.common.RoleEnum;
 import com.personal.common.SystemParamEnum;
 import com.personal.dto.PageDto;
 import com.personal.dto.ResponseDto;
@@ -30,7 +27,6 @@ import com.personal.entity.Artist;
 import com.personal.entity.Genre;
 import com.personal.entity.Song;
 import com.personal.entity.SystemParam;
-import com.personal.entity.User;
 import com.personal.mapper.SongMapper;
 import com.personal.musicplayer.specification.SongSpecification;
 import com.personal.repository.AlbumRepository;
@@ -38,10 +34,8 @@ import com.personal.repository.ArtistRepository;
 import com.personal.repository.GenreRepository;
 import com.personal.repository.SongRepository;
 import com.personal.repository.SystemParamRepository;
-import com.personal.repository.UserRepository;
 import com.personal.service.ISongService;
 import com.personal.utils.CloudStorageUtils;
-import com.personal.utils.UploadToDrive;
 import com.personal.utils.Utilities;
 
 @Service
@@ -57,15 +51,11 @@ public class SongService implements ISongService{
 	@Autowired
 	private GenreRepository genreRepo;
 	@Autowired
-	private UserRepository userRepo;
-	@Autowired
 	private SongMapper songMapper;
 	@Autowired
 	private SystemParamRepository systemRepo;
 	@Autowired
 	private Utilities util;
-	@Autowired
-	private UploadToDrive uploadDrive;
 	@Autowired
 	private CloudStorageUtils uploadCloudStorage;
 	
@@ -432,7 +422,10 @@ public class SongService implements ISongService{
 
 	@Override
 	public List<SongDto> ListTrending(Authentication auth) {
-		List<SongDto> list = songRepo.findTop20ByOrderByListenCountResetDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+		SongDto criteria = new SongDto();
+		PageRequest limit = PageRequest.of(0, 20, Sort.by("listenCountReset").descending());
+		List<SongDto> list = songRepo.findAll(songSpec.filter(criteria),limit).stream().map(songMapper::entityToDto).collect(Collectors.toList());
+//		List<SongDto> list = songRepo.findTop20ByOrderByListenCountResetDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 //		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
 //			User user = userRepo.findByUsername(auth.getName()).get();
 //			LocalDate current = LocalDate.now();
@@ -456,7 +449,7 @@ public class SongService implements ISongService{
 	@Override
 	public ResponseDto findSongByAlbumId(SongDto criteria, Authentication auth) {
 		ResponseDto res = new ResponseDto();
-		Page<Song> page =  songRepo.findSongByAlbumId(criteria.getAlbumId(), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
+		Page<Song> page =  songRepo.findSongByAlbumIdAndDeletedFalse(criteria.getAlbumId(), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 //		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
 //			User user = userRepo.findByUsername(auth.getName()).get();
@@ -497,7 +490,7 @@ public class SongService implements ISongService{
 	@Override
 	public ResponseDto findSongByArtistId(SongDto criteria, Authentication auth) {
 		ResponseDto res = new ResponseDto();
-		Page<Song> page =  songRepo.findSongByArtists_Id(criteria.getArtistIds().get(0), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
+		Page<Song> page =  songRepo.findSongByArtists_IdAndDeletedFalse(criteria.getArtistIds().get(0), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 //		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
 //			User user = userRepo.findByUsername(auth.getName()).get();
@@ -538,7 +531,7 @@ public class SongService implements ISongService{
 	@Override
 	public ResponseDto findSongByGenreId(SongDto criteria, Authentication auth) {
 		ResponseDto res = new ResponseDto();
-		Page<Song> page =  songRepo.findSongByGenres_Id(criteria.getGenreIds().get(0), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
+		Page<Song> page =  songRepo.findSongByGenres_IdAndDeletedFalse(criteria.getGenreIds().get(0), PageRequest.of(criteria.getPage(),criteria.getSize(),Sort.by("id").descending()));
 		List<SongDto> list = page.getContent().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 //		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
 //			User user = userRepo.findByUsername(auth.getName()).get();
@@ -596,12 +589,18 @@ public class SongService implements ISongService{
 
 	@Override
 	public List<SongDto> newlySong() {
-		return songRepo.findTop10ByOrderByCreatedDateDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+		SongDto criteria = new SongDto();
+		PageRequest limit = PageRequest.of(0, 10, Sort.by("createdDate").descending());
+		return songRepo.findAll(songSpec.filter(criteria), limit).stream().map(songMapper::entityToDto).collect(Collectors.toList());
+//		return songRepo.findTop10ByOrderByCreatedDateDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<SongDto> searchSong(String title, Authentication auth) {
-		List<SongDto> list = songRepo.findByTitleContaining(title).stream().map(songMapper::entityToDto).collect(Collectors.toList());
+		SongDto criteria = new SongDto();
+		criteria.setTitle(title);
+		List<SongDto> list = songRepo.findAll(songSpec.filter(criteria)).stream().map(songMapper::entityToDto).collect(Collectors.toList());
+//		List<SongDto> list = songRepo.findByTitleContaining(title).stream().map(songMapper::entityToDto).collect(Collectors.toList());
 //		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
 //			User user = userRepo.findByUsername(auth.getName()).get();
 //			LocalDate current = LocalDate.now();
@@ -624,7 +623,11 @@ public class SongService implements ISongService{
 
 	@Override
 	public List<SongDto> ListTop15Trending(Authentication auth) {
-		List<SongDto> list = songRepo.findTop15ByOrderByListenCountResetDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
+		SongDto criteria = new SongDto();
+		PageRequest limit = PageRequest.of(0, 15, Sort.by("listenCountReset").descending());
+		List<SongDto> list = songRepo.findAll(songSpec.filter(criteria), limit).stream().map(songMapper::entityToDto).collect(Collectors.toList());
+		
+//		List<SongDto> list = songRepo.findTop15ByOrderByListenCountResetDesc().stream().map(songMapper::entityToDto).collect(Collectors.toList());
 //		if(auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.USER.name))) {
 //			User user = userRepo.findByUsername(auth.getName()).get();
 //			LocalDate current = LocalDate.now();

@@ -13,8 +13,8 @@ import com.personal.entity.PlayList;
 @Repository
 public interface PlayListRepository extends JpaRepository<PlayList, Integer>, JpaSpecificationExecutor<PlayList>{
 	@Query("from PlayList pl where pl.user.id =:userId")
-	List<PlayList> findByUser(int userId);
+	List<PlayList> findByUserAndDeletedFalse(int userId);
 	
-	Optional<PlayList> findByUserIdAndName(int userId, String name);
+	Optional<PlayList> findByUserIdAndNameAndDeletedFalse(int userId, String name);
 
 }

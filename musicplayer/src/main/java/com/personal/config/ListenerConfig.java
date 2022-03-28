@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
@@ -13,9 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class ListenerConfig {
 
 	@Bean(name = "applicationEventMulticaster")
-//	TaskExecutor taskExecutor() {
-//        return new SimpleAsyncTaskExecutor();
-//    }
+
 	public ApplicationEventMulticaster simpleApplicationEventMulticaster() {
         SimpleApplicationEventMulticaster eventMulticaster =
           new SimpleApplicationEventMulticaster();

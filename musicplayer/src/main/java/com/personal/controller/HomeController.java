@@ -3,10 +3,7 @@ package com.personal.controller;
 import com.personal.dto.*;
 import com.personal.service.IAlbumService;
 import com.personal.service.IArtistService;
-import com.personal.service.IGenreService;
 import com.personal.service.ISongService;
-import com.personal.service.IUserService;
-import com.personal.serviceImp.ListenCountService;
 import com.personal.serviceImp.PaymentService;
 import com.personal.serviceImp.UserService;
 
@@ -15,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,9 +30,6 @@ public class HomeController {
 
     @Autowired
     private IArtistService iArtistService;
-
-    @Autowired
-    private IGenreService iGenreService;
     
     @Autowired
     private PaymentService paymentSer;

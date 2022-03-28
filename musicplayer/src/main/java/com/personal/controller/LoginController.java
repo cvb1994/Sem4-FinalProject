@@ -1,7 +1,6 @@
 package com.personal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,7 +18,6 @@ import com.personal.dto.LoginDto;
 import com.personal.dto.ResponseDto;
 import com.personal.dto.UserDto;
 import com.personal.entity.UserPrincipal;
-import com.personal.repository.UserRepository;
 import com.personal.serviceImp.AdminService;
 import com.personal.serviceImp.UserService;
 import com.personal.utils.JwtTokenProvider;

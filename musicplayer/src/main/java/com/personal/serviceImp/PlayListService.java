@@ -39,7 +39,7 @@ public class PlayListService implements IPlayListService{
 	@Override
 	public ResponseDto findByUser(int userId) {
 		ResponseDto res = new ResponseDto();
-		List<PlayListDto> list = playListRepo.findByUser(userId).stream().map(playListMapper::entityToDto).collect(Collectors.toList());
+		List<PlayListDto> list = playListRepo.findByUserAndDeletedFalse(userId).stream().map(playListMapper::entityToDto).collect(Collectors.toList());
 		res.setStatus(true);
 		res.setContent(list);
 		return res;
@@ -182,7 +182,7 @@ public class PlayListService implements IPlayListService{
 		
 		Song song = songRepo.findById(model.getSongId()).get();
 		
-		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndName(model.getUserId(), PLAYLIST_LIKE);
+		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndNameAndDeletedFalse(model.getUserId(), PLAYLIST_LIKE);
 		if(optPlayList.isPresent()) {
 			PlayList playlist = optPlayList.get();
 			List<Song> listSong = playlist.getSongs();
@@ -213,7 +213,7 @@ public class PlayListService implements IPlayListService{
 	@Override
 	public ResponseDto getFavoritePlaylistUser(int userId) {
 		ResponseDto res = new ResponseDto();
-		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndName(userId, PLAYLIST_LIKE);
+		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndNameAndDeletedFalse(userId, PLAYLIST_LIKE);
 		if(optPlayList.isPresent()) {
 			PlayListDto playlistDto = optPlayList.map(playListMapper::entityToDto).orElse(null);
 			res.setStatus(true);
@@ -230,7 +230,7 @@ public class PlayListService implements IPlayListService{
 	public ResponseDto checkFavoriteSong(int userId, int songId) {
 		ResponseDto res = new ResponseDto();
 		Song song = songRepo.findById(songId).get();
-		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndName(userId, PLAYLIST_LIKE);
+		Optional<PlayList> optPlayList = playListRepo.findByUserIdAndNameAndDeletedFalse(userId, PLAYLIST_LIKE);
 		if(optPlayList.isPresent()) {
 			PlayList playList = optPlayList.get();
 			List<Song> listSong = playList.getSongs();
